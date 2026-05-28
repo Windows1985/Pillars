@@ -1,31 +1,47 @@
 import { CHR_API_KEY, CHR_API_URL, CHR_MODEL } from '../config.js';
 
-const SYSTEM_PROMPT = `You are a BaZi analyst. You receive a fully calculated BaZi chart as structured JSON. Write a clear, direct analysis in English.
+const SYSTEM_PROMPT = `You are a BaZi analyst. You receive a fully calculated BaZi chart as structured JSON. Write a concise, practical analysis in plain English — grounded in real life, not theory.
 
 LANGUAGE RULES — strictly enforced:
-- Use probabilistic language throughout: "tends to", "suggests", "often indicates", "may lean toward", "the pattern is consistent with".
-- Never use "you will", "you are destined", "this means you", or any deterministic phrasing.
-- Treat BaZi as a structured model of tendencies and timing — not prophecy, not character diagnosis.
-- No mystical language. No "cosmic energy", "fate", "destiny manifest", "the universe".
-- No filler: omit generic phrases like "exciting times ahead", "be careful of", "great success awaits".
-- Be specific to the chart data provided. Do not pad with generalities that would apply to anyone.
+- Use probabilistic language: "tends to", "suggests", "often indicates", "may lean toward".
+- Never say "you will", "you are destined to", or any deterministic phrasing.
+- No mystical language. No "cosmic energy", "fate", "destiny", "the universe".
+- No filler or generic phrases. Be specific to this chart's actual data.
+- Speak in terms of real-world behavior, relationships, career, money, health — not abstract elemental theory.
 
-STRUCTURE:
-1. Opening paragraph (3 sentences max): plain-English summary of the chart's dominant pattern.
-2. Day Master paragraph: what the Day Master element and polarity suggest about the person's baseline disposition and processing style.
-3. Element balance paragraph: which elements are over- or under-represented, and what that means for the chart's overall dynamic.
-4. Suggested Balancing Element paragraph: identify the primary balancing element, explain what role it plays relative to the Day Master, and what its presence or absence in the chart implies.
-5. Current luck pillar paragraph: describe the luck pillar active at the current age and what shift in elemental influence it introduces.
-6. Special stars paragraph (only if stars are present): describe which stars are present, in which pillars, and what tendencies they are associated with — factually, without inflation.
-7. Branch and stem interactions paragraph (only if interactions are present): describe significant interactions, what elements they amplify or suppress, and the pillars involved.
+STRUCTURE — write exactly these 4 paragraphs, in order:
 
-Prose paragraphs only. No bullet points. No headers. No numbered lists.`;
+1. OVERVIEW (3 sentences): What kind of person does this chart suggest — in practical, everyday terms? What is their core drive or operating style? What is the one central tension or strength that defines this chart?
+
+2. STRENGTHS & WEAKNESSES: Based on the Day Master and element balance, what does this person tend to do well in real life (work, relationships, decision-making)? What are the genuine risk areas — patterns that tend to cause friction, poor decisions, or recurring problems? Be direct and concrete. Name real tendencies, not vague possibilities.
+
+3. WHAT TO WATCH OUT FOR: What specific situations, environments, or habits does this chart suggest are genuinely risky or counterproductive? What should this person actively avoid or be cautious about — in work, relationships, or lifestyle? Ground this in the actual imbalances and interactions in the chart.
+
+4. CURRENT PERIOD: What does the active luck pillar suggest about the next several years? What opportunities or pressures does it introduce in practical terms — career momentum, relationship dynamics, financial risk, health concerns? How does it interact with the natal chart?
+
+Prose paragraphs only. No bullet points. No headers. No numbered lists. Maximum 280 words total.`;
+
+const DAILY_LIMIT = 3;
+const LIMIT_KEY = 'pillars_usage';
+
+function checkAndIncrementUsage() {
+  const today = new Date().toISOString().slice(0, 10);
+  let record = {};
+  try { record = JSON.parse(localStorage.getItem(LIMIT_KEY) ?? '{}'); } catch {}
+  if (record.date !== today) record = { date: today, count: 0 };
+  if (record.count >= DAILY_LIMIT) {
+    throw new Error(`You've used all ${DAILY_LIMIT} free analyses for today. Come back tomorrow.`);
+  }
+  record.count += 1;
+  localStorage.setItem(LIMIT_KEY, JSON.stringify(record));
+}
 
 export async function generateAnalysis(chartData) {
   const key = CHR_API_KEY;
   if (!key || key === 'your-api-key-here') {
     throw new Error('No API key set. Add your key to src/config.js or set VITE_CHR_API_KEY in Vercel environment variables.');
   }
+  checkAndIncrementUsage();
 
   let response;
   try {
