@@ -52,40 +52,39 @@
 
     /* Hero — character dominates */
     .hero { padding: 72px 0 0; }
-    .hero-row { display: flex; align-items: flex-start; gap: 0; }
+    .hero-row { display: flex; align-items: stretch; gap: 0; }
 
     .hero-char-block {
       flex-shrink: 0;
-      display: flex; flex-direction: column; gap: 0;
-      padding-right: 64px;
+      display: flex; flex-direction: column; justify-content: center; gap: 0;
+      padding-right: 64px; padding-bottom: 8px;
       border-right: 1px solid var(--border);
     }
     .dm-label {
       font-family: var(--mono); font-size: 8px; letter-spacing: 0.2em;
       text-transform: uppercase; color: var(--text-muted);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
     .hero-char {
-      font-family: var(--cjk); font-size: 180px; line-height: 0.92;
+      font-family: var(--cjk); font-size: 240px; line-height: 0.9;
       color: var(--text);
-      /* Subtle jade shadow — the character glows faintly */
-      text-shadow: 0 0 80px oklch(58% 0.10 162 / 0.12);
+      text-shadow: 0 0 100px oklch(58% 0.10 162 / 0.10);
     }
-    .char-en-block { margin-top: 20px; }
+    .char-en-block { margin-top: 24px; }
     .char-en {
-      font-family: var(--display); font-size: 22px; font-weight: 300;
+      font-family: var(--display); font-size: 28px; font-weight: 300;
       font-style: italic; color: var(--text-dim); line-height: 1.2;
     }
     .char-pinyin {
       font-family: var(--mono); font-size: 9px; color: var(--text-muted);
-      letter-spacing: 0.1em; margin-top: 4px;
+      letter-spacing: 0.1em; margin-top: 6px;
     }
 
     .hero-text {
       flex: 1;
       padding-left: 64px;
-      display: flex; flex-direction: column; justify-content: flex-start;
-      gap: 40px; padding-top: 8px;
+      display: flex; flex-direction: column; justify-content: center;
+      gap: 40px;
     }
     .hero-insight {
       font-family: var(--display); font-size: 24px; font-weight: 300;
@@ -136,16 +135,26 @@
       text-transform: uppercase; color: var(--jade); margin-top: auto; padding-top: 12px;
     }
 
-    /* Tech strip — minimal, bottom */
+    /* Tech strip — A-style labeled columns */
     .tech-strip {
-      display: flex; align-items: center; gap: 32px;
-      padding: 20px 0; margin-top: 48px;
+      display: flex; align-items: center;
+      padding: 14px 0; margin-top: 48px;
       border-top: 1px solid var(--border);
     }
-    .tech-item { font-family: var(--mono); font-size: 9.5px; color: var(--text-muted); }
-    .tech-item span { color: var(--text-dim); }
-    .tech-item.jade span { color: var(--jade); }
-    .tech-sep { font-family: var(--mono); font-size: 9px; color: var(--border); }
+    .tech-item {
+      display: flex; flex-direction: column; gap: 3px;
+      padding: 0 28px;
+    }
+    .tech-item:first-child { padding-left: 0; }
+    .tech-label {
+      font-family: var(--mono); font-size: 8px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted);
+    }
+    .tech-value {
+      font-family: var(--mono); font-size: 11px; color: var(--text-dim);
+    }
+    .tech-value.jade { color: var(--jade); }
+    .tech-sep { width: 1px; height: 30px; background: var(--border); flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -230,13 +239,35 @@
     </div>
 
     <div class="tech-strip">
-      <div class="tech-item">1990-09-01 · <span>07:14 CST</span></div>
-      <div class="tech-sep">/</div>
-      <div class="tech-item">Beijing · <span>116.4°E 39.9°N</span></div>
-      <div class="tech-sep">/</div>
-      <div class="tech-item jade">Current pillar: <span>壬子 · 2020–2030</span></div>
-      <div class="tech-sep">/</div>
-      <div class="tech-item">Wood ×3 · <span>Water ×2 · Fire ×1</span></div>
+      <div class="tech-item">
+        <div class="tech-label">Birth</div>
+        <div class="tech-value">1990-09-01 · 07:14 CST</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Location</div>
+        <div class="tech-value">Beijing · 116.4°E 39.9°N</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Current Luck Pillar</div>
+        <div class="tech-value jade">壬子 · 2020–2030</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Element Balance</div>
+        <div class="tech-value">Wood ×3 · Water ×2 · Fire ×1</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Chart ID</div>
+        <div class="tech-value">JIA-9001-A</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Generated</div>
+        <div class="tech-value">2026-05-28</div>
+      </div>
     </div>
   </main>
 </body>
