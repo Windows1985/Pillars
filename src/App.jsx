@@ -30,24 +30,39 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900 text-neutral-100">
-      <header className="border-b border-neutral-800 px-6 py-4">
-        <h1 className="font-serif text-2xl tracking-wide text-neutral-100">Pillars</h1>
-        <p className="text-xs text-neutral-500 mt-0.5">BaZi — Four Pillars of Destiny</p>
+    <div className="min-h-screen bg-[#0c0c0e] text-[#ece8e1]">
+      {/* Header */}
+      <header className="border-b border-white/[0.05] px-8 py-5">
+        <div className="max-w-5xl mx-auto flex items-baseline gap-4">
+          <span className="font-serif text-xl tracking-wide text-[#ece8e1]">Pillars</span>
+          <span className="text-[11px] text-[#3d3a37] tracking-widest uppercase">BaZi · Four Pillars of Destiny</span>
+        </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8 space-y-10">
-        <InputForm onSubmit={handleSubmit} />
+      <main className="max-w-5xl mx-auto px-4 sm:px-8">
+        {/* Form — centered narrow column */}
+        <div className="max-w-xl mx-auto py-12 sm:py-16">
+          <InputForm onSubmit={handleSubmit} />
+        </div>
 
+        {/* Chart output — fades in when ready */}
         {chart && (
-          <>
-            <PillarChart chart={chart} stemCombinations={chart.stemCombinations} />
+          <div
+            className="pb-24 space-y-8"
+            style={{ animation: 'fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
+          >
+            <div className="border-t border-white/[0.05]" />
+            <PillarChart chart={chart} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <ElementBalance balance={chart.elementBalance} dayMaster={chart.dayMaster} />
-              <LuckPillars luckPillars={chart.luckPillars} birthYear={chart.birthDate.year} currentYear={chart.currentYear} />
+              <LuckPillars
+                luckPillars={chart.luckPillars}
+                birthYear={chart.birthDate.year}
+                currentYear={chart.currentYear}
+              />
             </div>
             <Analysis text={analysis} loading={analysisLoading} error={analysisError} />
-          </>
+          </div>
         )}
       </main>
     </div>
