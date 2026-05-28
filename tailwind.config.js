@@ -5,11 +5,17 @@ export default {
   theme: {
     extend: {
       fontFamily: {
+        display: ['Fraunces', 'Georgia', 'serif'],
         sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Segoe UI"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
         serif: ['"Noto Serif SC"', 'Georgia', 'Cambria', 'serif'],
         cjk: ['"Noto Serif SC"', '"Source Han Serif SC"', 'serif'],
       },
       colors: {
+        jade: {
+          400: 'oklch(62% 0.12 162)',
+          500: 'oklch(50% 0.10 162)',
+        },
         gold: { 400: '#c4913a', 500: '#a87830' },
         surface: { 0: '#070709', 1: '#0f0f12', 2: '#171719', 3: '#1f1f22' },
       },

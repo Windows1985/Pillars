@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Jade accent */
+  --jade:        oklch(60% 0.11 162);
+  --jade-dim:    oklch(38% 0.07 162);
+  --jade-bg:     oklch(13% 0.04 162);
+  --jade-border: oklch(22% 0.06 162);
+  /* Text */
+  --text:        oklch(88% 0.01 75);
+  --text-dim:    oklch(54% 0.01 75);
+  --text-muted:  oklch(30% 0.008 75);
+  /* Surfaces */
+  --surface-0:   oklch(9% 0.008 60);
+  --surface-1:   oklch(12% 0.008 60);
+  --surface-2:   oklch(15% 0.008 60);
+  --border:      oklch(18% 0.006 60);
+  /* Font stacks */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-mono:    'JetBrains Mono', monospace;
+  --font-cjk:     'Noto Serif SC', 'Source Han Serif SC', serif;
+}
+
 @layer base {
   *, *::before, *::after {
     scrollbar-width: none;
@@ -12,7 +33,7 @@
   html { scroll-behavior: smooth; }
 
   body {
-    background-color: #070709;
+    background-color: oklch(9% 0.008 60);
     background-image:
       radial-gradient(ellipse 70% 50% at 12% 75%, rgba(190, 115, 30, 0.055) 0%, transparent 65%),
       radial-gradient(ellipse 55% 45% at 88% 18%, rgba(45, 80, 130, 0.06) 0%, transparent 65%);
