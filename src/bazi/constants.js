@@ -196,3 +196,12 @@ export const ELEMENT_BG = {
   Metal: 'bg-gray-300',
   Water: 'bg-blue-400',
 };
+
+// Unified element UI tokens — hex colors, glow, bg, Chinese label
+export const ELEM = {
+  Wood:  { hex: '#6abf7a', glow: 'rgba(106,191,122,0.22)', bg: 'rgba(106,191,122,0.07)', zh: '木' },
+  Fire:  { hex: '#d96b54', glow: 'rgba(217,107,84,0.22)',  bg: 'rgba(217,107,84,0.07)',  zh: '火' },
+  Earth: { hex: '#c4913a', glow: 'rgba(196,145,58,0.22)',  bg: 'rgba(196,145,58,0.07)',  zh: '土' },
+  Metal: { hex: '#9db0c2', glow: 'rgba(157,176,194,0.18)', bg: 'rgba(157,176,194,0.06)', zh: '金' },
+  Water: { hex: '#5592b8', glow: 'rgba(85,146,184,0.22)',  bg: 'rgba(85,146,184,0.07)',  zh: '水' },
+};

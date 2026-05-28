@@ -1,138 +1,183 @@
-import { ELEMENTS, ELEMENT_COLORS } from '../bazi/constants.js';
+import { ELEMENTS, ELEM } from '../bazi/constants.js';
 
-const ELEMENT_DESCRIPTIONS = {
-  Wood:  { zh: '木', glyph: '木', desc: 'Growth, vision, flexibility. Governs creativity, planning, and expansion.' },
-  Fire:  { zh: '火', glyph: '火', desc: 'Passion, expression, intelligence. Governs communication and dynamism.' },
-  Earth: { zh: '土', glyph: '土', desc: 'Stability, reliability, nurturing. Governs practicality and support.' },
-  Metal: { zh: '金', glyph: '金', desc: 'Precision, discipline, resolve. Governs structure and decisiveness.' },
-  Water: { zh: '水', glyph: '水', desc: 'Wisdom, adaptability, depth. Governs intuition and flow.' },
-};
+// Pentagon radar chart
+const ELEMS_ORDER = ['Wood', 'Fire', 'Earth', 'Metal', 'Water'];
+const ANGLES = [90, 18, -54, -126, -198].map(d => (d * Math.PI) / 180);
+const CX = 100, CY = 100, MAX_R = 66, MIN_R = 4;
 
-const ELEMENT_BAR_COLOR = {
-  Wood:  '#4ade80',
-  Fire:  '#f87171',
-  Earth: '#fbbf24',
-  Metal: '#94a3b8',
-  Water: '#60a5fa',
-};
+function pt(angleRad, r) {
+  return [CX + r * Math.cos(angleRad), CY - r * Math.sin(angleRad)];
+}
+
+function toPoints(pairs) {
+  return pairs.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+}
+
+function RadarChart({ totals, total, dominantEl }) {
+  const gridRings = [0.3, 0.6, 1].map(f =>
+    toPoints(ANGLES.map(a => pt(a, MAX_R * f)))
+  );
+
+  const dataPts = ELEMS_ORDER.map((el, i) => {
+    const score = totals[el] ?? 0;
+    const proportion = total > 0 ? score / total : 0;
+    const scaled = Math.min(1, proportion * 3.5);
+    const r = MIN_R + scaled * (MAX_R - MIN_R);
+    return pt(ANGLES[i], r);
+  });
+
+  const dataPolygon = toPoints(dataPts);
+  const de = ELEM[dominantEl] ?? ELEM.Earth;
+
+  return (
+    <svg width="220" height="220" viewBox="-15 -15 230 230" style={{ overflow: 'visible' }}>
+      {/* Grid rings */}
+      {gridRings.map((pts, i) => (
+        <polygon key={i} points={pts} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth={0.5} />
+      ))}
+
+      {/* Axis lines */}
+      {ANGLES.map((a, i) => {
+        const [x, y] = pt(a, MAX_R);
+        return <line key={i} x1={CX} y1={CY} x2={x.toFixed(2)} y2={y.toFixed(2)} stroke="rgba(255,255,255,0.05)" strokeWidth={0.5} />;
+      })}
+
+      {/* Data fill */}
+      <polygon
+        points={dataPolygon}
+        fill={de.bg}
+        stroke={de.hex}
+        strokeWidth={1.5}
+        strokeLinejoin="round"
+        opacity={0.9}
+      />
+
+      {/* Dots */}
+      {dataPts.map(([x, y], i) => (
+        <circle
+          key={i}
+          cx={x.toFixed(2)} cy={y.toFixed(2)}
+          r={3.5}
+          fill={ELEM[ELEMS_ORDER[i]]?.hex ?? '#888'}
+          stroke="rgba(7,7,9,0.8)"
+          strokeWidth={1}
+        />
+      ))}
+
+      {/* Labels */}
+      {ELEMS_ORDER.map((el, i) => {
+        const [lx, ly] = pt(ANGLES[i], MAX_R + 18);
+        const e = ELEM[el];
+        return (
+          <text
+            key={el}
+            x={lx.toFixed(2)} y={ly.toFixed(2)}
+            textAnchor="middle" dominantBaseline="middle"
+            fontSize={13}
+            fill={e.hex}
+            fontFamily="'Noto Serif SC', serif"
+          >
+            {e.zh}
+          </text>
+        );
+      })}
+    </svg>
+  );
+}
 
 export default function ElementBalance({ balance, dayMaster }) {
   const { totals, total, strong, balancingElement } = balance;
   const dmElement = dayMaster.stem.element;
 
-  const sortedElements = [...ELEMENTS].sort((a, b) => (totals[b] ?? 0) - (totals[a] ?? 0));
-  const dominantEl = sortedElements[0];
-  const weakestEl = sortedElements[sortedElements.length - 1];
+  const dominantEl = ELEMS_ORDER.reduce((a, b) =>
+    (totals[a] ?? 0) >= (totals[b] ?? 0) ? a : b
+  );
 
   return (
     <div
-      className="rounded-lg p-5 space-y-5"
-      style={{ border: '1px solid #1e1e22', background: '#131316' }}
+      className="card-hover rounded-[22px] p-6"
+      style={{ background: '#0f0f12', border: '1px solid rgba(255,255,255,0.05)' }}
     >
-      {/* Header */}
-      <div>
-        <div className="flex items-baseline gap-3 mb-1">
-          <h2 className="text-base font-medium" style={{ color: '#ece8e1' }}>Element Balance</h2>
-          <span className="text-sm font-serif" style={{ color: '#3d3a37' }}>五行分布</span>
+      <div className="flex flex-col sm:flex-row items-center gap-6">
+        {/* Radar chart */}
+        <div className="flex-shrink-0">
+          <RadarChart totals={totals} total={total} dominantEl={dominantEl} />
         </div>
-        <p className="text-xs leading-relaxed" style={{ color: '#5a5754' }}>
-          Your chart is scored by how much of each of the five elements — Wood, Fire, Earth, Metal, Water — appears across all eight characters (stems and hidden stems). Balance shapes your strengths, blind spots, and what energies tend to help you.
-        </p>
-      </div>
 
-      {/* Day master strength badge */}
-      <div
-        className="flex items-center justify-between rounded px-3 py-2"
-        style={{ background: '#0c0c0e', border: '1px solid #1e1e22' }}
-        title="Strong Day Master (旺): your core element is well-supported. Challenging or draining elements tend to be more useful to you. Weak Day Master (弱): your core element needs support — nurturing and same-element energies tend to help most."
-      >
-        <div className="text-xs" style={{ color: '#5a5754' }}>
-          Day Master strength
-        </div>
-        <div
-          className="text-xs font-medium px-2 py-0.5 rounded-sm"
-          style={{
-            background: strong ? 'rgba(196,145,58,0.1)' : 'rgba(100,116,139,0.15)',
-            color: strong ? '#c4913a' : '#94a3b8',
-            border: strong ? '1px solid rgba(196,145,58,0.25)' : '1px solid rgba(100,116,139,0.2)',
-          }}
-        >
-          {strong ? 'Strong 旺' : 'Weak 弱'}
-        </div>
-      </div>
+        {/* Sidebar */}
+        <div className="flex-1 space-y-4">
+          {/* Strength */}
+          <div
+            className="flex items-center justify-between rounded-[12px] px-4 py-3"
+            style={{ background: '#080809', border: '1px solid rgba(255,255,255,0.05)' }}
+          >
+            <span className="text-sm" style={{ color: '#5a5754' }}>Day Master</span>
+            <span
+              className="text-sm font-medium px-3 py-0.5 rounded-full"
+              style={strong
+                ? { background: 'rgba(196,145,58,0.12)', color: '#c4913a', border: '1px solid rgba(196,145,58,0.25)' }
+                : { background: 'rgba(85,146,184,0.1)', color: '#5592b8', border: '1px solid rgba(85,146,184,0.2)' }
+              }
+            >
+              {strong ? 'Strong 旺' : 'Weak 弱'}
+            </span>
+          </div>
 
-      {/* Bars */}
-      <div className="space-y-2.5">
-        {ELEMENTS.map(el => {
-          const score = totals[el] ?? 0;
-          const pct = total > 0 ? (score / total) * 100 : 0;
-          const isDM = el === dmElement;
-          const meta = ELEMENT_DESCRIPTIONS[el];
-          return (
-            <div key={el} title={`${el} ${meta.zh}: ${meta.desc}`}>
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
+          {/* Scores */}
+          <div className="space-y-2">
+            {ELEMENTS.map(el => {
+              const score = totals[el] ?? 0;
+              const pct = total > 0 ? (score / total) * 100 : 0;
+              const isDM = el === dmElement;
+              const e = ELEM[el];
+              return (
+                <div key={el} className="flex items-center gap-3">
                   <span
-                    className="text-xs font-medium w-12"
-                    style={{ color: ELEMENT_BAR_COLOR[el] }}
+                    className="cjk text-sm w-5 text-center"
+                    style={{ color: e.hex, fontWeight: isDM ? 600 : 400 }}
                   >
-                    {el}
+                    {e.zh}
                   </span>
-                  <span className="text-[10px]" style={{ color: '#3d3a37' }}>{meta.zh}</span>
-                  {isDM && (
-                    <span
-                      className="text-[9px] px-1 py-0.5 rounded-sm"
-                      style={{ background: 'rgba(196,145,58,0.1)', color: '#c4913a' }}
-                    >
-                      Day Master
-                    </span>
-                  )}
+                  <div className="flex-1 h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{
+                        width: `${pct}%`,
+                        background: e.hex,
+                        opacity: isDM ? 1 : 0.5,
+                        boxShadow: isDM ? `0 0 8px ${e.glow}` : 'none',
+                      }}
+                    />
+                  </div>
+                  <span className="text-[12px] tabular-nums w-7 text-right" style={{ color: isDM ? '#e8e4dd' : '#4a4844' }}>
+                    {score.toFixed(1)}
+                  </span>
                 </div>
-                <span className="text-[11px] tabular-nums" style={{ color: isDM ? '#ece8e1' : '#5a5754' }}>
-                  {score.toFixed(1)}
-                </span>
-              </div>
-              <div
-                className="h-1.5 rounded-full overflow-hidden"
-                style={{ background: '#1a1a1e' }}
-              >
-                <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{
-                    width: `${pct}%`,
-                    background: ELEMENT_BAR_COLOR[el],
-                    opacity: isDM ? 1 : 0.5,
-                  }}
-                />
-              </div>
+              );
+            })}
+          </div>
+
+          {/* Balancing element */}
+          <div className="pt-1">
+            <div className="text-[11px] uppercase tracking-wider mb-1" style={{ color: '#3a3733' }}>
+              Suggested Balance
             </div>
-          );
-        })}
-      </div>
-
-      {/* Insight row */}
-      <div
-        className="rounded px-3 py-3 space-y-2"
-        style={{ background: '#0c0c0e', border: '1px solid #1e1e22' }}
-      >
-        <div className="text-xs" style={{ color: '#5a5754' }}>
-          <span style={{ color: '#3d3a37' }}>Dominant · </span>
-          <span style={{ color: ELEMENT_BAR_COLOR[dominantEl] }}>{dominantEl}</span>
-          <span className="mx-2" style={{ color: '#3d3a37' }}>·</span>
-          <span style={{ color: '#3d3a37' }}>Weakest · </span>
-          <span style={{ color: ELEMENT_BAR_COLOR[weakestEl] }}>{weakestEl}</span>
+            <div className="flex items-center gap-2">
+              <span
+                className="cjk text-lg"
+                style={{ color: ELEM[balancingElement.primaryElement]?.hex ?? '#c4913a' }}
+              >
+                {ELEM[balancingElement.primaryElement]?.zh}
+              </span>
+              <span className="text-sm" style={{ color: '#5a5754' }}>
+                {balancingElement.primaryElement}
+              </span>
+              <span className="text-[12px]" style={{ color: '#3a3733' }}>
+                · {balancingElement.reason}
+              </span>
+            </div>
+          </div>
         </div>
-
-        <div className="text-xs leading-relaxed">
-          <span style={{ color: '#5a5754' }}>Suggested balancing element · </span>
-          <span className="font-medium" style={{ color: ELEMENT_BAR_COLOR[balancingElement.primaryElement] }}>
-            {balancingElement.primaryElement}
-          </span>
-          <span className="ml-1" style={{ color: '#3d3a37' }}>({balancingElement.reason})</span>
-        </div>
-        <p className="text-[11px] leading-relaxed" style={{ color: '#3d3a37' }}>
-          The balancing element is the one your chart tends to respond well to — it may appear in your luck pillars, the people around you, or environments where you feel most effective.
-        </p>
       </div>
     </div>
   );
