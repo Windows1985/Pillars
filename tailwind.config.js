@@ -5,7 +5,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Segoe UI"', 'system-ui', 'sans-serif'],
         serif: ['Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+        mono: ['"SF Mono"', 'ui-monospace', 'monospace'],
       },
       colors: {
         gold: {
@@ -15,18 +17,23 @@ export default {
         surface: {
           0: '#0c0c0e',
           1: '#131316',
-          2: '#1a1a1e',
-          3: '#212126',
+          2: '#1c1c20',
+          3: '#242428',
         },
       },
       animation: {
-        'fade-in': 'fadeIn 0.4s ease forwards',
+        'fade-in':    'fadeIn 0.4s ease both',
+        'fade-in-up': 'fadeInUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both',
         'pulse-slow': 'pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         fadeIn: {
-          '0%': { opacity: 0 },
-          '100%': { opacity: 1 },
+          from: { opacity: '0' },
+          to:   { opacity: '1' },
+        },
+        fadeInUp: {
+          from: { opacity: '0', transform: 'translateY(20px)' },
+          to:   { opacity: '1', transform: 'none' },
         },
       },
     },

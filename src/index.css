@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  /* Remove all scrollbars globally while preserving scroll functionality */
   *, *::before, *::after {
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -18,14 +17,24 @@
 
   body {
     background-color: #0c0c0e;
-    color: #ece8e1;
+    color: #e8e4dd;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'kern' 1, 'liga' 1;
   }
 
   ::selection {
-    background: rgba(196, 145, 58, 0.25);
-    color: #ece8e1;
+    background: rgba(196, 145, 58, 0.22);
+    color: #e8e4dd;
   }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
 }
