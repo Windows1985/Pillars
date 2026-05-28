@@ -3,47 +3,30 @@ export default function Analysis({ text, loading, error }) {
 
   return (
     <div
-      className="rounded-lg p-6 space-y-5"
-      style={{ border: '1px solid #1e1e22', background: '#131316' }}
+      className="card-hover rounded-[22px] p-7"
+      style={{ background: '#0f0f12', border: '1px solid rgba(255,255,255,0.05)' }}
     >
-      <div>
-        <div className="flex items-baseline gap-3 mb-1">
-          <h2 className="text-base font-medium" style={{ color: '#ece8e1' }}>Analysis</h2>
-          <span className="text-sm font-serif" style={{ color: '#3d3a37' }}>命理解析</span>
-        </div>
-        <p className="text-xs" style={{ color: '#3d3a37' }}>
-          A reading of your chart's key themes, written in plain language. BaZi describes tendencies, not certainties.
-        </p>
-      </div>
-
       {loading && (
-        <div className="space-y-3 pt-1">
-          {[92, 78, 85, 60, 88, 70, 55].map((w, i) => (
+        <div className="space-y-3.5">
+          {[88, 72, 82, 58, 78, 65, 50].map((w, i) => (
             <div
               key={i}
-              className="h-2.5 rounded-full animate-pulse"
+              className="rounded-full"
               style={{
                 width: `${w}%`,
-                background: '#1a1a1e',
-                animationDelay: `${i * 80}ms`,
+                height: 10,
+                background: 'rgba(255,255,255,0.04)',
+                animation: `glowPulse 2s ease-in-out ${i * 100}ms infinite`,
               }}
             />
           ))}
-          <p className="text-xs pt-1" style={{ color: '#3d3a37' }}>Interpreting your chart…</p>
+          <p className="text-[12px] mt-2" style={{ color: '#2e2c2a' }}>Interpreting your chart…</p>
         </div>
       )}
 
       {error && (
-        <div
-          className="rounded px-4 py-3"
-          style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)' }}
-        >
-          <p className="text-xs" style={{ color: '#f87171' }}>
-            Analysis unavailable — {error}
-          </p>
-          <p className="text-[11px] mt-1" style={{ color: '#5a5754' }}>
-            Check that your API key is set in <code className="font-mono">src/config.js</code>.
-          </p>
+        <div className="rounded-[14px] px-5 py-4" style={{ background: 'rgba(217,107,84,0.05)', border: '1px solid rgba(217,107,84,0.15)' }}>
+          <p className="text-[14px]" style={{ color: '#d96b54' }}>{error}</p>
         </div>
       )}
 
@@ -52,20 +35,19 @@ export default function Analysis({ text, loading, error }) {
           {text.split('\n\n').filter(p => p.trim()).map((para, i) => (
             <p
               key={i}
-              className="text-sm leading-7"
-              style={{ color: i === 0 ? '#ece8e1' : '#9a9590' }}
+              className="leading-[1.8]"
+              style={{
+                fontSize: 15,
+                color: i === 0 ? '#e8e4dd' : '#7a7672',
+                fontStyle: i === 0 ? 'normal' : 'normal',
+              }}
             >
               {para.trim()}
             </p>
           ))}
-          <div
-            className="pt-3 mt-2"
-            style={{ borderTop: '1px solid #1a1a1e' }}
-          >
-            <p className="text-[11px]" style={{ color: '#3d3a37' }}>
-              This reading uses classical BaZi methodology. Interpretations are probabilistic tendencies — not predictions. The chart reflects patterns; choices remain yours.
-            </p>
-          </div>
+          <p className="text-[11px] pt-3" style={{ color: '#2e2c2a', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+            BaZi describes patterns and tendencies — not certainties. Interpretations are probabilistic.
+          </p>
         </div>
       )}
     </div>
