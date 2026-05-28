@@ -1,14 +1,36 @@
-// Solar term dates computed algorithmically.
-// Gives the day-of-month for each of the 12 major 节 (jié) that start BaZi months.
-// Term order: 立春(Feb), 惊蛰(Mar), 清明(Apr), 立夏(May), 芒种(Jun), 小暑(Jul),
-//             立秋(Aug), 白露(Sep), 寒露(Oct), 立冬(Nov), 大雪(Dec), 小寒(Jan of year+1)
-// Months:      [2,        3,        4,        5,        6,        7,
-//               8,        9,        10,       11,       12,       1]
-// Accuracy: ±1 day for most years; births on transition dates should be verified.
+// Solar term (节 jié) dates for the 12 major terms that open each BaZi month.
+//
+// SOLAR TERM DATA FORMAT
+// Each getSolarTermDate call returns { year, month, day, hour, minute }.
+// hour and minute are currently 0 — they are placeholders for a future precise
+// lookup table. The algorithmic formula below is accurate to ±1 day; it cannot
+// provide sub-day precision without a full astronomical data table.
+//
+// BOUNDARY HANDLING
+// getMonthInfo and getNearestSolarTerm accept an optional { hour, minute }
+// for the birth time. When the birth date matches a solar term's date exactly,
+// the birth time is compared against the term's hour/minute to determine which
+// side of the boundary the birth falls on. Until the hour/minute fields are
+// populated from a precise table, births on exact solar term days should be
+// flagged as uncertain.
+//
+// Term order (termIdx 0–11):
+//   0=立春(Feb)  1=惊蛰(Mar)  2=清明(Apr)  3=立夏(May)
+//   4=芒种(Jun)  5=小暑(Jul)  6=立秋(Aug)  7=白露(Sep)
+//   8=寒露(Oct)  9=立冬(Nov) 10=大雪(Dec) 11=小寒(Jan of year+1)
+//
+// termIdx → earthly branch: (termIdx + 2) % 12
+//   0→寅(2)  1→卯(3)  2→辰(4)  3→巳(5)  4→午(6)  5→未(7)
+//   6→申(8)  7→酉(9)  8→戌(10) 9→亥(11) 10→子(0) 11→丑(1)
+
+import { toDayNumber } from './dateUtils.js';
 
 const TERM_MONTHS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1];
 
-// Formula coefficients [C_20th, C_21st] for each term
+// Coefficients [C_20th, C_21st] for day-of-month formula.
+// day = floor(Y * 0.2422 + C) - floor(Y / 4)
+// where Y = year - 1900 (20th) or year - 2000 (21st).
+// Accuracy: ±1 day. Sub-day accuracy requires a full astronomical table.
 const COEFFS = [
   [4.02,  3.87],   // 立春
   [6.31,  6.01],   // 惊蛰
@@ -31,88 +53,89 @@ function termDay(year, termIdx) {
   return Math.floor(Y * 0.2422 + C) - Math.floor(Y / 4);
 }
 
-// Returns [month, day] for term termIdx in given year.
-// Note: termIdx 11 (小寒) returns month=1 of year+1.
+// Returns { year, month, day, hour, minute } for the given solar term.
+// hour and minute are 0 until a precise data table is supplied.
+// termIdx 11 (小寒) belongs to January of year+1.
 export function getSolarTermDate(year, termIdx) {
   const month = TERM_MONTHS[termIdx];
   const day = termDay(year, termIdx);
-  return { month, day, year: termIdx === 11 ? year + 1 : year };
+  const termYear = termIdx === 11 ? year + 1 : year;
+  return { year: termYear, month, day, hour: 0, minute: 0 };
 }
 
-// Returns the earthly branch index (0=子,1=丑,...,11=亥) for the BaZi month
-// containing the given Gregorian date.
-// Also returns the BaZi year (adjusted for 立春 boundary).
-export function getMonthInfo(year, month, day) {
-  // Check Li Chun (立春, term 0) to determine BaZi year
+// Compare a birth date+time against a solar term date+time.
+// Returns negative if birth is before term, positive if after, 0 if same.
+// When term hour/minute are both 0 (placeholder), only the calendar date is
+// compared; a same-day birth is treated as "on the boundary" (returns 0).
+function compareToBoundary(bYear, bMonth, bDay, bHour, bMinute, term) {
+  const bDN = toDayNumber(bYear, bMonth, bDay);
+  const tDN = toDayNumber(term.year, term.month, term.day);
+  if (bDN !== tDN) return bDN - tDN;
+  // Same calendar day: compare time only when term has precise hour/minute data
+  if (term.hour === 0 && term.minute === 0) return 0; // boundary uncertain
+  const bMins = bHour * 60 + bMinute;
+  const tMins = term.hour * 60 + term.minute;
+  return bMins - tMins;
+}
+
+// Returns the earthly branch index (0=子…11=亥) for the BaZi month and the
+// adjusted BaZi year for the given birth date and local time.
+// birthHour and birthMinute default to 0 when not provided.
+export function getMonthInfo(year, month, day, birthHour = 0, birthMinute = 0) {
   const lichun = getSolarTermDate(year, 0);
-  const beforeLichun = month < lichun.month || (month === lichun.month && day < lichun.day);
-  const baziYear = beforeLichun ? year - 1 : year;
+  const cmp = compareToBoundary(year, month, day, birthHour, birthMinute, lichun);
+  // cmp < 0: birth is before 立春 → BaZi year = year - 1
+  // cmp = 0: same-day boundary uncertainty → treat as previous year (conservative)
+  const baziYear = cmp <= 0 ? year - 1 : year;
 
-  // Find which of the 12 terms the date falls in (within the BaZi solar year)
-  // BaZi solar year starts at 立春. Terms in order 0-11 map to branches 寅(2)..丑(1).
-  // We check the current year's terms and the previous year's 小寒(11).
-
-  // Build list of [termIdx, month, day, year] for the 12 boundaries of the current BaZi year
+  // Build the 12 term boundaries covering the BaZi solar year for baziYear.
+  // The BaZi solar year runs from 立春(baziYear) through 小寒(baziYear, i.e. Jan of baziYear+1).
+  // We also need the previous year's 小寒 to cover January births before 立春.
   const boundaries = [];
   for (let ti = 0; ti < 12; ti++) {
     const td = getSolarTermDate(baziYear, ti);
-    boundaries.push({ termIdx: ti, year: td.year, month: td.month, day: td.day });
+    boundaries.push({ termIdx: ti, ...td });
   }
-  // Also need 小寒 of previous year as the start of 丑 month before 立春
   const prevXiaohan = getSolarTermDate(baziYear - 1, 11);
-  boundaries.push({ termIdx: 11, year: prevXiaohan.year, month: prevXiaohan.month, day: prevXiaohan.day });
+  boundaries.push({ termIdx: 11, ...prevXiaohan });
 
-  // Sort by date
   boundaries.sort((a, b) => {
-    if (a.year !== b.year) return a.year - b.year;
-    if (a.month !== b.month) return a.month - b.month;
-    return a.day - b.day;
+    const da = toDayNumber(a.year, a.month, a.day);
+    const db = toDayNumber(b.year, b.month, b.day);
+    return da - db;
   });
 
-  // Find the last boundary on or before the given date
-  let activeTerm = 11; // default 丑 (previous year's 小寒)
+  let activeTerm = 11; // default: 丑 month (小寒 of previous year)
   for (const b of boundaries) {
-    const beforeOrOn =
-      b.year < year ||
-      (b.year === year && b.month < month) ||
-      (b.year === year && b.month === month && b.day <= day);
-    if (beforeOrOn) activeTerm = b.termIdx;
+    const c = compareToBoundary(year, month, day, birthHour, birthMinute, b);
+    if (c >= 0) activeTerm = b.termIdx;
   }
 
-  // termIdx 0=立春→寅(2), 1=惊蛰→卯(3), ..., 11=小寒→丑(1)
   const branchIdx = (activeTerm + 2) % 12;
   return { branchIdx, baziYear };
 }
 
-// For luck pillar calculation: find the nearest 节 before or after a date.
-// direction: 'forward' (next term) or 'backward' (previous term)
-// Returns { termYear, termMonth, termDay, daysDiff }
+// Finds the nearest solar term in the given direction from the birth date.
+// Used to compute luck pillar starting age.
+// Returns { year, month, day, daysDiff } where daysDiff is in whole calendar days.
 export function getNearestSolarTerm(year, month, day, direction) {
-  const dateVal = year * 10000 + month * 100 + day;
-
-  // Scan terms across a range of years
+  const birthDN = toDayNumber(year, month, day);
   let best = null;
+
   for (let y = year - 1; y <= year + 1; y++) {
     for (let ti = 0; ti < 12; ti++) {
       const td = getSolarTermDate(y, ti);
-      const tVal = td.year * 10000 + td.month * 100 + td.day;
-      if (direction === 'forward' && tVal > dateVal) {
-        if (!best || tVal < best.tVal) best = { ...td, tVal };
-      } else if (direction === 'backward' && tVal < dateVal) {
-        if (!best || tVal > best.tVal) best = { ...td, tVal };
+      const termDN = toDayNumber(td.year, td.month, td.day);
+      const diff = termDN - birthDN;
+
+      if (direction === 'forward' && diff > 0) {
+        if (!best || diff < best.diff) best = { ...td, diff };
+      } else if (direction === 'backward' && diff < 0) {
+        if (!best || diff > best.diff) best = { ...td, diff };
       }
     }
   }
 
   if (!best) return null;
-
-  const daysDiff = Math.abs(dateDiff(year, month, day, best.year, best.month, best.day));
-  return { year: best.year, month: best.month, day: best.day, daysDiff };
-}
-
-function dateDiff(y1, m1, d1, y2, m2, d2) {
-  const msPerDay = 86400000;
-  const a = new Date(y1, m1 - 1, d1).getTime();
-  const b = new Date(y2, m2 - 1, d2).getTime();
-  return Math.round((b - a) / msPerDay);
+  return { year: best.year, month: best.month, day: best.day, daysDiff: Math.abs(best.diff) };
 }

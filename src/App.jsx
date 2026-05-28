@@ -41,7 +41,7 @@ export default function App() {
 
         {chart && (
           <>
-            <PillarChart chart={chart} />
+            <PillarChart chart={chart} stemCombinations={chart.stemCombinations} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <ElementBalance balance={chart.elementBalance} dayMaster={chart.dayMaster} />
               <LuckPillars luckPillars={chart.luckPillars} birthYear={chart.birthDate.year} currentYear={chart.currentYear} />

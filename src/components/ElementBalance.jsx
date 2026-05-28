@@ -1,7 +1,7 @@
 import { ELEMENTS, ELEMENT_COLORS, ELEMENT_BG } from '../bazi/constants.js';
 
 export default function ElementBalance({ balance, dayMaster }) {
-  const { totals, total, strong, usefulGod } = balance;
+  const { totals, total, strong, balancingElement } = balance;
   const dmElement = dayMaster.stem.element;
 
   return (
@@ -44,13 +44,13 @@ export default function ElementBalance({ balance, dayMaster }) {
 
       <div className="pt-2 border-t border-neutral-700">
         <div className="text-xs text-neutral-400">
-          Useful God 用神:{' '}
-          <span className={`font-medium ${ELEMENT_COLORS[usefulGod.primaryElement]}`}>
-            {usefulGod.primaryElement}
+          Suggested Balancing Element:{' '}
+          <span className={`font-medium ${ELEMENT_COLORS[balancingElement.primaryElement]}`}>
+            {balancingElement.primaryElement}
           </span>
           {' '}
           <span className="text-neutral-500">
-            ({strong ? 'controls / drains Day Master' : 'produces / supports Day Master'})
+            ({balancingElement.reason})
           </span>
         </div>
       </div>

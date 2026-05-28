@@ -13,11 +13,13 @@ function StarBadge({ star }) {
   );
 }
 
-function HiddenStemRow({ hs, isDayMaster }) {
+function HiddenStemRow({ hs }) {
   return (
     <div className="flex items-center gap-1 text-xs text-neutral-400">
       <span className={`${ELEMENT_COLORS[hs.stem.element]} font-medium`}>{hs.stem.char}</span>
-      <span className="text-neutral-600 text-[10px]">{hs.position === 'main' ? '本' : hs.position === 'middle' ? '中' : '余'}</span>
+      <span className="text-neutral-600 text-[10px]">
+        {hs.position === 'main' ? '本' : hs.position === 'middle' ? '中' : '余'}
+      </span>
       {hs.tenGod && (
         <span className="text-neutral-500 text-[10px]">{hs.tenGod.char}</span>
       )}
@@ -25,21 +27,32 @@ function HiddenStemRow({ hs, isDayMaster }) {
   );
 }
 
-export default function PillarChart({ chart }) {
-  const { pillars, dayMaster, specialStars, interactions } = chart;
+function InteractionTag({ ia }) {
+  return (
+    <div
+      className="text-xs px-2 py-1 rounded bg-neutral-800 border border-neutral-700"
+      title={`${ia.typeEnglish}: ${ia.effect}`}
+    >
+      <span className="text-neutral-300">{ia.name}</span>
+      <span className="text-neutral-500 ml-1">{ia.typePinyin}</span>
+      {ia.element && <span className="text-neutral-500 ml-1">→ {ia.element}</span>}
+    </div>
+  );
+}
 
-  // Group stars by pillar
+export default function PillarChart({ chart, stemCombinations }) {
+  const { pillars, dayMaster, specialStars, branchInteractions } = chart;
+
   const starsByPillar = { Year: [], Month: [], Day: [], Hour: [] };
-  specialStars.forEach(s => {
-    if (starsByPillar[s.pillar]) starsByPillar[s.pillar].push(s);
-  });
+  specialStars.forEach(s => { if (starsByPillar[s.pillar]) starsByPillar[s.pillar].push(s); });
 
   return (
     <div className="space-y-4">
       <div className="flex items-baseline gap-3">
         <h2 className="text-sm font-medium text-neutral-300">Four Pillars 四柱</h2>
         <span className="text-xs text-neutral-500">
-          Day Master: <span className={`font-medium ${ELEMENT_COLORS[dayMaster.stem.element]}`}>
+          Day Master:{' '}
+          <span className={`font-medium ${ELEMENT_COLORS[dayMaster.stem.element]}`}>
             {dayMaster.stem.char} {dayMaster.stem.pinyin} — {dayMaster.stem.english}
           </span>
         </span>
@@ -59,7 +72,6 @@ export default function PillarChart({ chart }) {
               {PILLAR_LABELS[i]}
             </div>
 
-            {/* Ten God (not for day pillar) */}
             <div className="h-4 flex items-center">
               {p.tenGod ? (
                 <span className="text-[11px] text-neutral-400" title={`${p.tenGod.pinyin} — ${p.tenGod.english}`}>
@@ -70,7 +82,6 @@ export default function PillarChart({ chart }) {
               )}
             </div>
 
-            {/* Stem */}
             <div
               className={`font-serif text-3xl sm:text-4xl font-medium ${ELEMENT_COLORS[p.stem.element]}`}
               title={`${p.stem.pinyin} — ${p.stem.english}`}
@@ -79,10 +90,8 @@ export default function PillarChart({ chart }) {
             </div>
             <div className="text-[10px] text-neutral-500">{p.stem.pinyin}</div>
 
-            {/* Divider */}
             <div className="w-8 h-px bg-neutral-700" />
 
-            {/* Branch */}
             <div
               className={`font-serif text-3xl sm:text-4xl font-medium ${ELEMENT_COLORS[p.branch.element]}`}
               title={`${p.branch.pinyin} — ${p.branch.english}`}
@@ -91,14 +100,12 @@ export default function PillarChart({ chart }) {
             </div>
             <div className="text-[10px] text-neutral-500">{p.branch.pinyin}</div>
 
-            {/* Hidden stems */}
             <div className="w-full space-y-0.5 min-h-[3rem]">
               {p.hiddenStems.map((hs, j) => (
                 <HiddenStemRow key={j} hs={hs} />
               ))}
             </div>
 
-            {/* Special stars */}
             {starsByPillar[p.label].length > 0 && (
               <div className="flex flex-wrap gap-1 justify-center">
                 {starsByPillar[p.label].map((s, j) => (
@@ -110,21 +117,33 @@ export default function PillarChart({ chart }) {
         ))}
       </div>
 
-      {/* Branch interactions */}
-      {interactions.length > 0 && (
-        <div className="mt-2">
-          <div className="text-xs text-neutral-500 mb-2">Branch Interactions</div>
+      {/* Stem combinations 天干合 */}
+      {stemCombinations?.length > 0 && (
+        <div>
+          <div className="text-xs text-neutral-500 mb-2">Stem Combinations 天干合</div>
           <div className="flex flex-wrap gap-2">
-            {interactions.map((ia, i) => (
+            {stemCombinations.map((sc, i) => (
               <div
                 key={i}
                 className="text-xs px-2 py-1 rounded bg-neutral-800 border border-neutral-700"
-                title={`${ia.typeEnglish}: ${ia.effect}`}
+                title={sc.effect}
               >
-                <span className="text-neutral-300">{ia.name}</span>
-                <span className="text-neutral-500 ml-1">{ia.typePinyin}</span>
-                {ia.element && <span className="text-neutral-500 ml-1">→ {ia.element}</span>}
+                <span className="text-neutral-300">{sc.name}</span>
+                <span className="text-neutral-500 ml-1">→ {sc.combinedElement}</span>
+                <span className="text-neutral-600 ml-1 text-[10px]">(未化)</span>
               </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Branch interactions */}
+      {branchInteractions?.length > 0 && (
+        <div>
+          <div className="text-xs text-neutral-500 mb-2">Branch Interactions 地支</div>
+          <div className="flex flex-wrap gap-2">
+            {branchInteractions.map((ia, i) => (
+              <InteractionTag key={i} ia={ia} />
             ))}
           </div>
         </div>

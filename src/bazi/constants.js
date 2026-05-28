@@ -156,6 +156,32 @@ export const HOUR_BRANCHES = [
 ];
 
 export const ELEMENTS = ['Wood', 'Fire', 'Earth', 'Metal', 'Water'];
+
+// SEASONAL MULTIPLIERS (future implementation)
+// ─────────────────────────────────────────────
+// When seasonal weighting is implemented, each element's effective contribution
+// to the chart will be multiplied by SEASONAL_MULTIPLIERS[element][monthBranchIdx].
+//
+// monthBranchIdx: 0=子 1=丑 2=寅 3=卯 4=辰 5=巳 6=午 7=未 8=申 9=酉 10=戌 11=亥
+//
+// Season → status (旺相休囚死):
+//   Spring 寅卯辰(2,3,4): Wood旺 Fire相 Water休 Metal囚 Earth死
+//   Summer 巳午未(5,6,7): Fire旺 Earth相 Wood休 Water囚 Metal死
+//   Autumn 申酉戌(8,9,10): Metal旺 Water相 Earth休 Fire囚 Wood死
+//   Winter 亥子丑(11,0,1): Water旺 Wood相 Metal休 Earth囚 Fire死
+//
+// Suggested weight values: 旺=1.5 相=1.2 休=0.8 囚=0.7 死=0.5
+// These are not yet applied in element balance calculations.
+// To activate: multiply each hidden/surface stem contribution by the
+// SEASONAL_MULTIPLIERS value for that stem's element and the birth month branch.
+export const SEASONAL_MULTIPLIERS = {
+  //              子    丑    寅    卯    辰    巳    午    未    申    酉    戌    亥
+  Wood:  [0.8,  1.2,  1.5,  1.5,  1.5,  0.8,  0.8,  0.8,  0.5,  0.5,  0.5,  1.2],
+  Fire:  [0.5,  0.5,  1.2,  1.2,  1.2,  1.5,  1.5,  1.5,  0.7,  0.7,  0.7,  0.5],
+  Earth: [0.7,  0.7,  0.5,  0.5,  1.5,  1.2,  1.2,  1.5,  0.8,  0.8,  1.5,  0.7],
+  Metal: [0.8,  0.8,  0.7,  0.7,  0.7,  0.5,  0.5,  0.5,  1.5,  1.5,  1.5,  0.8],
+  Water: [1.5,  1.5,  0.8,  0.8,  0.8,  0.7,  0.7,  0.7,  1.2,  1.2,  1.2,  1.5],
+};
 export const ELEMENT_COLORS = {
   Wood:  'text-green-400',
   Fire:  'text-red-400',
