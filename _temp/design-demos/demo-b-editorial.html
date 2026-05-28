@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1440">
+  <title>Direction B · Editorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Noto+Serif+SC:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        oklch(9% 0.008 60);
+      --surface:   oklch(12% 0.008 60);
+      --border:    oklch(18% 0.006 60);
+      --text:      oklch(88% 0.01 75);
+      --text-dim:  oklch(54% 0.01 75);
+      --text-muted:oklch(30% 0.008 75);
+      --jade:      oklch(58% 0.10 162);
+      --jade-dim:  oklch(36% 0.07 162);
+      --jade-bg:   oklch(13% 0.04 162);
+      --mono: 'JetBrains Mono', monospace;
+      --display: 'Fraunces', Georgia, serif;
+      --cjk: 'Noto Serif SC', serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 15px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 64px; height: 56px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { display: flex; align-items: baseline; gap: 12px; }
+    .logo-char { font-family: var(--cjk); font-size: 20px; color: var(--text); }
+    .logo-text { font-family: var(--display); font-size: 17px; font-weight: 300; letter-spacing: 0.06em; }
+    .logo-sub  { font-family: var(--mono); font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); }
+    nav { display: flex; align-items: center; gap: 32px; }
+    .nav-item {
+      font-family: var(--display); font-size: 13px; font-weight: 300;
+      color: var(--text-muted); cursor: pointer; letter-spacing: 0.02em;
+    }
+    .nav-item.active { color: var(--text); }
+    .nav-item.active::after { content: ''; display: block; width: 100%; height: 1px; background: var(--jade); margin-top: 2px; }
+
+    main { max-width: 1200px; margin: 0 auto; padding: 0 64px; }
+
+    /* Hero — character dominates */
+    .hero { padding: 72px 0 0; }
+    .hero-row { display: flex; align-items: stretch; gap: 0; }
+
+    .hero-char-block {
+      flex-shrink: 0;
+      display: flex; flex-direction: column; justify-content: center; gap: 0;
+      padding-right: 64px; padding-bottom: 8px;
+      border-right: 1px solid var(--border);
+    }
+    .dm-label {
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .hero-char {
+      font-family: var(--cjk); font-size: 240px; line-height: 0.9;
+      color: var(--text);
+      text-shadow: 0 0 100px oklch(58% 0.10 162 / 0.10);
+    }
+    .char-en-block { margin-top: 24px; }
+    .char-en {
+      font-family: var(--display); font-size: 28px; font-weight: 300;
+      font-style: italic; color: var(--text-dim); line-height: 1.2;
+    }
+    .char-pinyin {
+      font-family: var(--mono); font-size: 9px; color: var(--text-muted);
+      letter-spacing: 0.1em; margin-top: 6px;
+    }
+
+    .hero-text {
+      flex: 1;
+      padding-left: 64px;
+      display: flex; flex-direction: column; justify-content: center;
+      gap: 40px;
+    }
+    .hero-insight {
+      font-family: var(--display); font-size: 24px; font-weight: 300;
+      line-height: 1.55; color: var(--text); text-wrap: pretty;
+      max-width: 520px;
+    }
+    .hero-insight em { font-style: italic; color: var(--jade); }
+
+    .today-block { display: flex; flex-direction: column; gap: 16px; }
+    .today-eyebrow {
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--text-muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .today-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--jade); }
+    .today-chars-row { display: flex; gap: 20px; align-items: baseline; }
+    .today-char { font-family: var(--cjk); font-size: 44px; line-height: 1; color: var(--text-dim); }
+    .today-char-label { font-family: var(--mono); font-size: 9px; color: var(--text-muted); margin-top: 3px; }
+    .today-reading {
+      font-family: var(--display); font-size: 15px; font-weight: 300;
+      font-style: italic; line-height: 1.75; color: var(--text-dim);
+      text-wrap: pretty; max-width: 440px;
+    }
+
+    /* Explore — asymmetric editorial cards */
+    .explore { padding: 64px 0 0; }
+    .explore-header {
+      display: flex; align-items: baseline; gap: 24px; margin-bottom: 32px;
+    }
+    .explore-title { font-family: var(--display); font-size: 11px; font-style: italic; color: var(--text-muted); letter-spacing: 0.04em; }
+    .explore-line { flex: 1; height: 1px; background: var(--border); }
+
+    .explore-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 24px; }
+    .explore-card {
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 28px 0 24px; border-top: 1px solid var(--border);
+      cursor: pointer; transition: border-color 0.2s;
+    }
+    .explore-card:hover { border-color: var(--jade-dim); }
+    .explore-card.featured { grid-row: 1; }
+    .card-zh { font-family: var(--cjk); font-size: 28px; color: var(--text-dim); }
+    .explore-card.featured .card-zh { font-size: 40px; }
+    .card-en { font-family: var(--display); font-size: 22px; font-weight: 300; color: var(--text); line-height: 1.2; }
+    .explore-card.featured .card-en { font-size: 30px; }
+    .card-desc { font-size: 13px; line-height: 1.7; color: var(--text-muted); text-wrap: pretty; }
+    .card-link {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--jade); margin-top: auto; padding-top: 12px;
+    }
+
+    /* Tech strip — A-style labeled columns */
+    .tech-strip {
+      display: flex; align-items: center;
+      padding: 14px 0; margin-top: 48px;
+      border-top: 1px solid var(--border);
+    }
+    .tech-item {
+      display: flex; flex-direction: column; gap: 3px;
+      padding: 0 28px;
+    }
+    .tech-item:first-child { padding-left: 0; }
+    .tech-label {
+      font-family: var(--mono); font-size: 8px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted);
+    }
+    .tech-value {
+      font-family: var(--mono); font-size: 11px; color: var(--text-dim);
+    }
+    .tech-value.jade { color: var(--jade); }
+    .tech-sep { width: 1px; height: 30px; background: var(--border); flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span class="logo-char">柱</span>
+      <span class="logo-text">Pillars</span>
+      <span class="logo-sub">Four Pillars of Destiny</span>
+    </div>
+    <nav>
+      <div class="nav-item active">Home</div>
+      <div class="nav-item">Chart</div>
+      <div class="nav-item">Analysis</div>
+      <div class="nav-item">Timeline</div>
+    </nav>
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.14em;color:var(--jade);">Pro</div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div class="hero-row">
+        <div class="hero-char-block">
+          <div class="dm-label">Day Master · 日主</div>
+          <div class="hero-char">甲</div>
+          <div class="char-en-block">
+            <div class="char-en">Yang Wood</div>
+            <div class="char-pinyin">Jiǎ · 天干</div>
+          </div>
+        </div>
+        <div class="hero-text">
+          <p class="hero-insight">Your Wood is unrooted — no Earth beneath it, strong Water feeding it. <em>This decade activates your Resource pillar.</em> Precision over expansion is not advice. It is structure.</p>
+          <div class="today-block">
+            <div class="today-eyebrow">Today's Pillar · 壬午日</div>
+            <div class="today-chars-row">
+              <div>
+                <div class="today-char">壬</div>
+                <div class="today-char-label">Yang Water · Rén</div>
+              </div>
+              <div style="font-family:var(--cjk);font-size:20px;color:var(--text-muted);padding-bottom:4px;">·</div>
+              <div>
+                <div class="today-char">午</div>
+                <div class="today-char-label">Fire Horse · Wǔ</div>
+              </div>
+            </div>
+            <p class="today-reading">Water over Fire: your Wood flourishes. Decisions made before the Metal hour carry structural weight into the week.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore">
+      <div class="explore-header">
+        <div class="explore-title">Explore your chart</div>
+        <div class="explore-line"></div>
+      </div>
+      <div class="explore-grid">
+        <div class="explore-card featured">
+          <div class="card-zh">性格</div>
+          <div class="card-en">Personality</div>
+          <div class="card-desc">The complete character portrait — Yang Wood's drive toward leadership, the Resource stars that shape your learning, and the Wealth patterns you'll recognise from your own life.</div>
+          <div class="card-link">Read analysis →</div>
+        </div>
+        <div class="explore-card">
+          <div class="card-zh">事业</div>
+          <div class="card-en">Career</div>
+          <div class="card-desc">Resource stars, Officer energy, optimal work structure.</div>
+          <div class="card-link">Explore →</div>
+        </div>
+        <div class="explore-card">
+          <div class="card-zh">感情</div>
+          <div class="card-en">Relationships</div>
+          <div class="card-desc">Spouse palace, elemental affinities, timing patterns.</div>
+          <div class="card-link">Explore →</div>
+        </div>
+        <div class="explore-card">
+          <div class="card-zh">大运</div>
+          <div class="card-en">Timing</div>
+          <div class="card-desc">Ten-year luck pillars — your life arc, mapped.</div>
+          <div class="card-link">View timeline →</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-strip">
+      <div class="tech-item">
+        <div class="tech-label">Birth</div>
+        <div class="tech-value">1990-09-01 · 07:14 CST</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Location</div>
+        <div class="tech-value">Beijing · 116.4°E 39.9°N</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Current Luck Pillar</div>
+        <div class="tech-value jade">壬子 · 2020–2030</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Element Balance</div>
+        <div class="tech-value">Wood ×3 · Water ×2 · Fire ×1</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Chart ID</div>
+        <div class="tech-value">JIA-9001-A</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Generated</div>
+        <div class="tech-value">2026-05-28</div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
