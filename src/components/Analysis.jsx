@@ -1,51 +1,72 @@
-export default function Analysis({ text, loading, error }) {
-  if (!loading && !text && !error) return null;
+import BlurGate from './paywall/BlurGate.jsx';
+
+function Spinner() {
+  return (
+    <div className="flex flex-col items-center gap-4 py-6">
+      <div style={{ width: 36, height: 36, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.06)', borderTopColor: '#c4913a', animation: 'spin 0.9s linear infinite' }} />
+      <p className="text-[13px]" style={{ color: '#4a4844' }}>AI is analysing your chart…</p>
+    </div>
+  );
+}
+
+function Prose({ text, dim }) {
+  return (
+    <div className="space-y-5">
+      {text.split('\n\n').filter(p => p.trim()).map((para, i) => (
+        <p key={i} className="leading-[1.8]" style={{ fontSize: 15, color: dim ? '#5a5754' : (i === 0 ? '#e8e4dd' : '#7a7672') }}>
+          {para.trim()}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+export default function Analysis({ teaserText, teaserLoading, teaserError, natalText, natalLoading, natalError, tier, onUpgrade }) {
+  const hasAnything = teaserText || teaserLoading || teaserError || natalText || natalLoading || natalError;
+  if (!hasAnything) return null;
 
   return (
-    <div
-      className="card-hover rounded-[22px] p-7"
-      style={{ background: '#0f0f12', border: '1px solid rgba(255,255,255,0.05)' }}
-    >
-      {loading && (
-        <div className="flex flex-col items-center gap-4 py-6">
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: '50%',
-              border: '2px solid rgba(255,255,255,0.06)',
-              borderTopColor: '#c4913a',
-              animation: 'spin 0.9s linear infinite',
-            }}
-          />
-          <p className="text-[13px]" style={{ color: '#4a4844' }}>AI is analysing your chart…</p>
+    <div className="card-hover rounded-[22px] p-7" style={{ background: '#0f0f12', border: '1px solid rgba(255,255,255,0.05)' }}>
+      {/* Free teaser */}
+      {(teaserLoading || teaserError || teaserText) && (
+        <div className="mb-6 pb-6" style={{ borderBottom: tier !== 'free' ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+          {teaserLoading && <Spinner />}
+          {teaserError && <p className="text-[13px]" style={{ color: '#d96b54' }}>{teaserError}</p>}
+          {teaserText && (
+            <>
+              <Prose text={teaserText} dim={false} />
+              {tier === 'free' && (
+                <div className="mt-5 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                  <p className="text-[11px]" style={{ color: '#2e2c2a' }}>BaZi describes patterns and tendencies — not certainties.</p>
+                </div>
+              )}
+            </>
+          )}
         </div>
       )}
 
-      {error && (
-        <div className="rounded-[14px] px-5 py-4" style={{ background: 'rgba(217,107,84,0.05)', border: '1px solid rgba(217,107,84,0.15)' }}>
-          <p className="text-[14px]" style={{ color: '#d96b54' }}>{error}</p>
+      {/* Full natal analysis (Pro+) */}
+      {tier !== 'free' ? (
+        <div>
+          {natalLoading && <Spinner />}
+          {natalError && <p className="text-[13px]" style={{ color: '#d96b54' }}>{natalError}</p>}
+          {natalText && (
+            <>
+              <Prose text={natalText} dim={false} />
+              <p className="text-[11px] mt-5 pt-3" style={{ color: '#2e2c2a', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                BaZi describes patterns and tendencies — not certainties. Interpretations are probabilistic.
+              </p>
+            </>
+          )}
         </div>
-      )}
-
-      {text && (
-        <div className="space-y-5">
-          {text.split('\n\n').filter(p => p.trim()).map((para, i) => (
-            <p
-              key={i}
-              className="leading-[1.8]"
-              style={{
-                fontSize: 15,
-                color: i === 0 ? '#e8e4dd' : '#7a7672',
-              }}
-            >
-              {para.trim()}
-            </p>
-          ))}
-          <p className="text-[11px] pt-3" style={{ color: '#2e2c2a', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-            BaZi describes patterns and tendencies — not certainties. Interpretations are probabilistic.
-          </p>
-        </div>
+      ) : (
+        <BlurGate required="pro" current="free" label="Full natal analysis: personality, career, relationships, wealth & health" onUpgrade={onUpgrade}>
+          <div className="space-y-3 py-2">
+            {[82, 68, 90, 55, 74, 61, 80, 45, 70, 58].map((w, i) => (
+              <div key={i} className="rounded-full" style={{ width: `${w}%`, height: 8, background: 'rgba(255,255,255,0.04)' }} />
+            ))}
+          </div>
+        </BlurGate>
       )}
     </div>
   );
