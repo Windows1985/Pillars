@@ -7,20 +7,18 @@ export default function Analysis({ text, loading, error }) {
       style={{ background: '#0f0f12', border: '1px solid rgba(255,255,255,0.05)' }}
     >
       {loading && (
-        <div className="space-y-3.5">
-          {[88, 72, 82, 58, 78, 65, 50].map((w, i) => (
-            <div
-              key={i}
-              className="rounded-full"
-              style={{
-                width: `${w}%`,
-                height: 10,
-                background: 'rgba(255,255,255,0.04)',
-                animation: `glowPulse 2s ease-in-out ${i * 100}ms infinite`,
-              }}
-            />
-          ))}
-          <p className="text-[12px] mt-2" style={{ color: '#2e2c2a' }}>Interpreting your chart…</p>
+        <div className="flex flex-col items-center gap-4 py-6">
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              border: '2px solid rgba(255,255,255,0.06)',
+              borderTopColor: '#c4913a',
+              animation: 'spin 0.9s linear infinite',
+            }}
+          />
+          <p className="text-[13px]" style={{ color: '#4a4844' }}>AI is analysing your chart…</p>
         </div>
       )}
 
@@ -39,7 +37,6 @@ export default function Analysis({ text, loading, error }) {
               style={{
                 fontSize: 15,
                 color: i === 0 ? '#e8e4dd' : '#7a7672',
-                fontStyle: i === 0 ? 'normal' : 'normal',
               }}
             >
               {para.trim()}
