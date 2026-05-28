@@ -1,4 +1,3 @@
-import Analysis from '../components/Analysis.jsx';
 import BlurGate from '../components/paywall/BlurGate.jsx';
 
 function SectionDivider({ en, zh, chapter }) {
@@ -19,17 +18,46 @@ function SectionDivider({ en, zh, chapter }) {
   );
 }
 
-function Placeholder({ label, height = 200 }) {
+function Spinner() {
   return (
-    <div style={{
-      height, background: 'var(--surface-1)',
-      border: '1px solid var(--border)', borderRadius: 8,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-        {label} · redesigned in Step 4
-      </span>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: '32px 0' }}>
+      <div style={{
+        width: 32, height: 32, borderRadius: '50%',
+        border: '1.5px solid var(--border)', borderTopColor: 'var(--jade)',
+        animation: 'spin 0.9s linear infinite',
+      }} />
+      <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.12em', color: 'var(--text-muted)' }}>
+        Reading your chart…
+      </p>
     </div>
+  );
+}
+
+function Prose({ text }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {text.split('\n\n').filter(p => p.trim()).map((para, i) => (
+        <p key={i} style={{
+          fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 300,
+          lineHeight: 1.85, color: i === 0 ? 'var(--text)' : 'var(--text-dim)',
+          textWrap: 'pretty',
+        }}>
+          {para.trim()}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+function NatalBlurGate({ onUpgrade }) {
+  return (
+    <BlurGate required="pro" current="free" label="Full natal analysis: personality, career, relationships, and timing" onUpgrade={onUpgrade}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '8px 0' }}>
+        {[88, 65, 92, 48, 78, 56, 84, 40, 72, 60, 82, 50].map((w, i) => (
+          <div key={i} style={{ width: `${w}%`, height: 7, background: 'var(--border)', borderRadius: 2 }} />
+        ))}
+      </div>
+    </BlurGate>
   );
 }
 
@@ -39,10 +67,14 @@ export default function AnalysisScreen({
   tier, onUpgrade, anonAnalysis, anonLoading, anonError,
   user,
 }) {
+  const showAnon = !user;
+  const activeText = showAnon ? anonAnalysis : teaserText;
+  const activeLoading = showAnon ? anonLoading : teaserLoading;
+  const activeError = showAnon ? anonError : teaserError;
+
   return (
     <div style={{ maxWidth: 860, margin: '0 auto', padding: '0 64px 80px' }}>
 
-      {/* Screen header */}
       <div style={{ padding: '56px 0 48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
           Analysis · 命理解析
@@ -55,22 +87,55 @@ export default function AnalysisScreen({
         </p>
       </div>
 
-      {/* Teaser / intro section */}
       <SectionDivider en="Overview" zh="概述" chapter="I" />
-      <Placeholder label="Teaser analysis" height={160} />
+      {activeLoading && <Spinner />}
+      {activeError && (
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{activeError}</p>
+      )}
+      {activeText && <Prose text={activeText} />}
+      {!activeLoading && !activeError && !activeText && (
+        <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)' }}>
+          Generating your overview…
+        </p>
+      )}
 
-      {/* Natal analysis — Pro-gated */}
       <SectionDivider en="Full Natal Reading" zh="完整命理" chapter="II" />
-      <Placeholder label="Full natal analysis (Pro, blur-gated)" height={320} />
+      {tier !== 'free' ? (
+        <>
+          {natalLoading && <Spinner />}
+          {natalError && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{natalError}</p>}
+          {natalText && <Prose text={natalText} />}
+        </>
+      ) : (
+        <NatalBlurGate onUpgrade={onUpgrade} />
+      )}
 
-      <SectionDivider en="Personality" zh="性格" chapter="III" />
-      <Placeholder label="Personality chapter (Pro)" height={240} />
+      {tier !== 'free' && (
+        <>
+          <SectionDivider en="Personality" zh="性格" chapter="III" />
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)' }}>
+            Personality chapter available in a future update.
+          </p>
 
-      <SectionDivider en="Career" zh="事业" chapter="IV" />
-      <Placeholder label="Career chapter (Pro)" height={240} />
+          <SectionDivider en="Career" zh="事业" chapter="IV" />
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)' }}>
+            Career chapter available in a future update.
+          </p>
 
-      <SectionDivider en="Relationships" zh="感情" chapter="V" />
-      <Placeholder label="Relationships chapter (Pro)" height={240} />
+          <SectionDivider en="Relationships" zh="感情" chapter="V" />
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)' }}>
+            Relationships chapter available in a future update.
+          </p>
+        </>
+      )}
+
+      {!user && (
+        <div style={{ marginTop: 48, paddingTop: 32, borderTop: '1px solid var(--border)', textAlign: 'center' }}>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 300, color: 'var(--text-muted)', marginBottom: 16 }}>
+            BaZi describes patterns and tendencies — not certainties.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

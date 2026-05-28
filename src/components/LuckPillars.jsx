@@ -2,161 +2,203 @@ import { useState } from 'react';
 import { STEMS, BRANCHES, ELEM } from '../bazi/constants.js';
 
 export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
-  const { forward, startingAge, pillars } = luckPillars;
-  const age = currentYear - birthYear;
-  const [selected, setSelected] = useState(null);
+  const { startingAge, pillars } = luckPillars;
+  const currentAge = currentYear - birthYear;
+  const [selectedIdx, setSelectedIdx] = useState(null);
 
-  function isCurrent(p) {
-    return age >= p.startAge && age < p.endAge;
-  }
-
-  const sel = selected !== null ? pillars[selected] : null;
-  const selStem = sel ? STEMS[sel.stemIdx] : null;
-  const selBranch = sel ? BRANCHES[sel.branchIdx] : null;
-  const selSe = selStem ? (ELEM[selStem.element] ?? ELEM.Wood) : null;
-  const selBe = selBranch ? (ELEM[selBranch.element] ?? ELEM.Wood) : null;
+  const timelineSpan = 80;
+  const currentPct = Math.max(0, Math.min(100, ((currentAge - startingAge) / timelineSpan) * 100));
+  const isInTimeline = currentAge >= startingAge && currentAge < startingAge + timelineSpan;
 
   return (
-    <div
-      className="card-hover rounded-[22px] p-6"
-      style={{ background: '#0f0f12', border: '1px solid rgba(255,255,255,0.05)' }}
-    >
-      {/* Meta row */}
-      <div className="flex items-center gap-5 mb-6 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <div>
-          <div className="text-[9px] uppercase tracking-widest mb-0.5" style={{ color: '#2e2c2a' }}>Begins age</div>
-          <div className="text-base font-medium" style={{ color: '#e8e4dd' }}>{startingAge}</div>
-        </div>
-        <div className="w-px h-8 self-center" style={{ background: 'rgba(255,255,255,0.05)' }} />
-        <div>
-          <div className="text-[9px] uppercase tracking-widest mb-0.5" style={{ color: '#2e2c2a' }}>Direction</div>
-          <div className="text-sm" style={{ color: '#5a5754' }}>{forward ? 'Forward 顺' : 'Backward 逆'}</div>
-        </div>
-        <div className="w-px h-8 self-center" style={{ background: 'rgba(255,255,255,0.05)' }} />
-        <div>
-          <div className="text-[9px] uppercase tracking-widest mb-0.5" style={{ color: '#2e2c2a' }}>Current age</div>
-          <div className="text-sm" style={{ color: '#5a5754' }}>{age}</div>
-        </div>
+    <div>
+      {/* Character row */}
+      <div style={{ display: 'flex' }}>
+        {pillars.map((p, i) => {
+          const stem = STEMS[p.stemIdx];
+          const branch = BRANCHES[p.branchIdx];
+          const se = ELEM[stem.element] ?? ELEM.Wood;
+          const be = ELEM[branch.element] ?? ELEM.Wood;
+          const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
+          const isSelected = selectedIdx === i;
+
+          return (
+            <button
+              key={i}
+              onClick={() => setSelectedIdx(isSelected ? null : i)}
+              style={{
+                flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
+                gap: 3, padding: '6px 4px 10px', cursor: 'pointer',
+                background: 'none', border: 'none',
+                opacity: isCurrent || isSelected ? 1 : 0.35,
+                transition: 'opacity 0.2s',
+              }}
+            >
+              <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 22, lineHeight: 1, color: se.hex }}>
+                {stem.char}
+              </span>
+              <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 22, lineHeight: 1, color: be.hex }}>
+                {branch.char}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Timeline */}
-      <div className="relative overflow-x-auto -mx-2 px-2">
-        <div
-          className="absolute"
-          style={{
-            top: 52,
-            left: 28,
-            right: 28,
-            height: 1,
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)',
-          }}
-        />
+      {/* Bar + current marker */}
+      <div style={{ position: 'relative', height: 2, background: 'var(--border)', margin: '0 0 0' }}>
+        {/* Segment fills */}
+        {pillars.map((p, i) => {
+          const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
+          return (
+            <div
+              key={i}
+              style={{
+                position: 'absolute',
+                left: `${(i / 8) * 100}%`,
+                width: `${100 / 8}%`,
+                height: '100%',
+                background: isCurrent ? 'var(--jade)' : 'transparent',
+              }}
+            />
+          );
+        })}
 
-        <div className="flex justify-between min-w-max gap-1" style={{ minWidth: '100%' }}>
-          {pillars.map((p, i) => {
-            const current = isCurrent(p);
-            const isSelected = selected === i;
-            const stem = STEMS[p.stemIdx];
-            const branch = BRANCHES[p.branchIdx];
-            const se = ELEM[stem.element] ?? ELEM.Wood;
-            const be = ELEM[branch.element] ?? ELEM.Wood;
+        {/* Current age cursor */}
+        {isInTimeline && (
+          <div style={{
+            position: 'absolute',
+            left: `${currentPct}%`,
+            top: -10,
+            transform: 'translateX(-50%)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0,
+            pointerEvents: 'none',
+          }}>
+            <div style={{ width: 1, height: 22, background: 'var(--jade)' }} />
+          </div>
+        )}
+      </div>
 
-            return (
-              <button
-                key={i}
-                onClick={() => setSelected(isSelected ? null : i)}
-                className="flex flex-col items-center gap-2 relative"
-                style={{
-                  minWidth: 56,
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  borderRadius: 10,
-                  padding: '6px 8px',
-                  outline: isSelected ? `1px solid ${se.hex}40` : '1px solid transparent',
-                  transition: 'outline 0.2s',
-                }}
-              >
-                <div className="cjk text-xl leading-none" style={{ color: se.hex, opacity: current ? 1 : 0.55 }}>
-                  {stem.char}
-                </div>
+      {/* Age label row */}
+      <div style={{ display: 'flex', position: 'relative', marginTop: 8 }}>
+        {pillars.map((p, i) => {
+          const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
+          return (
+            <button
+              key={i}
+              onClick={() => setSelectedIdx(selectedIdx === i ? null : i)}
+              style={{
+                flex: 1, textAlign: 'center', cursor: 'pointer',
+                background: 'none', border: 'none', padding: '4px 0',
+              }}
+            >
+              <span style={{
+                fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.06em',
+                color: isCurrent ? 'var(--jade)' : 'var(--text-muted)',
+              }}>
+                {p.startAge}
+              </span>
+            </button>
+          );
+        })}
 
-                <div
-                  style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    background: current || isSelected ? se.hex : 'rgba(255,255,255,0.12)',
-                    boxShadow: current ? `0 0 12px ${se.hex}, 0 0 24px ${se.glow}` : 'none',
-                    zIndex: 1,
-                    animation: current ? 'glowPulse 2.5s ease-in-out infinite' : 'none',
-                    flexShrink: 0,
-                  }}
-                />
-
-                <div className="cjk text-xl leading-none" style={{ color: be.hex, opacity: current ? 1 : 0.55 }}>
-                  {branch.char}
-                </div>
-
-                <div className="text-[9px] text-center leading-tight" style={{ color: current ? '#5a5754' : '#2e2c2a' }}>
-                  {p.startAge}
-                </div>
-
-                {current && (
-                  <div className="text-[8px] font-semibold tracking-wider uppercase" style={{ color: '#c4913a' }}>
-                    Now
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
+        {/* "now" label */}
+        {isInTimeline && (
+          <div style={{
+            position: 'absolute',
+            left: `${currentPct}%`,
+            top: 18,
+            transform: 'translateX(-50%)',
+            fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.12em',
+            textTransform: 'uppercase', color: 'var(--jade)', whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+          }}>
+            {currentAge} · now
+          </div>
+        )}
       </div>
 
       {/* Detail panel */}
-      {sel && selStem && selBranch && selSe && selBe && (
-        <div
-          className="mt-5 rounded-[14px] px-5 py-4"
-          style={{
-            background: '#080809',
-            border: `1px solid ${selSe.hex}20`,
-            animation: 'fadeIn 0.18s ease',
-          }}
-        >
-          <div className="flex items-center gap-4 mb-3">
-            <span className="cjk text-2xl" style={{ color: selSe.hex }}>{selStem.char}</span>
-            <span className="cjk text-2xl" style={{ color: selBe.hex }}>{selBranch.char}</span>
-            <div className="ml-1">
-              <div className="text-[11px] font-medium" style={{ color: '#e8e4dd' }}>
-                {selStem.pinyin} {selBranch.pinyin}
-              </div>
-              <div className="text-[10px]" style={{ color: '#4a4844' }}>
-                Age {sel.startAge}–{sel.endAge}
-              </div>
-            </div>
+      {selectedIdx !== null && pillars[selectedIdx] && (
+        <PillarDetail pillar={pillars[selectedIdx]} currentAge={currentAge} />
+      )}
+    </div>
+  );
+}
+
+function PillarDetail({ pillar, currentAge }) {
+  const stem = STEMS[pillar.stemIdx];
+  const branch = BRANCHES[pillar.branchIdx];
+  const se = ELEM[stem.element] ?? ELEM.Wood;
+  const be = ELEM[branch.element] ?? ELEM.Wood;
+  const isCurrent = currentAge >= pillar.startAge && currentAge < pillar.endAge;
+
+  return (
+    <div style={{
+      marginTop: 40,
+      paddingTop: 32,
+      borderTop: '1px solid var(--border)',
+      display: 'flex', gap: 48, alignItems: 'flex-start',
+    }}>
+      <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end', flexShrink: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 56, lineHeight: 1, color: se.hex }}>
+            {stem.char}
           </div>
-          <div className="flex flex-wrap gap-3">
-            <div>
-              <div className="text-[9px] uppercase tracking-widest mb-1" style={{ color: '#2e2c2a' }}>Stem</div>
-              <span
-                className="text-[11px] px-2 py-0.5 rounded-full"
-                style={{ background: selSe.bg, color: selSe.hex, border: `1px solid ${selSe.hex}30` }}
-              >
-                {selSe.zh} {selStem.element} · {selStem.english}
-              </span>
-            </div>
-            <div>
-              <div className="text-[9px] uppercase tracking-widest mb-1" style={{ color: '#2e2c2a' }}>Branch</div>
-              <span
-                className="text-[11px] px-2 py-0.5 rounded-full"
-                style={{ background: selBe.bg, color: selBe.hex, border: `1px solid ${selBe.hex}30` }}
-              >
-                {selBe.zh} {selBranch.element} · {selBranch.english}
-              </span>
-            </div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'var(--text-muted)', letterSpacing: '0.1em' }}>
+            {stem.pinyin}
           </div>
         </div>
-      )}
+        <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 20, color: 'var(--border)', paddingBottom: 14 }}>·</div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 56, lineHeight: 1, color: be.hex }}>
+            {branch.char}
+          </div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'var(--text-muted)', letterSpacing: '0.1em' }}>
+            {branch.pinyin}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
+          <div style={{
+            fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 300, fontStyle: 'italic',
+            color: 'var(--text)',
+          }}>
+            {stem.english} · {branch.english}
+          </div>
+          {isCurrent && (
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.14em',
+              textTransform: 'uppercase', color: 'var(--jade)', padding: '2px 8px',
+              border: '1px solid var(--jade-dim)',
+            }}>
+              Current
+            </span>
+          )}
+        </div>
+        <div style={{
+          fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)',
+          letterSpacing: '0.1em', marginBottom: 20,
+        }}>
+          Age {pillar.startAge}–{pillar.endAge}
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <span style={{
+            fontFamily: 'var(--font-mono)', fontSize: 10, padding: '4px 12px',
+            background: se.bg, color: se.hex, border: `1px solid ${se.hex}30`,
+          }}>
+            {se.zh} {stem.element}
+          </span>
+          <span style={{
+            fontFamily: 'var(--font-mono)', fontSize: 10, padding: '4px 12px',
+            background: be.bg, color: be.hex, border: `1px solid ${be.hex}30`,
+          }}>
+            {be.zh} {branch.element} · {branch.english}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

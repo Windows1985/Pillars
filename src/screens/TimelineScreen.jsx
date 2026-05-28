@@ -1,16 +1,4 @@
-function Placeholder({ label, height = 200 }) {
-  return (
-    <div style={{
-      height, background: 'var(--surface-1)',
-      border: '1px solid var(--border)', borderRadius: 8,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-        {label} · redesigned in Step 4
-      </span>
-    </div>
-  );
-}
+import LuckPillars from '../components/LuckPillars.jsx';
 
 export default function TimelineScreen({ chart }) {
   const { luckPillars, birthDate, currentYear } = chart;
@@ -20,7 +8,6 @@ export default function TimelineScreen({ chart }) {
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 64px 80px' }}>
 
-      {/* Screen header */}
       <div style={{ padding: '56px 0 48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
           Luck Pillars · 大运
@@ -50,14 +37,12 @@ export default function TimelineScreen({ chart }) {
         </div>
       </div>
 
-      {/* Horizontal timeline — Pudding.cool style, Step 4 */}
-      <div style={{ marginTop: 48 }}>
-        <Placeholder label="Horizontal scrubbable luck pillar timeline" height={280} />
-      </div>
-
-      {/* Decade detail panel */}
-      <div style={{ marginTop: 24 }}>
-        <Placeholder label="Decade detail panel (hover/click reveal)" height={160} />
+      <div style={{ marginTop: 56 }}>
+        <LuckPillars
+          luckPillars={luckPillars}
+          birthYear={birthDate.year}
+          currentYear={currentYear}
+        />
       </div>
     </div>
   );

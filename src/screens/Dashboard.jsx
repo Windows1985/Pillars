@@ -1,3 +1,5 @@
+import { getTodayPillar } from '../bazi/dayPillar.js';
+
 const ELEMENT_INSIGHT = {
   Wood:  'Your Wood is unrooted — strong Water feeds it, no Earth anchors it. This decade activates your Resource pillar. Precision over expansion is not advice. It is structure.',
   Fire:  'Your Fire illuminates every room you enter. The question this decade is sustaining the flame without burning out those closest to it.',
@@ -5,15 +7,6 @@ const ELEMENT_INSIGHT = {
   Metal: 'Your Metal cuts through ambiguity with precision. This decade tests when to refine what exists rather than forge from scratch.',
   Water: 'Your Water flows around every obstacle with strategic depth. This decade the practice is direction — committing to a current and following it.',
 };
-
-// TODO Step 4: derive from actual date calculation using the 60-cycle
-function getTodayPillar() {
-  return {
-    stemChar: '壬', stemEn: 'Yang Water', stemPinyin: 'Rén',
-    branchChar: '午', branchEn: 'Fire Horse', branchPinyin: 'Wǔ',
-    reading: 'Water over Fire: your Wood flourishes today. Decisions made before the Metal hour carry structural weight into the week.',
-  };
-}
 
 const EXPLORE = [
   { zh: '性格', en: 'Personality', desc: 'Yang Wood structure, Wealth stars, core drives and the blind spots you\'ll recognise from your own life.', link: 'Read analysis', to: 'analysis', featured: true },
@@ -26,6 +19,8 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
   const stem = chart.dayMaster.stem;
   const today = getTodayPillar();
   const insight = teaserText || ELEMENT_INSIGHT[stem.element] || '';
+  const todayStem = today.stem;
+  const todayBranch = today.branch;
 
   const age = chart.currentYear - chart.birthDate.year;
   const currentPillar = chart.luckPillars?.pillars?.find(p => age >= p.startAge && age < p.endAge);
@@ -100,17 +95,17 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
                 display: 'flex', alignItems: 'center', gap: 8,
               }}>
                 <span style={{ display: 'inline-block', width: 20, height: 1, background: 'var(--jade)', flexShrink: 0 }} />
-                Today's Pillar · {today.stemChar}{today.branchChar}日
+                Today's Pillar · {todayStem.char}{todayBranch.char}日
               </div>
               <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end' }}>
                 <div>
-                  <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 44, lineHeight: 1, color: 'var(--text-dim)' }}>{today.stemChar}</div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', marginTop: 3 }}>{today.stemEn}</div>
+                  <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 44, lineHeight: 1, color: 'var(--text-dim)' }}>{todayStem.char}</div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', marginTop: 3 }}>{todayStem.english}</div>
                 </div>
                 <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 20, color: 'var(--border)', paddingBottom: 4 }}>·</div>
                 <div>
-                  <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 44, lineHeight: 1, color: 'var(--text-dim)' }}>{today.branchChar}</div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', marginTop: 3 }}>{today.branchEn}</div>
+                  <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 44, lineHeight: 1, color: 'var(--text-dim)' }}>{todayBranch.char}</div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', marginTop: 3 }}>{todayBranch.element} {todayBranch.english}</div>
                 </div>
               </div>
               <p style={{
