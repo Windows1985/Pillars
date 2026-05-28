@@ -3,7 +3,29 @@
 @tailwind utilities;
 
 @layer base {
+  /* Remove all scrollbars globally while preserving scroll functionality */
+  *, *::before, *::after {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  *::-webkit-scrollbar {
+    display: none;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-neutral-900 text-neutral-100 antialiased;
+    background-color: #0c0c0e;
+    color: #ece8e1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+  }
+
+  ::selection {
+    background: rgba(196, 145, 58, 0.25);
+    color: #ece8e1;
   }
 }
