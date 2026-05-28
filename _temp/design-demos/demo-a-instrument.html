@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1440">
+  <title>Direction A · Instrument</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        oklch(8% 0.01 240);
+      --surface:   oklch(11% 0.01 240);
+      --border:    oklch(20% 0.01 240);
+      --text:      oklch(90% 0.008 70);
+      --text-dim:  oklch(52% 0.008 70);
+      --text-muted:oklch(28% 0.008 70);
+      --jade:      oklch(60% 0.11 162);
+      --jade-dim:  oklch(38% 0.07 162);
+      --jade-bg:   oklch(13% 0.04 162);
+      --mono: 'JetBrains Mono', monospace;
+      --serif: 'Newsreader', Georgia, serif;
+      --cjk: 'Noto Serif SC', serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 52px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { display: flex; align-items: baseline; gap: 10px; }
+    .logo-char { font-family: var(--cjk); font-size: 17px; color: var(--text); }
+    .logo-text { font-family: var(--serif); font-size: 15px; font-weight: 300; letter-spacing: 0.08em; }
+    .logo-sub  { font-family: var(--mono); font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); }
+    nav { display: flex; align-items: center; gap: 2px; }
+    .nav-item {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 5px 14px; border-radius: 3px; cursor: pointer;
+    }
+    .nav-item.active { color: var(--jade); background: var(--jade-bg); }
+    .pro-badge {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em;
+      color: var(--jade); background: var(--jade-bg);
+      padding: 3px 8px; border-radius: 2px; border: 1px solid var(--jade-dim);
+    }
+
+    main { max-width: 1280px; margin: 0 auto; padding: 0 48px; }
+
+    /* Hero */
+    .hero {
+      display: grid; grid-template-columns: 1fr 1fr;
+      padding: 56px 0 48px;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: center;
+      gap: 20px; padding-right: 56px; border-right: 1px solid var(--border);
+    }
+    .eyebrow {
+      font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted);
+    }
+    .char-row { display: flex; align-items: flex-end; gap: 20px; }
+    .hero-char { font-family: var(--cjk); font-size: 104px; line-height: 1; color: var(--text); }
+    .char-meta { display: flex; flex-direction: column; gap: 6px; padding-bottom: 10px; }
+    .char-en { font-family: var(--serif); font-size: 30px; font-weight: 300; line-height: 1.1; }
+    .char-pinyin { font-family: var(--mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.08em; }
+    .hero-insight { font-size: 14px; line-height: 1.8; color: var(--text-dim); max-width: 400px; text-wrap: pretty; }
+
+    .hero-right {
+      padding-left: 56px; display: flex; flex-direction: column;
+      justify-content: center; gap: 28px;
+    }
+    .today-label {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--text-muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .today-label::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--jade); flex-shrink: 0; }
+    .today-chars { display: flex; align-items: flex-end; gap: 24px; }
+    .today-char-group { display: flex; flex-direction: column; gap: 4px; }
+    .today-char { font-family: var(--cjk); font-size: 52px; line-height: 1; }
+    .today-char-sub { font-family: var(--mono); font-size: 9px; color: var(--text-muted); letter-spacing: 0.04em; }
+    .today-reading { font-size: 14px; line-height: 1.78; color: var(--text-dim); text-wrap: pretty; }
+
+    /* Explore */
+    .explore { padding: 44px 0; }
+    .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .section-title { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+    .explore-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .explore-card {
+      background: var(--bg); padding: 28px 24px;
+      display: flex; flex-direction: column; gap: 8px;
+      cursor: pointer; transition: background 0.18s;
+    }
+    .explore-card:hover { background: var(--surface); }
+    .card-zh { font-family: var(--cjk); font-size: 18px; color: var(--text-dim); }
+    .card-en { font-family: var(--serif); font-size: 19px; font-weight: 300; color: var(--text); line-height: 1.2; }
+    .card-desc { font-size: 11.5px; line-height: 1.6; color: var(--text-muted); margin-top: 4px; text-wrap: pretty; }
+    .card-arrow { font-family: var(--mono); font-size: 10px; color: var(--jade); margin-top: auto; padding-top: 16px; }
+
+    /* Tech strip */
+    .tech-strip {
+      display: flex; align-items: center; gap: 0;
+      padding: 14px 0; border-top: 1px solid var(--border);
+    }
+    .tech-item { display: flex; flex-direction: column; gap: 3px; padding: 0 24px; }
+    .tech-item:first-child { padding-left: 0; }
+    .tech-label { font-family: var(--mono); font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); }
+    .tech-value { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+    .tech-value.jade { color: var(--jade); }
+    .tech-sep { width: 1px; height: 30px; background: var(--border); flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span class="logo-char">柱</span>
+      <span class="logo-text">Pillars</span>
+      <span class="logo-sub">Four Pillars of Destiny</span>
+    </div>
+    <nav>
+      <div class="nav-item active">Dashboard</div>
+      <div class="nav-item">Chart</div>
+      <div class="nav-item">Analysis</div>
+      <div class="nav-item">Timeline</div>
+    </nav>
+    <span class="pro-badge">Pro</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div class="hero-left">
+        <div class="eyebrow">Day Master · 日主</div>
+        <div class="char-row">
+          <div class="hero-char">甲</div>
+          <div class="char-meta">
+            <div class="char-en">Yang Wood</div>
+            <div class="char-pinyin">Jiǎ · 天干 · Heavenly Stem</div>
+          </div>
+        </div>
+        <p class="hero-insight">Your commanding Wood is unrooted — no Earth beneath it, strong Water feeding it. The current decade activates your Resource pillar. Precision over expansion.</p>
+      </div>
+      <div class="hero-right">
+        <div class="today-label">Today's Pillar · 壬午日</div>
+        <div class="today-chars">
+          <div class="today-char-group">
+            <div class="today-char">壬</div>
+            <div class="today-char-sub">Yang Water · Rén</div>
+          </div>
+          <div class="today-char-group">
+            <div class="today-char">午</div>
+            <div class="today-char-sub">Fire Horse · Wǔ</div>
+          </div>
+        </div>
+        <p class="today-reading">Water over Fire: your Wood flourishes today. The Horse's momentum is real — decisions made before the Metal hour carry structural weight into the week.</p>
+      </div>
+    </div>
+
+    <div class="explore">
+      <div class="section-header">
+        <div class="section-title">Explore</div>
+        <div class="section-line"></div>
+      </div>
+      <div class="explore-grid">
+        <div class="explore-card">
+          <div class="card-zh">性格</div>
+          <div class="card-en">Personality</div>
+          <div class="card-desc">Yang Wood structure, Wealth stars, core drives and the blind spots you'll recognise.</div>
+          <div class="card-arrow">→</div>
+        </div>
+        <div class="explore-card">
+          <div class="card-zh">事业</div>
+          <div class="card-en">Career</div>
+          <div class="card-desc">Resource stars, Officer energy, and the work structure that amplifies your output.</div>
+          <div class="card-arrow">→</div>
+        </div>
+        <div class="explore-card">
+          <div class="card-zh">感情</div>
+          <div class="card-en">Relationships</div>
+          <div class="card-desc">Spouse palace, elemental affinity, and the timing patterns that govern connection.</div>
+          <div class="card-arrow">→</div>
+        </div>
+        <div class="explore-card">
+          <div class="card-zh">大运</div>
+          <div class="card-en">Timing</div>
+          <div class="card-desc">Your life arc across ten-year luck pillars — where you are now, what comes next.</div>
+          <div class="card-arrow">→</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-strip">
+      <div class="tech-item">
+        <div class="tech-label">Birth</div>
+        <div class="tech-value">1990-09-01 · 07:14 CST</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Location</div>
+        <div class="tech-value">Beijing · 116.4°E 39.9°N</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Current Luck Pillar</div>
+        <div class="tech-value jade">壬子 · 2020 – 2030</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Element Balance</div>
+        <div class="tech-value">Wood ×3 · Water ×2 · Fire ×1</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Chart ID</div>
+        <div class="tech-value">JIA-9001-A</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-label">Generated</div>
+        <div class="tech-value">2026-05-28</div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
