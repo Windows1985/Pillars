@@ -190,19 +190,27 @@ function NumberInput({ value, onChange, min, max, placeholder }) {
 
 function Select({ value, onChange, options }) {
   return (
-    <select
-      value={value}
-      onChange={e => onChange(+e.target.value)}
-      style={{
-        width: '100%', boxSizing: 'border-box',
-        fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '0.08em',
-        background: 'var(--surface-1)', border: '1px solid var(--border)',
-        padding: '10px 12px', color: 'var(--text-dim)',
-        outline: 'none', cursor: 'pointer',
-      }}
-    >
-      {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-    </select>
+    <div style={{ position: 'relative' }}>
+      <select
+        value={value}
+        onChange={e => onChange(+e.target.value)}
+        style={{
+          width: '100%', boxSizing: 'border-box',
+          fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '0.08em',
+          background: 'var(--surface-1)', border: '1px solid var(--border)',
+          padding: '10px 32px 10px 12px', color: 'var(--text-dim)',
+          outline: 'none', cursor: 'pointer',
+          appearance: 'none', WebkitAppearance: 'none',
+        }}
+      >
+        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+      <span style={{
+        position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+        pointerEvents: 'none',
+        fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)',
+      }}>↓</span>
+    </div>
   );
 }
 

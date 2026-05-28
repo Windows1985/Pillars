@@ -6,26 +6,27 @@ const TIERS = [
   {
     key: 'free',
     name: 'Free',
+    nameZh: '免费',
     priceMonthly: 0,
     priceAnnual: 0,
-    color: '#5a5754',
+    accentColor: 'var(--text-muted)',
     features: [
       'Full chart calculation',
       '3-sentence AI teaser',
       '1 saved chart',
       'All pillars & elements visible',
     ],
-    locked: [],
   },
   {
     key: 'pro',
     name: 'Pro',
+    nameZh: '专业',
     priceMonthly: 50,
     priceAnnual: 420,
     currency: 'HK$',
     usdMonthly: 4.99,
     usdAnnual: 39.99,
-    color: '#c4913a',
+    accentColor: '#c4913a',
     features: [
       'Everything in Free',
       'Full natal analysis (cached forever)',
@@ -40,12 +41,13 @@ const TIERS = [
   {
     key: 'max',
     name: 'Max',
+    nameZh: '至尊',
     priceMonthly: 100,
     priceAnnual: 840,
     currency: 'HK$',
     usdMonthly: 10.99,
     usdAnnual: 89.99,
-    color: '#5592b8',
+    accentColor: '#5592b8',
     features: [
       'Everything in Pro',
       '"Ask Pillars" — chart-grounded Q&A',
@@ -59,7 +61,7 @@ const TIERS = [
   },
 ];
 
-export default function PricingPage({ onClose, currentTier, initialPlan }) {
+export default function PricingPage({ onClose, currentTier }) {
   const { user } = useAuth();
   const [annual, setAnnual] = useState(false);
   const [loading, setLoading] = useState(null);
@@ -96,49 +98,64 @@ export default function PricingPage({ onClose, currentTier, initialPlan }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto"
-      style={{ background: 'rgba(7,7,9,0.9)', backdropFilter: 'blur(10px)' }}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 50,
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+        padding: '0 24px 48px', overflowY: 'auto',
+        background: 'rgba(7,7,9,0.9)', backdropFilter: 'blur(10px)',
+      }}
       onClick={e => e.target === e.currentTarget && onClose?.()}
     >
-      <div className="w-full max-w-3xl py-12">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl font-medium mb-2" style={{ color: '#e8e4dd' }}>Unlock the full picture</h2>
-          <p className="text-sm" style={{ color: '#5a5754' }}>Chart calculation is always free. Upgrade for analysis, forecasts, and Q&A.</p>
+      <div style={{ width: '100%', maxWidth: 780, paddingTop: 72 }}>
 
-          {/* Annual toggle */}
-          <div className="flex items-center justify-center gap-3 mt-6">
-            <span className="text-sm" style={{ color: annual ? '#4a4844' : '#e8e4dd' }}>Monthly</span>
-            <button
-              onClick={() => setAnnual(!annual)}
-              className="relative rounded-full transition-colors"
-              style={{
-                width: 44, height: 24,
-                background: annual ? '#c4913a' : 'rgba(255,255,255,0.1)',
-                border: 'none', cursor: 'pointer',
-              }}
-            >
-              <span
-                className="absolute top-1 rounded-full transition-all"
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 14 }}>
+            Pricing · 定价
+          </div>
+          <h2 style={{
+            fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic',
+            color: 'var(--text)', marginBottom: 10,
+          }}>
+            Unlock the full picture
+          </h2>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 300, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+            Chart calculation is always free. Upgrade for analysis, forecasts, and Q&A.
+          </p>
+
+          {/* Billing toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, marginTop: 28, background: 'var(--border)', display: 'inline-flex' }}>
+            {[{ id: false, label: 'Monthly' }, { id: true, label: 'Annual  −30%' }].map(opt => (
+              <button
+                key={String(opt.id)}
+                onClick={() => setAnnual(opt.id)}
                 style={{
-                  width: 16, height: 16,
-                  background: '#fff',
-                  left: annual ? 24 : 4,
+                  fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase',
+                  padding: '9px 20px',
+                  background: annual === opt.id ? 'var(--jade-bg)' : 'var(--surface-1)',
+                  color: annual === opt.id ? 'var(--jade)' : 'var(--text-muted)',
+                  border: 'none', cursor: 'pointer',
+                  transition: 'background 0.15s, color 0.15s',
                 }}
-              />
-            </button>
-            <span className="text-sm" style={{ color: annual ? '#e8e4dd' : '#4a4844' }}>
-              Annual <span className="text-[11px] ml-1" style={{ color: '#c4913a' }}>−30%</span>
-            </span>
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
         </div>
 
         {error && (
-          <div className="mb-6 rounded-[14px] px-5 py-3 text-sm text-center" style={{ background: 'rgba(217,107,84,0.06)', color: '#d96b54', border: '1px solid rgba(217,107,84,0.15)' }}>
+          <div style={{
+            marginBottom: 24, padding: '12px 16px', textAlign: 'center',
+            fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.04em',
+            background: 'rgba(217,107,84,0.06)', color: '#d96b54', border: '1px solid rgba(217,107,84,0.15)',
+          }}>
             {error}
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Tier cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border)' }}>
           {TIERS.map(tier => {
             const isCurrent = currentTier === tier.key;
             const price = tier.priceMonthly === 0 ? 'Free' : annual
@@ -151,31 +168,54 @@ export default function PricingPage({ onClose, currentTier, initialPlan }) {
             return (
               <div
                 key={tier.key}
-                className="rounded-[20px] p-6"
                 style={{
-                  background: isCurrent ? `linear-gradient(160deg, rgba(196,145,58,0.06), #0f0f12)` : '#0f0f12',
-                  border: isCurrent ? `1px solid rgba(196,145,58,0.2)` : '1px solid rgba(255,255,255,0.06)',
+                  background: isCurrent ? 'var(--surface-2)' : 'var(--surface-1)',
+                  padding: '32px 28px 28px',
+                  borderTop: isCurrent ? `2px solid ${tier.accentColor}` : '2px solid transparent',
+                  display: 'flex', flexDirection: 'column',
                 }}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium" style={{ color: tier.color }}>{tier.name}</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+                  <div>
+                    <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>
+                      {tier.nameZh}
+                    </div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: tier.accentColor }}>
+                      {tier.name}
+                    </div>
+                  </div>
                   {isCurrent && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: 'rgba(196,145,58,0.1)', color: '#c4913a', border: '1px solid rgba(196,145,58,0.2)' }}>
+                    <span style={{
+                      fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
+                      padding: '3px 10px', color: tier.accentColor,
+                      background: `${tier.accentColor}18`, border: `1px solid ${tier.accentColor}40`,
+                    }}>
                       Current
                     </span>
                   )}
                 </div>
 
-                <div className="mb-5">
-                  <div className="text-2xl font-medium" style={{ color: '#e8e4dd' }}>{price}</div>
-                  {subPrice && <div className="text-[11px] mt-0.5" style={{ color: '#3a3733' }}>{subPrice}</div>}
+                <div style={{ marginBottom: 28 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 300, color: 'var(--text)', lineHeight: 1 }}>
+                    {price}
+                  </div>
+                  {subPrice && (
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.06em', color: 'var(--text-muted)', marginTop: 6 }}>
+                      {subPrice}
+                    </div>
+                  )}
                 </div>
 
-                <ul className="space-y-2 mb-6">
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28, flex: 1 }}>
                   {tier.features.map((f, i) => (
-                    <li key={i} className="flex items-start gap-2 text-[13px]" style={{ color: i === 0 ? '#4a4844' : '#7a7672' }}>
-                      <span style={{ color: tier.color, flexShrink: 0 }}>·</span>
-                      {f}
+                    <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                      <span style={{ color: tier.accentColor, flexShrink: 0, lineHeight: 1.5 }}>·</span>
+                      <span style={{
+                        fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, lineHeight: 1.5,
+                        color: i === 0 ? 'var(--text-muted)' : 'var(--text-dim)',
+                      }}>
+                        {f}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -184,12 +224,14 @@ export default function PricingPage({ onClose, currentTier, initialPlan }) {
                   <button
                     onClick={() => handleUpgrade(tier)}
                     disabled={!!loading}
-                    className="w-full rounded-[10px] py-2.5 text-sm font-medium"
                     style={{
-                      background: loading === tier.key ? 'rgba(196,145,58,0.3)' : tier.color,
-                      color: '#070709',
-                      border: 'none',
+                      fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase',
+                      padding: '11px 0', width: '100%',
+                      background: loading === tier.key ? 'transparent' : `${tier.accentColor}18`,
+                      color: loading === tier.key ? 'var(--text-muted)' : tier.accentColor,
+                      border: `1px solid ${tier.accentColor}40`,
                       cursor: loading ? 'not-allowed' : 'pointer',
+                      transition: 'background 0.15s',
                     }}
                   >
                     {loading === tier.key ? '…' : `Upgrade to ${tier.name}`}
@@ -201,8 +243,14 @@ export default function PricingPage({ onClose, currentTier, initialPlan }) {
         </div>
 
         {onClose && (
-          <div className="text-center mt-8">
-            <button onClick={onClose} className="text-[12px]" style={{ color: '#3a3733', background: 'none', border: 'none', cursor: 'pointer' }}>
+          <div style={{ textAlign: 'center', marginTop: 32 }}>
+            <button
+              onClick={onClose}
+              style={{
+                fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em',
+                color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer',
+              }}
+            >
               Maybe later
             </button>
           </div>

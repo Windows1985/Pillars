@@ -47,7 +47,7 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
 
       {/* Bar track — position:relative so cursor is anchored here */}
       <div style={{ position: 'relative' }}>
-        <div style={{ height: 2, background: 'var(--border)' }}>
+        <div style={{ height: 2, background: 'var(--border)', position: 'relative' }}>
           {/* Current decade fill */}
           {pillars.map((p, i) => {
             const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
