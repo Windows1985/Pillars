@@ -13,7 +13,7 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
   return (
     <div>
       {/* Character row */}
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', marginBottom: 32 }}>
         {pillars.map((p, i) => {
           const stem = STEMS[p.stemIdx];
           const branch = BRANCHES[p.branchIdx];
@@ -28,7 +28,7 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
               onClick={() => setSelectedIdx(isSelected ? null : i)}
               style={{
                 flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-                gap: 3, padding: '6px 4px 10px', cursor: 'pointer',
+                gap: 3, padding: '6px 4px', cursor: 'pointer',
                 background: 'none', border: 'none',
                 opacity: isCurrent || isSelected ? 1 : 0.35,
                 transition: 'opacity 0.2s',
@@ -45,71 +45,75 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
         })}
       </div>
 
-      {/* Bar + current marker */}
-      <div style={{ position: 'relative', height: 2, background: 'var(--border)', margin: '0 0 0' }}>
-        {/* Segment fills */}
-        {pillars.map((p, i) => {
-          const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
-          return (
-            <div
-              key={i}
-              style={{
-                position: 'absolute',
-                left: `${(i / 8) * 100}%`,
-                width: `${100 / 8}%`,
-                height: '100%',
-                background: isCurrent ? 'var(--jade)' : 'transparent',
-              }}
-            />
-          );
-        })}
+      {/* Bar track — position:relative so cursor is anchored here */}
+      <div style={{ position: 'relative' }}>
+        <div style={{ height: 2, background: 'var(--border)' }}>
+          {/* Current decade fill */}
+          {pillars.map((p, i) => {
+            const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
+            return isCurrent ? (
+              <div
+                key={i}
+                style={{
+                  position: 'absolute',
+                  left: `${(i / 8) * 100}%`,
+                  width: `${100 / 8}%`,
+                  height: '100%',
+                  background: 'var(--jade)',
+                }}
+              />
+            ) : null;
+          })}
+        </div>
 
-        {/* Current age cursor */}
+        {/* Current age cursor — spans above and below the bar */}
         {isInTimeline && (
-          <div style={{
-            position: 'absolute',
-            left: `${currentPct}%`,
-            top: -10,
-            transform: 'translateX(-50%)',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0,
-            pointerEvents: 'none',
-          }}>
-            <div style={{ width: 1, height: 22, background: 'var(--jade)' }} />
-          </div>
+          <div
+            style={{
+              position: 'absolute',
+              left: `${currentPct}%`,
+              top: -12,
+              transform: 'translateX(-50%)',
+              width: 1,
+              height: 28,
+              background: 'var(--jade)',
+              pointerEvents: 'none',
+            }}
+          />
         )}
-      </div>
 
-      {/* Age label row */}
-      <div style={{ display: 'flex', position: 'relative', marginTop: 8 }}>
-        {pillars.map((p, i) => {
-          const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
-          return (
-            <button
-              key={i}
-              onClick={() => setSelectedIdx(selectedIdx === i ? null : i)}
-              style={{
-                flex: 1, textAlign: 'center', cursor: 'pointer',
-                background: 'none', border: 'none', padding: '4px 0',
-              }}
-            >
-              <span style={{
-                fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.06em',
-                color: isCurrent ? 'var(--jade)' : 'var(--text-muted)',
-              }}>
-                {p.startAge}
-              </span>
-            </button>
-          );
-        })}
+        {/* Age label row */}
+        <div style={{ display: 'flex', marginTop: 12 }}>
+          {pillars.map((p, i) => {
+            const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
+            return (
+              <button
+                key={i}
+                onClick={() => setSelectedIdx(selectedIdx === i ? null : i)}
+                style={{
+                  flex: 1, textAlign: 'center', cursor: 'pointer',
+                  background: 'none', border: 'none', padding: '4px 0',
+                }}
+              >
+                <span style={{
+                  fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.06em',
+                  color: isCurrent ? 'var(--jade)' : 'var(--text-muted)',
+                }}>
+                  {p.startAge}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-        {/* "now" label */}
+        {/* "now" label below age row, pinned to cursor position */}
         {isInTimeline && (
           <div style={{
             position: 'absolute',
             left: `${currentPct}%`,
-            top: 18,
+            top: 36,
             transform: 'translateX(-50%)',
-            fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.12em',
+            fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.14em',
             textTransform: 'uppercase', color: 'var(--jade)', whiteSpace: 'nowrap',
             pointerEvents: 'none',
           }}>
@@ -135,7 +139,7 @@ function PillarDetail({ pillar, currentAge }) {
 
   return (
     <div style={{
-      marginTop: 40,
+      marginTop: 56,
       paddingTop: 32,
       borderTop: '1px solid var(--border)',
       display: 'flex', gap: 48, alignItems: 'flex-start',
