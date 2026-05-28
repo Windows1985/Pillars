@@ -10,31 +10,41 @@ export default function BlurGate({ required, current, label, children, onUpgrade
   const price = required === 'pro' ? 'HK$50/mo' : 'HK$100/mo';
 
   return (
-    <div className="relative rounded-[22px] overflow-hidden">
-      {/* Blurred content */}
+    <div style={{ position: 'relative', overflow: 'hidden' }}>
       <div style={{ filter: 'blur(6px)', pointerEvents: 'none', userSelect: 'none', opacity: 0.5 }}>
         {children}
       </div>
 
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-[22px]"
-        style={{ background: 'rgba(7,7,9,0.55)', backdropFilter: 'blur(2px)' }}
-      >
-        <div className="text-center px-6">
-          <div
-            className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-3 text-[10px] font-semibold uppercase tracking-wider"
-            style={{ background: 'rgba(196,145,58,0.12)', color: '#c4913a', border: '1px solid rgba(196,145,58,0.25)' }}
-          >
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        background: 'rgba(9, 9, 11, 0.6)', backdropFilter: 'blur(2px)',
+        gap: 16,
+      }}>
+        <div style={{ textAlign: 'center', padding: '0 32px' }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '3px 12px', marginBottom: 12,
+            fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.16em',
+            textTransform: 'uppercase', color: '#c4913a',
+            background: 'rgba(196,145,58,0.1)', border: '1px solid rgba(196,145,58,0.22)',
+          }}>
             {tierLabel}
           </div>
-          <p className="text-[13px] mb-4" style={{ color: '#7a7672' }}>
-            {label ?? `Unlock ${label ?? 'this section'} with ${tierLabel}`}
+          <p style={{
+            fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 300,
+            color: 'var(--text-dim)', marginBottom: 20, lineHeight: 1.6,
+          }}>
+            {label ?? `Unlock this section with ${tierLabel}`}
           </p>
           <button
             onClick={onUpgrade}
-            className="rounded-[10px] px-5 py-2.5 text-sm font-medium"
-            style={{ background: '#c4913a', color: '#070709', border: 'none', cursor: 'pointer' }}
+            style={{
+              fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.12em',
+              textTransform: 'uppercase', padding: '10px 24px',
+              background: '#c4913a', color: '#070709',
+              border: 'none', cursor: 'pointer',
+            }}
           >
             Upgrade to {tierLabel} · {price}
           </button>
