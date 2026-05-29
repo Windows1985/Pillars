@@ -31,6 +31,8 @@ export default function App() {
   const [anonLoading, setAnonLoading] = useState(false);
   const [anonError, setAnonError] = useState('');
 
+  const [chartLoading, setChartLoading] = useState(false);
+
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState('signin');
   const [showPricing, setShowPricing] = useState(false);
@@ -66,7 +68,12 @@ export default function App() {
     const result = calculateChart(formData);
     setChart(result);
     resetAnalysis();
-    setScreen('dashboard');
+    setChartLoading(true);
+    setTimeout(() => {
+      setChartLoading(false);
+      setScreen('dashboard');
+      window.scrollTo(0, 0);
+    }, 3000);
 
     if (user) {
       try {
@@ -151,13 +158,15 @@ export default function App() {
           <Landing onEnter={() => setScreen('form')} />
         )}
 
-        {screen === 'form' && (
+        {screen === 'form' && !chartLoading && (
           <FormScreen
             onSubmit={handleSubmit}
             user={user}
             onSignUp={() => { setAuthMode('signup'); setShowAuth(true); }}
           />
         )}
+
+        {chartLoading && <ChartLoadingScreen />}
 
         {screen === 'dashboard' && chart && (
           <Dashboard
@@ -189,6 +198,28 @@ export default function App() {
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} defaultMode={authMode} />}
       {showPricing && <PricingPage onClose={() => setShowPricing(false)} currentTier={tier} />}
     </>
+  );
+}
+
+function ChartLoadingScreen() {
+  return (
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      minHeight: 'calc(100vh - 56px)', gap: 24,
+    }}>
+      <div style={{
+        width: 36, height: 36,
+        border: '1.5px solid var(--border)', borderTopColor: 'var(--jade)',
+        borderRadius: '50%',
+        animation: 'spin 0.9s linear infinite',
+      }} />
+      <div style={{
+        fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.22em',
+        textTransform: 'uppercase', color: 'var(--text-muted)',
+      }}>
+        Calculating your chart…
+      </div>
+    </div>
   );
 }
 
