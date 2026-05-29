@@ -45,21 +45,89 @@ Edge functions expected by the frontend:
 
 Pure logic in `src/bazi/`. Entry point is `calculate.js` → `calculateChart(formData)` returns the full chart object (pillars, element balance, luck pillars, interactions). All constants (stems, branches, hidden stems, ten gods, ELEM colour tokens) live in `constants.js`.
 
-### Design system
+---
 
-Defined in `src/index.css` CSS variables and `tailwind.config.js`. Key rules:
+## Design language
 
-- **Never hardcode hex values for text/surface colours** — use `var(--text)`, `var(--text-dim)`, `var(--text-muted)`, `var(--surface-0..2)`, `var(--border)`
-- **Element colours** come from `ELEM[element].hex` in JS — Wood `#6abf7a`, Fire `#d96b54`, Earth `#c4913a`, Metal `#9db0c2`, Water `#5592b8`
-- **Font stack**: `var(--font-display)` (Fraunces serif) for headings, `var(--font-mono)` (JetBrains Mono) for labels/data, `var(--font-cjk)` (Noto Serif SC) for Chinese characters
-- **Spacing**: 4px base unit, multiples of 4 only
-- **Loading states**: always skeleton (`.skeleton-line` class + `skeletonPulse` animation), never spinner — the chart-calculation screen in `App.jsx` is the sole exception
+This app has a strong, established visual identity. Preserve it exactly unless a change explicitly requires deviation.
 
-### Stripe / subscription
+### Palette
+
+Dark warm background — `oklch(9% 0.008 60)` with two subtle radial glows baked into `body` (amber bottom-left, blue top-right). Never flatten this to plain black.
+
+```
+Surface scale (darkest → lightest):
+--surface-0   oklch(9% 0.008 60)   body / deepest bg
+--surface-1   oklch(12% 0.008 60)  cards
+--surface-2   oklch(15% 0.008 60)  elevated surfaces, tooltip bg
+--border      oklch(18% 0.006 60)  all dividers and outlines
+
+Text scale:
+--text        oklch(88% 0.01 75)   primary — headings, key values
+--text-dim    oklch(67% 0.01 75)   secondary — body prose, sub-labels
+--text-muted  oklch(60% 0.008 75)  tertiary — metadata, timestamps, hints
+
+Accent:
+--jade        oklch(60% 0.11 162)  current/active states, focus rings
+--jade-dim    oklch(38% 0.07 162)  jade borders
+--jade-bg     oklch(13% 0.04 162)  jade tinted backgrounds
+```
+
+Element colour tokens (JS only — never hardcode in CSS):
+```
+ELEM.Wood   #6abf7a   glow rgba(106,191,122,0.22)
+ELEM.Fire   #d96b54   glow rgba(217,107,84,0.22)
+ELEM.Earth  #c4913a   glow rgba(196,145,58,0.22)   ← also the gold accent / premium colour
+ELEM.Metal  #9db0c2   glow rgba(157,176,194,0.18)
+ELEM.Water  #5592b8   glow rgba(85,146,184,0.22)
+```
+
+Rule: **text and surface colours always use CSS variables. Element hex values live in `ELEM` in `constants.js` and are used directly in inline `style` props.**
+
+### Typography
+
+Three fonts, never mixed within a semantic role:
+
+| Role | Variable | Font | Usage |
+|------|----------|------|-------|
+| Display | `var(--font-display)` | Fraunces (serif, italic at large sizes) | Section headings, hero text, prose body |
+| Data/Label | `var(--font-mono)` | JetBrains Mono | All caps labels, scores, IDs, timestamps, badges |
+| CJK | `var(--font-cjk)` | Noto Serif SC | Chinese characters only — stems, branches, element labels |
+
+Label convention: monospace, font-size 7–10px, `letter-spacing: 0.14–0.22em`, `text-transform: uppercase`. These are the "instrument panel" labels throughout the UI.
+
+Heading convention: Fraunces, `font-weight: 300`, `font-style: italic` at large sizes (28px+). Never bold headings.
+
+### Spacing
+
+4px base unit. All padding, gap, and margin values must be multiples of 4. Common values: 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64, 72, 80.
+
+### Component patterns
+
+**Cards**: `background: var(--surface-1)`, `border: 1px solid var(--border)`. Add `.card-hover` class for hover lift effect. No box-shadow at rest.
+
+**Section dividers**: thin 1px `var(--border)` line with centred label text. See `SectionDivider` pattern used across screens.
+
+**Badges/chips**: monospace, 7–9px, `letter-spacing: 0.14–0.16em`, uppercase, coloured background at ~8% opacity with matching border at ~20% opacity.
+
+**Loading**: always `.skeleton-line` (grey pulsing block matching text width), never a spinner. The sole exception is the full-screen chart-calculation transition in `App.jsx`.
+
+**Tooltips**: `@radix-ui/react-tooltip` with `background: var(--surface-2)`, `border: 1px solid var(--border)`. `TooltipProvider` lives at root in `main.jsx`.
+
+**Modals**: `@radix-ui/react-dialog`. Overlay: `rgba(7,7,9,0.88)` + `backdrop-filter: blur(8px)`. Content: `var(--surface-1)` with `var(--border)`.
+
+### Responsive breakpoints
+
+- `≥ 640px`: full desktop layout
+- `< 640px`: Four Pillars grid → 2×2 (`pillar-grid` class), Luck Cycle timeline → vertical card stack (`.luck-timeline` / `.luck-pillar-btn` classes), screen padding drops from 64px to 20px (`.screen-container` class)
+
+---
+
+## Stripe / subscription
 
 The frontend is fully wired — `PricingPage` reads price IDs from env vars and POSTs to `create-checkout`. What's needed on the backend:
 
-1. **`create-checkout` Edge Function**: create a Stripe Checkout Session with `mode: 'subscription'`, `success_url` appending `?upgraded=1`, `client_reference_id` set to the Supabase user UID
+1. **`create-checkout` Edge Function**: Stripe Checkout Session with `mode: 'subscription'`, `success_url` appending `?upgraded=1`, `client_reference_id` = Supabase user UID
 2. **Stripe webhook Edge Function**: handle `checkout.session.completed` and `customer.subscription.updated/deleted` → update `profiles.tier` in Supabase
 3. **`profiles` table** needs: `tier text default 'free'`, `stripe_customer_id text`
 4. Post-upgrade detection via `?upgraded=1` is already wired in `App.jsx` — calls `refreshProfile()`
