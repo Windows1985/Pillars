@@ -47,7 +47,7 @@ export default function ElementBalance({ balance, dayMaster }) {
           enableGridX={false}
           enableGridY={false}
           enableLabel={true}
-          label={({ data }) => data.rawScore.toFixed(1)}
+          label={({ data }) => (data.data?.rawScore ?? 0).toFixed(1)}
           labelSkipWidth={0}
           labelSkipHeight={0}
           labelTextColor={({ data }) => data.rawScore === 0 ? 'rgba(156,163,175,0.2)' : data.color}
