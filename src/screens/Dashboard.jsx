@@ -41,26 +41,25 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
   ];
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 64px 80px' }}>
+    <div className="screen-pad fade-in-up" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 64px 80px' }}>
 
       {/* ── Hero ── */}
       <div style={{ padding: '72px 0 0' }}>
-        <div style={{ display: 'flex', alignItems: 'stretch' }}>
+        <div className="hero-flex" style={{ display: 'flex', alignItems: 'stretch' }}>
 
           {/* Left: Day Master character */}
-          <div style={{
+          <div className="hero-left" style={{
             flexShrink: 0,
             display: 'flex', flexDirection: 'column', justifyContent: 'center',
-            paddingRight: 64, paddingBottom: 8,
+            paddingRight: 80, paddingBottom: 8,
             borderRight: '1px solid var(--border)',
           }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>
               Day Master · 日主
             </div>
-            <div style={{
-              fontFamily: 'var(--font-cjk)', fontSize: 240, lineHeight: 0.9,
+            <div className="glow-cjk" style={{
+              fontFamily: 'var(--font-cjk)', fontSize: 'clamp(120px, 20vw, 240px)', lineHeight: 0.9,
               color: 'var(--text)',
-              textShadow: '0 0 100px oklch(58% 0.10 162 / 0.10)',
             }}>
               {stem.char}
             </div>
@@ -78,7 +77,7 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
           </div>
 
           {/* Right: insight + today's pillar */}
-          <div style={{ flex: 1, paddingLeft: 64, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 40 }}>
+          <div className="hero-right" style={{ flex: 1, paddingLeft: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 48 }}>
             <p style={{
               fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 300,
               lineHeight: 1.55, color: 'var(--text)', maxWidth: 520, textWrap: 'pretty',
@@ -120,11 +119,11 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
       </div>
 
       {/* ── Tech strip ── */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '14px 0', marginTop: 48, borderTop: '1px solid var(--border)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '20px 0', marginTop: 56, borderTop: '1px solid var(--border)' }}>
         {techItems.map((item, i) => (
           <div key={item.label} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
             {i > 0 && <div style={{ width: 1, height: 30, background: 'var(--border)', flexShrink: 0, marginRight: 24 }} />}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 3, paddingLeft: i === 0 ? 0 : 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
                 {item.label}
               </div>
@@ -138,4 +137,3 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
     </div>
   );
 }
-

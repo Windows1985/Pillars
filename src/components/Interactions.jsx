@@ -19,8 +19,9 @@ function Tag({ name, type, typeEnglish, effect, pillars, element, combinedElemen
     <div
       style={{
         display: 'inline-flex', flexDirection: 'column', gap: 4,
-        padding: '8px 14px', cursor: 'default',
+        padding: '10px 14px', cursor: 'default',
         background: s.bg, border: `1px solid ${s.border}`,
+        borderRadius: 4,
       }}
       title={`${typeEnglish}\n${effect}${pillarsStr ? `\nPillars: ${pillarsStr}` : ''}`}
     >
@@ -41,7 +42,7 @@ function Tag({ name, type, typeEnglish, effect, pillars, element, combinedElemen
         {typeEnglish}{pillarsStr ? ` · ${pillarsStr}` : ''}
       </div>
       {effect && (
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: 240 }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)', lineHeight: 1.55, maxWidth: 240, marginTop: 2 }}>
           {effect}
         </div>
       )}
