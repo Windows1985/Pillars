@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './contexts/AuthContext.jsx';
 
-function withTimeout(promise, ms = 15000) {
+function withTimeout(promise, ms = 30000) {
   return Promise.race([
     promise,
     new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out — please try again.')), ms)),
@@ -90,14 +90,14 @@ export default function App() {
         loadUserCharts().then(setSavedCharts).catch(() => {});
 
         setTeaserLoading(true);
-        withTimeout(generateTeaser(id), 15000)
+        withTimeout(generateTeaser(id), 30000)
           .then(t => setTeaserText(t))
           .catch(e => setTeaserError(e.message))
           .finally(() => setTeaserLoading(false));
 
         if (isPro) {
           setNatalLoading(true);
-          withTimeout(generateNatal(id), 15000)
+          withTimeout(generateNatal(id), 30000)
             .then(t => setNatalText(t))
             .catch(e => setNatalError(e.message))
             .finally(() => setNatalLoading(false));
@@ -107,7 +107,7 @@ export default function App() {
       }
     } else {
       setAnonLoading(true);
-      withTimeout(generateAnalysis(result), 15000)
+      withTimeout(generateAnalysis(result), 30000)
         .then(t => setAnonAnalysis(t))
         .catch(e => setAnonError(e.message))
         .finally(() => setAnonLoading(false));
@@ -121,14 +121,14 @@ export default function App() {
     setScreen('dashboard');
 
     setTeaserLoading(true);
-    withTimeout(generateTeaser(saved.id), 15000)
+    withTimeout(generateTeaser(saved.id), 30000)
       .then(t => setTeaserText(t))
       .catch(e => setTeaserError(e.message))
       .finally(() => setTeaserLoading(false));
 
     if (isPro) {
       setNatalLoading(true);
-      withTimeout(generateNatal(saved.id), 15000)
+      withTimeout(generateNatal(saved.id), 30000)
         .then(t => setNatalText(t))
         .catch(e => setNatalError(e.message))
         .finally(() => setNatalLoading(false));
@@ -149,19 +149,19 @@ export default function App() {
     tier, onUpgrade: handleUpgrade, user,
     onRetryTeaser: chartId ? () => {
       setTeaserText(''); setTeaserError(''); setTeaserLoading(true);
-      withTimeout(generateTeaser(chartId), 15000)
+      withTimeout(generateTeaser(chartId), 30000)
         .then(t => setTeaserText(t)).catch(e => setTeaserError(e.message))
         .finally(() => setTeaserLoading(false));
     } : null,
     onRetryNatal: (chartId && isPro) ? () => {
       setNatalText(''); setNatalError(''); setNatalLoading(true);
-      withTimeout(generateNatal(chartId), 15000)
+      withTimeout(generateNatal(chartId), 30000)
         .then(t => setNatalText(t)).catch(e => setNatalError(e.message))
         .finally(() => setNatalLoading(false));
     } : null,
     onRetryAnon: chart ? () => {
       setAnonAnalysis(''); setAnonError(''); setAnonLoading(true);
-      withTimeout(generateAnalysis(chart), 15000)
+      withTimeout(generateAnalysis(chart), 30000)
         .then(t => setAnonAnalysis(t)).catch(e => setAnonError(e.message))
         .finally(() => setAnonLoading(false));
     } : null,

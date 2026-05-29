@@ -77,7 +77,7 @@ export default function ElementBalance({ balance, dayMaster }) {
           layers={['grid', 'axes', 'bars', 'markers', 'legends', 'annotations', ValueLabels]}
           axisLeft={{
             tickSize: 0,
-            tickPadding: 16,
+            tickPadding: 24,
             renderTick: ({ x, y, value, textAnchor }) => (
               <g transform={`translate(${x},${y})`}>
                 <text
@@ -93,7 +93,7 @@ export default function ElementBalance({ balance, dayMaster }) {
           axisBottom={null}
           axisTop={null}
           axisRight={null}
-          margin={{ top: 4, right: 52, bottom: 4, left: 32 }}
+          margin={{ top: 4, right: 52, bottom: 4, left: 44 }}
           theme={nivoTheme}
           isInteractive={false}
           animate={true}
