@@ -1,7 +1,8 @@
 import { ResponsiveBar } from '@nivo/bar';
 import { ELEM } from '../bazi/constants.js';
 
-const ELEMS_ORDER = ['Wood', 'Fire', 'Earth', 'Metal', 'Water'];
+// Wood→top requires Wood last in array (nivo horizontal renders bottom-to-top)
+const ELEMS_DISPLAY = ['Water', 'Metal', 'Earth', 'Fire', 'Wood'];
 
 const nivoTheme = {
   background: 'transparent',
@@ -10,14 +11,13 @@ const nivoTheme = {
   axis: {
     ticks: { text: { fill: '#9ca3af', fontSize: 13 }, line: { stroke: 'transparent' } },
   },
-  labels: { text: { fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 400 } },
 };
 
 export default function ElementBalance({ balance, dayMaster }) {
   const { totals, strong, balancingElement } = balance;
   const dmElement = dayMaster.stem.element;
 
-  const barData = ELEMS_ORDER.map(el => {
+  const barData = ELEMS_DISPLAY.map(el => {
     const raw = totals[el] ?? 0;
     return {
       id: el,
@@ -30,33 +30,51 @@ export default function ElementBalance({ balance, dayMaster }) {
   });
 
   const maxVal = Math.max(...barData.map(d => d.rawScore), 0.1);
-  // Build lookup by element name so nivo callbacks can access rawScore/color
-  // without relying on nivo's internal datum shape (which varies by prop type)
   const rawByEl = Object.fromEntries(barData.map(d => [d.id, d]));
+
+  // Custom layer: value labels rendered outside (right of) each bar
+  const ValueLabels = ({ bars }) => (
+    <>
+      {bars.map(bar => {
+        const d = rawByEl[String(bar.data.indexValue)];
+        const raw = d?.rawScore ?? 0;
+        return (
+          <text
+            key={bar.key}
+            x={bar.x + bar.width + 8}
+            y={bar.y + bar.height / 2}
+            textAnchor="start"
+            dominantBaseline="middle"
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 10,
+              fill: raw === 0 ? 'rgba(156,163,175,0.3)' : (d?.color ?? '#9ca3af'),
+            }}
+          >
+            {raw.toFixed(1)}
+          </text>
+        );
+      })}
+    </>
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ height: 200, marginBottom: 32 }}>
+      <div style={{ height: 220, marginBottom: 32 }}>
         <ResponsiveBar
           data={barData}
           keys={['score']}
           indexBy="id"
           layout="horizontal"
-          valueScale={{ type: 'linear', min: 0, max: maxVal * 1.2 }}
+          valueScale={{ type: 'linear', min: 0, max: maxVal * 1.25 }}
           indexScale={{ type: 'band', round: true }}
           colors={({ data }) => data.color}
-          padding={0.4}
+          padding={0.38}
           borderRadius={0}
           enableGridX={false}
           enableGridY={false}
-          enableLabel={true}
-          label={({ indexValue }) => (rawByEl[String(indexValue)]?.rawScore ?? 0).toFixed(1)}
-          labelSkipWidth={0}
-          labelSkipHeight={0}
-          labelTextColor={({ indexValue }) => {
-            const d = rawByEl[String(indexValue)];
-            return (d?.rawScore ?? 0) === 0 ? 'rgba(156,163,175,0.2)' : (d?.color ?? '#9ca3af');
-          }}
+          enableLabel={false}
+          layers={['grid', 'axes', 'bars', 'markers', 'legends', 'annotations', ValueLabels]}
           axisLeft={{
             tickSize: 0,
             tickPadding: 16,
@@ -94,7 +112,7 @@ export default function ElementBalance({ balance, dayMaster }) {
             padding: '3px 10px',
             ...(strong
               ? { color: '#c4913a', background: 'rgba(196,145,58,0.08)', border: '1px solid rgba(196,145,58,0.2)' }
-              : { color: 'var(--jade)', background: 'var(--jade-bg)', border: '1px solid var(--jade-border)' }),
+              : { color: 'var(--jade)', background: 'var(--jade-bg)', border: '1px solid var(--jade-dim)' }),
           }}>
             {strong ? 'Strong 旺' : 'Weak 弱'}
           </span>
