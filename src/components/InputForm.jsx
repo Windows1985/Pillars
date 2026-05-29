@@ -265,6 +265,9 @@ function HourGrid({ value, onChange }) {
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
               {h.time}
             </span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.04em', color: active ? 'var(--jade)' : 'var(--text-muted)', textTransform: 'capitalize' }}>
+              {h.animal}
+            </span>
           </button>
         );
       })}
@@ -325,7 +328,7 @@ export default function InputForm({ onSubmit }) {
         {step > 2 ? (
           <Done label="Sex at birth" value={genderLabel} />
         ) : (
-          <StepCard n={2} question="What is your sex at birth?" context="BaZi uses biological sex to determine which direction your luck pillars run — the 10-year chapters that shift the elemental balance of each decade." onEnter={() => advance(2)}>
+          <StepCard n={2} question="What is your sex at birth?" context="BaZi uses biological sex to determine which direction your ten-year life cycles run — the chapters that shift the elemental balance of each decade." onEnter={() => advance(2)}>
             <TogglePair value={gender} onChange={setGender} options={[{ value: 'male', label: 'Male 男' }, { value: 'female', label: 'Female 女' }]} />
             <div style={{ marginTop: 20 }}>
               <Btn label="Continue" onClick={() => advance(2)} />
@@ -338,7 +341,7 @@ export default function InputForm({ onSubmit }) {
         {step > 3 ? (
           <Done label="Birth year" value={year} />
         ) : (
-          <StepCard n={3} question="What year were you born?" context="The BaZi year begins on 立春 (Lì Chūn) around February 4th, not January 1st. If you were born in January or early February, your BaZi year may be the previous calendar year." onEnter={() => validateYear(year) && advance(3)}>
+          <StepCard n={3} question="What year were you born?" context="The BaZi year begins on 立春 (Lì Chūn) around February 4th, not January 1st. If you were born in January or early February, your BaZi year may be the previous calendar year. Charts are calculated for birth years 1920–2011." onEnter={() => validateYear(year) && advance(3)}>
             <NumberInput value={year} onChange={setYear} min={1920} max={2011} placeholder="e.g. 1988" />
             {year && !validateYear(year) && (
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#d96b54', marginTop: 8 }}>
@@ -356,7 +359,7 @@ export default function InputForm({ onSubmit }) {
         {step > 4 ? (
           <Done label="Birth date" value={dateLabel} />
         ) : (
-          <StepCard n={4} question="What is your birth date?" context="Month and day set your Month Pillar, governed by the solar term calendar." onEnter={() => advance(4)}>
+          <StepCard n={4} question="What is your birth date?" context="Your month and day set the Month Pillar — the character pair governing career and social life." onEnter={() => advance(4)}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <Select value={month} onChange={v => { setMonth(v); setDay(d => Math.min(d, daysInMonth(parseInt(year) || 2000, v))); }} options={MONTHS.map((m, i) => ({ value: i + 1, label: m }))} />
               <Select value={safeDay} onChange={setDay} options={Array.from({ length: maxDay }, (_, i) => ({ value: i + 1, label: String(i + 1) }))} />

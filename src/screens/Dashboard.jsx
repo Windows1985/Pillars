@@ -26,7 +26,7 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
     .filter(([, v]) => v > 0)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3)
-    .map(([k, v]) => `${ELEM_ZH[k]}×${Math.round(v * 10) / 10}`)
+    .map(([k, v]) => `${ELEM_ZH[k]} ${k}×${Math.round(v * 10) / 10}`)
     .join(' ');
 
   const bd = chart.birthDate;
@@ -70,6 +70,9 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
               </div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.1em', marginTop: 6 }}>
                 {stem.pinyin} · 天干
+              </div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 300, fontStyle: 'italic', fontSize: 13, color: 'var(--text-dim)', marginTop: 10, maxWidth: 220, lineHeight: 1.5 }}>
+                The Heavenly Stem of your birth day — the central reference point for your entire chart.
               </div>
             </div>
           </div>

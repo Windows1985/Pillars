@@ -23,7 +23,16 @@ export default function PillarChart({ chart }) {
   const starsByPillar = { Year: [], Month: [], Day: [], Hour: [] };
   specialStars.forEach(s => { if (starsByPillar[s.pillar]) starsByPillar[s.pillar].push(s); });
 
+  const ELEM_LEGEND = [
+    { name: 'Wood', hex: '#6abf7a' }, { name: 'Fire', hex: '#d96b54' },
+    { name: 'Earth', hex: '#c4913a' }, { name: 'Metal', hex: '#9db0c2' }, { name: 'Water', hex: '#5592b8' },
+  ];
+
   return (
+    <div>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', textAlign: 'center', marginBottom: 12 }}>
+        Heavenly Stem (天干) above · Earthly Branch (地支) below
+      </div>
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }}>
       {pillars.map((p, i) => {
         const isDay = i === 2;
@@ -155,11 +164,11 @@ export default function PillarChart({ chart }) {
             {stars.length > 0 && (
               <div style={{ padding: '0 20px 16px', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                 {stars.map((s, j) => (
-                  <span key={j} style={{
+                  <span key={j} title={s.english || s.star} style={{
                     fontFamily: 'var(--font-cjk)', fontSize: 9, padding: '2px 7px',
                     background: 'rgba(196,145,58,0.08)', color: '#c4913a',
                     border: '1px solid rgba(196,145,58,0.2)',
-                    letterSpacing: '0.04em',
+                    letterSpacing: '0.04em', cursor: 'default',
                   }}>
                     {s.star}
                   </span>
@@ -169,6 +178,15 @@ export default function PillarChart({ chart }) {
           </div>
         );
       })}
+    </div>
+    <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginTop: 16 }}>
+      {ELEM_LEGEND.map(el => (
+        <div key={el.name} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <div style={{ width: 6, height: 6, borderRadius: '50%', background: el.hex, flexShrink: 0 }} />
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'var(--text-muted)', letterSpacing: '0.08em' }}>{el.name}</span>
+        </div>
+      ))}
+    </div>
     </div>
   );
 }

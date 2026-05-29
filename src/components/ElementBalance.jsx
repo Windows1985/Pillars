@@ -39,8 +39,8 @@ function RadarChart({ totals, total, dominantEl }) {
       {ELEMS_ORDER.map((el, i) => {
         const [lx, ly] = pt(ANGLES[i], MAX_R + 18);
         return (
-          <text key={el} x={lx.toFixed(2)} y={ly.toFixed(2)} textAnchor="middle" dominantBaseline="middle" fontSize={13} fill={ELEM[el].hex} fontFamily="'Noto Serif SC', serif">
-            {ELEM[el].zh}
+          <text key={el} x={lx.toFixed(2)} y={ly.toFixed(2)} textAnchor="middle" dominantBaseline="middle" fontSize={10} fill={ELEM[el].hex} fontFamily="'Noto Serif SC', serif">
+            <tspan>{ELEM[el].zh} {el}</tspan>
           </text>
         );
       })}
@@ -60,19 +60,24 @@ export default function ElementBalance({ balance, dayMaster }) {
 
       <div style={{ flex: 1, paddingTop: 8 }}>
         {/* Strong / Weak */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-            Day Master
-          </span>
-          <span style={{
-            fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.1em',
-            padding: '3px 10px',
-            ...(strong
-              ? { color: '#c4913a', background: 'rgba(196,145,58,0.08)', border: '1px solid rgba(196,145,58,0.2)' }
-              : { color: 'var(--jade)', background: 'var(--jade-bg)', border: '1px solid var(--jade-border)' }),
-          }}>
-            {strong ? 'Strong 旺' : 'Weak 弱'}
-          </span>
+        <div style={{ marginBottom: 28 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+              Day Master
+            </span>
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.1em',
+              padding: '3px 10px',
+              ...(strong
+                ? { color: '#c4913a', background: 'rgba(196,145,58,0.08)', border: '1px solid rgba(196,145,58,0.2)' }
+                : { color: 'var(--jade)', background: 'var(--jade-bg)', border: '1px solid var(--jade-border)' }),
+            }}>
+              {strong ? 'Strong 旺' : 'Weak 弱'}
+            </span>
+          </div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.12em' }}>
+            Strong: thrives with challenge and independence · Weak: benefits from support and collaboration
+          </div>
         </div>
 
         {/* Element scores */}
@@ -111,7 +116,7 @@ export default function ElementBalance({ balance, dayMaster }) {
         {/* Suggested balance */}
         <div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>
-            Suggested Balance
+            To strengthen your chart
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 20, color: ELEM[balancingElement.primaryElement]?.hex ?? '#c4913a' }}>
@@ -125,6 +130,9 @@ export default function ElementBalance({ balance, dayMaster }) {
                 {balancingElement.reason}
               </div>
             </div>
+          </div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)', marginTop: 8, lineHeight: 1.5 }}>
+            Invite more {balancingElement.primaryElement} energy into your environment and timing of decisions.
           </div>
         </div>
       </div>
