@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
-import { supabase, SUPABASE_FN_URL } from '../../lib/supabase.js';
+import { supabase, SUPABASE_FN_URL, SUPABASE_ANON_KEY } from '../../lib/supabase.js';
 
 const TIERS = [
   {
@@ -83,6 +83,7 @@ export default function PricingPage({ onClose, currentTier }) {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
+          apikey: SUPABASE_ANON_KEY,
         },
         body: JSON.stringify({ price_id: priceId, success_url: window.location.href, cancel_url: window.location.href }),
       });

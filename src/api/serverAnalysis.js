@@ -1,4 +1,4 @@
-import { supabase, SUPABASE_FN_URL } from '../lib/supabase.js';
+import { supabase, SUPABASE_FN_URL, SUPABASE_ANON_KEY } from '../lib/supabase.js';
 
 export async function saveChart(chartData, name = 'My Chart') {
   const { data: { session } } = await supabase.auth.getSession();
@@ -17,7 +17,7 @@ export async function generateTeaser(chartId) {
   if (!session) throw new Error('Not authenticated');
   const resp = await fetch(`${SUPABASE_FN_URL}/generate-analysis`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}`, apikey: SUPABASE_ANON_KEY },
     body: JSON.stringify({ chart_id: chartId, type: 'teaser' }),
   });
   const data = await resp.json();
@@ -30,7 +30,7 @@ export async function generateNatal(chartId) {
   if (!session) throw new Error('Not authenticated');
   const resp = await fetch(`${SUPABASE_FN_URL}/generate-analysis`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}`, apikey: SUPABASE_ANON_KEY },
     body: JSON.stringify({ chart_id: chartId, type: 'natal' }),
   });
   const data = await resp.json();
