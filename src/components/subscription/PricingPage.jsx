@@ -131,7 +131,7 @@ export default function PricingPage({ open, onClose, currentTier }) {
               </p>
 
               {/* Billing toggle */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, marginTop: 28, background: 'var(--border)', display: 'inline-flex' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 1, marginTop: 28, background: 'var(--border)' }}>
                 {[{ id: false, label: 'Monthly' }, { id: true, label: 'Annual  −30%' }].map(opt => (
                   <button
                     key={String(opt.id)}

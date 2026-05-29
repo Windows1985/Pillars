@@ -30,6 +30,9 @@ export default function ElementBalance({ balance, dayMaster }) {
   });
 
   const maxVal = Math.max(...barData.map(d => d.rawScore), 0.1);
+  // Build lookup by element name so nivo callbacks can access rawScore/color
+  // without relying on nivo's internal datum shape (which varies by prop type)
+  const rawByEl = Object.fromEntries(barData.map(d => [d.id, d]));
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -47,13 +50,16 @@ export default function ElementBalance({ balance, dayMaster }) {
           enableGridX={false}
           enableGridY={false}
           enableLabel={true}
-          label={({ data }) => (data.data?.rawScore ?? 0).toFixed(1)}
+          label={({ indexValue }) => (rawByEl[String(indexValue)]?.rawScore ?? 0).toFixed(1)}
           labelSkipWidth={0}
           labelSkipHeight={0}
-          labelTextColor={({ data }) => data.rawScore === 0 ? 'rgba(156,163,175,0.2)' : data.color}
+          labelTextColor={({ indexValue }) => {
+            const d = rawByEl[String(indexValue)];
+            return (d?.rawScore ?? 0) === 0 ? 'rgba(156,163,175,0.2)' : (d?.color ?? '#9ca3af');
+          }}
           axisLeft={{
             tickSize: 0,
-            tickPadding: 8,
+            tickPadding: 16,
             renderTick: ({ x, y, value, textAnchor }) => (
               <g transform={`translate(${x},${y})`}>
                 <text
