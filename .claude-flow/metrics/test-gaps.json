@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-05-29T01:25:51.621Z",
+  "mode": "headless",
+  "workerType": "testgaps",
+  "model": "sonnet",
+  "durationMs": 284543,
+  "executionId": "testgaps_1780017667078_nissio",
+  "success": true,
+  "findings": {
+    "sections": [],
+    "codeBlocks": []
+  },
+  "rawOutputPreview": "The only \"change\" is `.claude/worktrees/agent-a97299c93eb7304ff` — an internal worktree reference, not source code. I didn't create any test files; the test skeletons were only in my text response.\n\nThere's nothing meaningful to commit here. If you'd like the test files actually written to disk, say so and I'll create them. If you want to dismiss the hook warning by pulling the 1 pending commit from origin, I can do that too — just confirm.\n",
+  "rawOutputLength": 445
+}
