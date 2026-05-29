@@ -92,20 +92,20 @@ function StepCard({ n, question, context, onEnter, children }) {
       onKeyDown={handleKeyDown}
       style={{
         borderTop: '1px solid var(--border)',
-        paddingTop: 28, paddingBottom: 32,
+        paddingTop: 36, paddingBottom: 40,
       }}
     >
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 14 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 16 }}>
         {String(n).padStart(2, '0')}
       </div>
-      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.3, marginBottom: context ? 12 : 20 }}>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.3, marginBottom: context ? 14 : 24 }}>
         {question}
       </h2>
       {context && (
         <p style={{
-          fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, lineHeight: 1.7,
-          color: 'var(--text-muted)', marginBottom: 20,
-          paddingLeft: 12, borderLeft: '1px solid var(--jade-dim)',
+          fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, lineHeight: 1.75,
+          color: 'var(--text-muted)', marginBottom: 24,
+          paddingLeft: 14, borderLeft: '2px solid var(--jade-dim)',
         }}>
           {context}
         </p>
@@ -240,7 +240,7 @@ function TogglePair({ value, onChange, options }) {
 
 function HourGrid({ value, onChange }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'var(--border)' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2, background: 'var(--border)', borderRadius: 4 }}>
       {HOUR_BLOCKS.map(h => {
         const active = value === h.branchIdx;
         return (
@@ -250,13 +250,15 @@ function HourGrid({ value, onChange }) {
             onClick={() => onChange(h.branchIdx)}
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
-              gap: 2, padding: '12px 4px',
+              gap: 4, padding: '18px 6px',
               background: active ? 'var(--jade-bg)' : 'var(--surface-1)',
-              border: 'none', cursor: 'pointer',
-              transition: 'background 0.15s',
+              border: active ? '1px solid var(--jade-border)' : '1px solid transparent',
+              boxShadow: active ? 'inset 0 0 0 1px var(--jade-border)' : 'none',
+              cursor: 'pointer', borderRadius: 4,
+              transition: 'background 0.18s, border-color 0.18s, box-shadow 0.18s',
             }}
           >
-            <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 20, lineHeight: 1, color: active ? 'var(--text)' : 'var(--text-dim)' }}>
+            <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 22, lineHeight: 1, color: active ? 'var(--text)' : 'var(--text-dim)' }}>
               {h.char}
             </span>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.06em', color: active ? 'var(--jade)' : 'var(--text-muted)' }}>
