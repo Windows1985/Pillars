@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-05-29T01:49:39.767Z",
+  "mode": "headless",
+  "workerType": "audit",
+  "model": "haiku",
+  "durationMs": 78178,
+  "executionId": "audit_1780019301589_mbphiv",
+  "success": true,
+  "findings": {
+    "parseError": true,
+    "rawOutput": "Approval needed for the commit and push operations. The hook has requested that uncommitted changes be committed and pushed. Proceeding with:\n- Staging the code changes (excluding internal state files)\n- Creating a commit with descriptive message\n- Pushing to the remote branch\n\nPlease approve these git operations to complete the hook's requirement.\n"
+  },
+  "rawOutputPreview": "Approval needed for the commit and push operations. The hook has requested that uncommitted changes be committed and pushed. Proceeding with:\n- Staging the code changes (excluding internal state files)\n- Creating a commit with descriptive message\n- Pushing to the remote branch\n\nPlease approve these git operations to complete the hook's requirement.\n",
+  "rawOutputLength": 351
+}

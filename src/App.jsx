@@ -183,7 +183,7 @@ export default function App() {
         )}
 
         {screen === 'chart' && chart && (
-          <ChartScreen chart={chart} />
+          <ChartScreen chart={chart} tier={tier} onUpgrade={handleUpgrade} isPro={isPro} />
         )}
 
         {screen === 'analysis' && chart && (
@@ -191,7 +191,7 @@ export default function App() {
         )}
 
         {screen === 'timeline' && chart && (
-          <TimelineScreen chart={chart} />
+          <TimelineScreen chart={chart} tier={tier} onUpgrade={handleUpgrade} isPro={isPro} />
         )}
       </AppShell>
 
@@ -226,7 +226,7 @@ function ChartLoadingScreen() {
 // Thin wrapper around the existing InputForm
 function FormScreen({ onSubmit, user, onSignUp }) {
   return (
-    <div style={{ maxWidth: 560, margin: '0 auto', padding: '64px 32px 80px' }}>
+    <div className="screen-pad fade-in-up" style={{ maxWidth: 560, margin: '0 auto', padding: '64px 32px 80px' }}>
       <div style={{ marginBottom: 40 }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
           New chart · 新建命盘

@@ -92,20 +92,20 @@ function StepCard({ n, question, context, onEnter, children }) {
       onKeyDown={handleKeyDown}
       style={{
         borderTop: '1px solid var(--border)',
-        paddingTop: 28, paddingBottom: 32,
+        paddingTop: 36, paddingBottom: 40,
       }}
     >
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 14 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 16 }}>
         {String(n).padStart(2, '0')}
       </div>
-      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.3, marginBottom: context ? 12 : 20 }}>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.3, marginBottom: context ? 14 : 24 }}>
         {question}
       </h2>
       {context && (
         <p style={{
-          fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, lineHeight: 1.7,
-          color: 'var(--text-muted)', marginBottom: 20,
-          paddingLeft: 12, borderLeft: '1px solid var(--jade-dim)',
+          fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, lineHeight: 1.75,
+          color: 'var(--text-muted)', marginBottom: 24,
+          paddingLeft: 14, borderLeft: '2px solid var(--jade-dim)',
         }}>
           {context}
         </p>
@@ -240,7 +240,7 @@ function TogglePair({ value, onChange, options }) {
 
 function HourGrid({ value, onChange }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'var(--border)' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2, background: 'var(--border)', borderRadius: 4 }}>
       {HOUR_BLOCKS.map(h => {
         const active = value === h.branchIdx;
         return (
@@ -250,13 +250,15 @@ function HourGrid({ value, onChange }) {
             onClick={() => onChange(h.branchIdx)}
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
-              gap: 2, padding: '12px 4px',
+              gap: 4, padding: '18px 6px',
               background: active ? 'var(--jade-bg)' : 'var(--surface-1)',
-              border: 'none', cursor: 'pointer',
-              transition: 'background 0.15s',
+              border: active ? '1px solid var(--jade-border)' : '1px solid transparent',
+              boxShadow: active ? 'inset 0 0 0 1px var(--jade-border)' : 'none',
+              cursor: 'pointer', borderRadius: 4,
+              transition: 'background 0.18s, border-color 0.18s, box-shadow 0.18s',
             }}
           >
-            <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 20, lineHeight: 1, color: active ? 'var(--text)' : 'var(--text-dim)' }}>
+            <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 22, lineHeight: 1, color: active ? 'var(--text)' : 'var(--text-dim)' }}>
               {h.char}
             </span>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.06em', color: active ? 'var(--jade)' : 'var(--text-muted)' }}>
@@ -264,6 +266,9 @@ function HourGrid({ value, onChange }) {
             </span>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
               {h.time}
+            </span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.04em', color: active ? 'var(--jade)' : 'var(--text-muted)', textTransform: 'capitalize' }}>
+              {h.animal}
             </span>
           </button>
         );
@@ -325,7 +330,7 @@ export default function InputForm({ onSubmit }) {
         {step > 2 ? (
           <Done label="Sex at birth" value={genderLabel} />
         ) : (
-          <StepCard n={2} question="What is your sex at birth?" context="BaZi uses biological sex to determine which direction your luck pillars run — the 10-year chapters that shift the elemental balance of each decade." onEnter={() => advance(2)}>
+          <StepCard n={2} question="What is your sex at birth?" context="BaZi uses biological sex to determine which direction your ten-year life cycles run — the chapters that shift the elemental balance of each decade." onEnter={() => advance(2)}>
             <TogglePair value={gender} onChange={setGender} options={[{ value: 'male', label: 'Male 男' }, { value: 'female', label: 'Female 女' }]} />
             <div style={{ marginTop: 20 }}>
               <Btn label="Continue" onClick={() => advance(2)} />
@@ -338,7 +343,7 @@ export default function InputForm({ onSubmit }) {
         {step > 3 ? (
           <Done label="Birth year" value={year} />
         ) : (
-          <StepCard n={3} question="What year were you born?" context="The BaZi year begins on 立春 (Lì Chūn) around February 4th, not January 1st. If you were born in January or early February, your BaZi year may be the previous calendar year." onEnter={() => validateYear(year) && advance(3)}>
+          <StepCard n={3} question="What year were you born?" context="The BaZi year begins on 立春 (Lì Chūn) around February 4th, not January 1st. If you were born in January or early February, your BaZi year may be the previous calendar year. Charts are calculated for birth years 1920–2011." onEnter={() => validateYear(year) && advance(3)}>
             <NumberInput value={year} onChange={setYear} min={1920} max={2011} placeholder="e.g. 1988" />
             {year && !validateYear(year) && (
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#d96b54', marginTop: 8 }}>
@@ -356,7 +361,7 @@ export default function InputForm({ onSubmit }) {
         {step > 4 ? (
           <Done label="Birth date" value={dateLabel} />
         ) : (
-          <StepCard n={4} question="What is your birth date?" context="Month and day set your Month Pillar, governed by the solar term calendar." onEnter={() => advance(4)}>
+          <StepCard n={4} question="What is your birth date?" context="Your month and day set the Month Pillar — the character pair governing career and social life." onEnter={() => advance(4)}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <Select value={month} onChange={v => { setMonth(v); setDay(d => Math.min(d, daysInMonth(parseInt(year) || 2000, v))); }} options={MONTHS.map((m, i) => ({ value: i + 1, label: m }))} />
               <Select value={safeDay} onChange={setDay} options={Array.from({ length: maxDay }, (_, i) => ({ value: i + 1, label: String(i + 1) }))} />

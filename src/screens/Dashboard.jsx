@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getTodayPillar } from '../bazi/dayPillar.js';
+import { generateTodayPillarReading } from '../api/proAnalysis.js';
+import UpgradeNudge from '../components/paywall/UpgradeNudge.jsx';
 
 const ELEMENT_INSIGHT = {
   Wood:  'Your Wood is unrooted — strong Water feeds it, no Earth anchors it. This decade activates your Resource pillar. Precision over expansion is not advice. It is structure.',
@@ -9,13 +11,32 @@ const ELEMENT_INSIGHT = {
   Water: 'Your Water flows around every obstacle with strategic depth. This decade the practice is direction — committing to a current and following it.',
 };
 
+function Spinner() {
+  return (
+    <div style={{ display: 'inline-block', width: 16, height: 16, borderRadius: '50%', border: '1.5px solid var(--border)', borderTopColor: 'var(--jade)', animation: 'spin 0.9s linear infinite', verticalAlign: 'middle', marginRight: 8 }} />
+  );
+}
 
-export default function Dashboard({ chart, chartId, teaserText, teaserLoading, onNavigate, savedCharts = [], onOpenSaved }) {
+export default function Dashboard({ chart, chartId, teaserText, teaserLoading, onNavigate, savedCharts = [], onOpenSaved, tier, onUpgrade }) {
+  const isPro = tier === 'pro' || tier === 'max';
   const stem = chart.dayMaster.stem;
   const today = getTodayPillar();
   const insight = teaserText || ELEMENT_INSIGHT[stem.element] || '';
   const todayStem = today.stem;
   const todayBranch = today.branch;
+
+  const [todayReading, setTodayReading] = useState('');
+  const [todayLoading, setTodayLoading] = useState(false);
+  const [todayError, setTodayError] = useState('');
+
+  useEffect(() => {
+    if (!isPro) return;
+    setTodayLoading(true);
+    generateTodayPillarReading(chart, today)
+      .then(t => setTodayReading(t))
+      .catch(e => setTodayError(e.message))
+      .finally(() => setTodayLoading(false));
+  }, [isPro]);
 
   const age = chart.currentYear - chart.birthDate.year;
   const currentPillar = chart.luckPillars?.pillars?.find(p => age >= p.startAge && age < p.endAge);
@@ -26,7 +47,7 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
     .filter(([, v]) => v > 0)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3)
-    .map(([k, v]) => `${ELEM_ZH[k]}×${Math.round(v * 10) / 10}`)
+    .map(([k, v]) => `${ELEM_ZH[k]} ${k}×${Math.round(v * 10) / 10}`)
     .join(' ');
 
   const bd = chart.birthDate;
@@ -41,26 +62,25 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
   ];
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 64px 80px' }}>
+    <div className="screen-pad fade-in-up" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 64px 80px' }}>
 
       {/* ── Hero ── */}
       <div style={{ padding: '72px 0 0' }}>
-        <div style={{ display: 'flex', alignItems: 'stretch' }}>
+        <div className="hero-flex" style={{ display: 'flex', alignItems: 'stretch' }}>
 
           {/* Left: Day Master character */}
-          <div style={{
+          <div className="hero-left" style={{
             flexShrink: 0,
             display: 'flex', flexDirection: 'column', justifyContent: 'center',
-            paddingRight: 64, paddingBottom: 8,
+            paddingRight: 80, paddingBottom: 8,
             borderRight: '1px solid var(--border)',
           }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>
               Day Master · 日主
             </div>
-            <div style={{
-              fontFamily: 'var(--font-cjk)', fontSize: 240, lineHeight: 0.9,
+            <div className="glow-cjk" style={{
+              fontFamily: 'var(--font-cjk)', fontSize: 'clamp(120px, 20vw, 240px)', lineHeight: 0.9,
               color: 'var(--text)',
-              textShadow: '0 0 100px oklch(58% 0.10 162 / 0.10)',
             }}>
               {stem.char}
             </div>
@@ -71,11 +91,14 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.1em', marginTop: 6 }}>
                 {stem.pinyin} · 天干
               </div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 300, fontStyle: 'italic', fontSize: 13, color: 'var(--text-dim)', marginTop: 10, maxWidth: 220, lineHeight: 1.5 }}>
+                The Heavenly Stem of your birth day — the central reference point for your entire chart.
+              </div>
             </div>
           </div>
 
           {/* Right: insight + today's pillar */}
-          <div style={{ flex: 1, paddingLeft: 64, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 40 }}>
+          <div className="hero-right" style={{ flex: 1, paddingLeft: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 48 }}>
             <p style={{
               fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 300,
               lineHeight: 1.55, color: 'var(--text)', maxWidth: 520, textWrap: 'pretty',
@@ -111,17 +134,38 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
               }}>
                 {today.reading}
               </p>
+
+              {/* Today's pillar AI reading */}
+              {isPro ? (
+                <div style={{ marginTop: 8, paddingTop: 16, borderTop: '1px solid var(--border)', maxWidth: 440 }}>
+                  {todayLoading && (
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em' }}>
+                      <Spinner />Reading today for your chart…
+                    </p>
+                  )}
+                  {todayError && (
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#d96b54' }}>{todayError}</p>
+                  )}
+                  {todayReading && (
+                    <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 300, lineHeight: 1.75, color: 'var(--text-dim)', textWrap: 'pretty' }}>
+                      {todayReading}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <UpgradeNudge label="Analyse today's pillar against your chart" onUpgrade={onUpgrade} />
+              )}
             </div>
           </div>
         </div>
       </div>
 
       {/* ── Tech strip ── */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '14px 0', marginTop: 48, borderTop: '1px solid var(--border)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '20px 0', marginTop: 56, borderTop: '1px solid var(--border)' }}>
         {techItems.map((item, i) => (
           <div key={item.label} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
             {i > 0 && <div style={{ width: 1, height: 30, background: 'var(--border)', flexShrink: 0, marginRight: 24 }} />}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 3, paddingLeft: i === 0 ? 0 : 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
                 {item.label}
               </div>
@@ -135,4 +179,3 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
     </div>
   );
 }
-
