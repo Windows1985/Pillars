@@ -24,9 +24,8 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
               style={{
                 flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
                 padding: '0', cursor: 'pointer', background: 'none', border: 'none',
-                borderTop: `2px solid ${isCurrent ? 'var(--jade)' : isSelected ? 'var(--border)' : 'transparent'}`,
                 opacity: isCurrent || isSelected ? 1 : 0.28,
-                transition: 'opacity 0.2s, border-color 0.2s',
+                transition: 'opacity 0.2s',
               }}
             >
               <div style={{ paddingTop: 22, paddingBottom: 6 }}>

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { getTodayPillar } from '../bazi/dayPillar.js';
 
 const ELEMENT_INSIGHT = {
@@ -8,12 +9,6 @@ const ELEMENT_INSIGHT = {
   Water: 'Your Water flows around every obstacle with strategic depth. This decade the practice is direction — committing to a current and following it.',
 };
 
-const EXPLORE = [
-  { zh: '性格', en: 'Personality', desc: 'Yang Wood structure, Wealth stars, core drives and the blind spots you\'ll recognise from your own life.', link: 'Read analysis', to: 'analysis', featured: true },
-  { zh: '事业', en: 'Career', desc: 'Resource stars, Officer energy, optimal work structure.', link: 'Explore', to: 'analysis' },
-  { zh: '感情', en: 'Relationships', desc: 'Spouse palace, elemental affinities, timing patterns.', link: 'Explore', to: 'analysis' },
-  { zh: '大运', en: 'Timing', desc: 'Ten-year luck pillars — your life arc, mapped.', link: 'View timeline', to: 'timeline' },
-];
 
 export default function Dashboard({ chart, chartId, teaserText, teaserLoading, onNavigate, savedCharts = [], onOpenSaved }) {
   const stem = chart.dayMaster.stem;
@@ -121,21 +116,6 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
         </div>
       </div>
 
-      {/* ── Explore grid ── */}
-      <div style={{ padding: '64px 0 0' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 24, marginBottom: 32 }}>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontStyle: 'italic', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-            Explore your chart
-          </span>
-          <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 24 }}>
-          {EXPLORE.map((card) => (
-            <ExploreCard key={card.en} card={card} onNavigate={onNavigate} />
-          ))}
-        </div>
-      </div>
-
       {/* ── Tech strip ── */}
       <div style={{ display: 'flex', alignItems: 'center', padding: '14px 0', marginTop: 48, borderTop: '1px solid var(--border)' }}>
         {techItems.map((item, i) => (
@@ -156,33 +136,3 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
   );
 }
 
-function ExploreCard({ card, onNavigate }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={() => onNavigate(card.to)}
-      onKeyDown={e => e.key === 'Enter' && onNavigate(card.to)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: 'flex', flexDirection: 'column', gap: 10,
-        padding: '28px 0 24px', cursor: 'pointer',
-        borderTop: `1px solid ${hovered ? 'var(--jade-dim)' : 'var(--border)'}`,
-        transition: 'border-color 0.2s',
-        outline: 'none',
-      }}
-    >
-      <div style={{ fontFamily: 'var(--font-cjk)', fontSize: card.featured ? 40 : 28, color: 'var(--text-dim)' }}>{card.zh}</div>
-      <div style={{ fontFamily: 'var(--font-display)', fontSize: card.featured ? 30 : 22, fontWeight: 300, color: 'var(--text)', lineHeight: 1.2 }}>{card.en}</div>
-      <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-muted)', textWrap: 'pretty' }}>{card.desc}</div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--jade)', marginTop: 'auto', paddingTop: 12 }}>
-        {card.link} →
-      </div>
-    </div>
-  );
-}
-
-// useState needed for ExploreCard hover
-import { useState } from 'react';
