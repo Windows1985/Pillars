@@ -221,7 +221,7 @@ export default function App() {
       </AppShell>
 
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} defaultMode={authMode} />
-      {showPricing && <PricingPage onClose={() => setShowPricing(false)} currentTier={tier} />}
+      <PricingPage open={showPricing} onClose={() => setShowPricing(false)} currentTier={tier} />
     </>
   );
 }

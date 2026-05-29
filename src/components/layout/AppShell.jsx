@@ -13,6 +13,7 @@ export default function AppShell({
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-0)' }}>
+      <a href="#main-content" className="skip-link">Skip to content</a>
       <header style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 64px', height: 56,
@@ -23,6 +24,7 @@ export default function AppShell({
         {/* Logo */}
         <button
           onClick={() => onNavigate(hasChart ? 'dashboard' : 'landing')}
+          aria-label="Pillars — go to home"
           style={{ display: 'flex', alignItems: 'baseline', gap: 10, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
         >
           <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 18, color: 'var(--text)' }}>柱</span>
@@ -34,17 +36,18 @@ export default function AppShell({
 
         {/* Nav — only when chart exists */}
         {hasChart && (
-          <nav style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <nav aria-label="Main navigation" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             {NAV.map(({ id, en }) => (
               <button
                 key={id}
                 onClick={() => onNavigate(id)}
+                aria-current={screen === id ? 'page' : undefined}
                 style={{
                   fontFamily: 'var(--font-display)',
                   fontSize: 13, fontWeight: 300, letterSpacing: '0.02em',
                   color: screen === id ? 'var(--text)' : 'var(--text-muted)',
                   background: 'none', border: 'none', cursor: 'pointer',
-                  padding: '6px 14px', position: 'relative',
+                  padding: '8px 14px', position: 'relative',
                 }}
               >
                 {en}
@@ -78,6 +81,7 @@ export default function AppShell({
               )}
               <button
                 onClick={onSignOut}
+                aria-label="Sign out"
                 style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 Sign out
@@ -94,7 +98,9 @@ export default function AppShell({
         </div>
       </header>
 
-      {children}
+      <main id="main-content">
+        {children}
+      </main>
     </div>
   );
 }

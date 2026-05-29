@@ -12,9 +12,9 @@ export default function TimelineScreen({ chart }) {
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
           Luck Pillars · 大运
         </div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.2 }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.2 }}>
           Your life arc
-        </h2>
+        </h1>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 24, marginTop: 16 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Current age</div>

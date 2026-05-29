@@ -140,10 +140,13 @@ function Btn({ label, onClick, disabled, large }) {
   );
 }
 
-function TextInput({ value, onChange, placeholder, autoFocus }) {
+function TextInput({ value, onChange, placeholder, autoFocus, id, name, autoComplete }) {
   return (
     <input
       type="text"
+      id={id}
+      name={name}
+      autoComplete={autoComplete}
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
@@ -163,10 +166,13 @@ function TextInput({ value, onChange, placeholder, autoFocus }) {
   );
 }
 
-function NumberInput({ value, onChange, min, max, placeholder }) {
+function NumberInput({ value, onChange, min, max, placeholder, id, name, inputMode }) {
   return (
     <input
       type="number"
+      id={id}
+      name={name}
+      inputMode={inputMode ?? "numeric"}
       value={value}
       min={min}
       max={max}
@@ -222,6 +228,7 @@ function TogglePair({ value, onChange, options }) {
           key={o.value}
           data-autofocus={o.value === options[0].value ? true : undefined}
           onClick={() => onChange(o.value)}
+          aria-pressed={value === o.value}
           style={{
             flex: 1, padding: '12px 0',
             fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase',
@@ -248,6 +255,8 @@ function HourGrid({ value, onChange }) {
             key={h.branchIdx}
             data-autofocus={h.branchIdx === 0 ? true : undefined}
             onClick={() => onChange(h.branchIdx)}
+            aria-label={`${h.animal} hour — ${h.time}`}
+            aria-pressed={active}
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               gap: 2, padding: '12px 4px',
@@ -313,7 +322,10 @@ export default function InputForm({ onSubmit }) {
           <Done label="Name" value={name.trim() || '—'} />
         ) : (
           <StepCard n={1} question="What's your name?" context="Optional — used only to personalise the chart header." onEnter={() => advance(1)}>
-            <TextInput value={name} onChange={setName} placeholder="Your name, or leave blank" autoFocus />
+            <label htmlFor="name" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>
+              Your name (optional)
+            </label>
+            <TextInput id="name" name="name" autoComplete="given-name" value={name} onChange={setName} placeholder="Your name, or leave blank" autoFocus />
             <div style={{ marginTop: 20 }}>
               <Btn label="Continue" onClick={() => advance(1)} />
             </div>
@@ -339,7 +351,10 @@ export default function InputForm({ onSubmit }) {
           <Done label="Birth year" value={year} />
         ) : (
           <StepCard n={3} question="What year were you born?" context="The BaZi year begins on 立春 (Lì Chūn) around February 4th, not January 1st. If you were born in January or early February, your BaZi year may be the previous calendar year." onEnter={() => validateYear(year) && advance(3)}>
-            <NumberInput value={year} onChange={setYear} min={1920} max={2011} placeholder="e.g. 1988" />
+            <label htmlFor="birth-year" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>
+              Birth year
+            </label>
+            <NumberInput id="birth-year" name="birth-year" inputMode="numeric" value={year} onChange={setYear} min={1920} max={2011} placeholder="e.g. 1988" />
             {year && !validateYear(year) && (
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#d96b54', marginTop: 8 }}>
                 Enter a year between 1920 and 2011.

@@ -1,6 +1,6 @@
 export default function Landing({ onEnter }) {
   return (
-    <div style={{
+    <div id="main-content" style={{
       minHeight: 'calc(100vh - 56px)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
@@ -36,6 +36,7 @@ export default function Landing({ onEnter }) {
 
       <button
         onClick={onEnter}
+        aria-label="Enter your birth data"
         style={{
           fontFamily: 'var(--font-mono)',
           fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase',

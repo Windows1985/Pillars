@@ -34,7 +34,7 @@ function AnalysisSkeleton() {
 
 function Prose({ text }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: '72ch' }}>
       {text.split('\n\n').filter(p => p.trim()).map((para, i) => (
         <p key={i} style={{
           fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 300,
@@ -78,45 +78,47 @@ export default function AnalysisScreen({
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
           Analysis · 命理解析
         </div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.2 }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.2 }}>
           Your natal reading
-        </h2>
+        </h1>
         <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, color: 'var(--text-dim)', marginTop: 10, lineHeight: 1.7 }}>
           A full-text interpretation of your chart's structure, element dynamics, and decade-level timing.
         </p>
       </div>
 
       <SectionDivider en="Overview" zh="概述" chapter="I" />
-      {activeLoading && <AnalysisSkeleton />}
-      {activeError && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{activeError}</p>
-          {(onRetryTeaser || onRetryAnon) && (
-            <button
-              onClick={showAnon ? onRetryAnon : onRetryTeaser}
-              style={{
-                alignSelf: 'flex-start',
-                fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em',
-                textTransform: 'uppercase', color: 'var(--text-muted)',
-                background: 'none', border: '1px solid var(--border)',
-                padding: '6px 16px', cursor: 'pointer',
-              }}
-            >
-              Retry
-            </button>
-          )}
-        </div>
-      )}
-      {activeText && <Prose text={activeText} />}
-      {!activeLoading && !activeError && !activeText && (
-        <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)' }}>
-          Generating your overview…
-        </p>
-      )}
+      <div aria-live="polite" role="status">
+        {activeLoading && <AnalysisSkeleton />}
+        {activeError && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{activeError}</p>
+            {(onRetryTeaser || onRetryAnon) && (
+              <button
+                onClick={showAnon ? onRetryAnon : onRetryTeaser}
+                style={{
+                  alignSelf: 'flex-start',
+                  fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em',
+                  textTransform: 'uppercase', color: 'var(--text-muted)',
+                  background: 'none', border: '1px solid var(--border)',
+                  padding: '6px 16px', cursor: 'pointer',
+                }}
+              >
+                Retry
+              </button>
+            )}
+          </div>
+        )}
+        {activeText && <Prose text={activeText} />}
+        {!activeLoading && !activeError && !activeText && (
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)' }}>
+            Generating your overview…
+          </p>
+        )}
+      </div>
 
       <SectionDivider en="Full Natal Reading" zh="完整命理" chapter="II" />
       {tier !== 'free' ? (
-        <>
+        <div aria-live="polite" role="status">
           {natalLoading && <AnalysisSkeleton />}
           {natalError && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -138,7 +140,7 @@ export default function AnalysisScreen({
             </div>
           )}
           {natalText && <Prose text={natalText} />}
-        </>
+        </div>
       ) : (
         <NatalBlurGate onUpgrade={onUpgrade} />
       )}

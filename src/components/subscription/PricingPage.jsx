@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { supabase, SUPABASE_FN_URL, SUPABASE_ANON_KEY } from '../../lib/supabase.js';
+import * as Dialog from '@radix-ui/react-dialog';
 
 const TIERS = [
   {
@@ -61,7 +62,7 @@ const TIERS = [
   },
 ];
 
-export default function PricingPage({ onClose, currentTier }) {
+export default function PricingPage({ open, onClose, currentTier }) {
   const { user } = useAuth();
   const [annual, setAnnual] = useState(false);
   const [loading, setLoading] = useState(null);
@@ -98,165 +99,172 @@ export default function PricingPage({ onClose, currentTier }) {
   }
 
   return (
-    <div
-      style={{
-        position: 'fixed', inset: 0, zIndex: 50,
-        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-        padding: '0 24px 48px', overflowY: 'auto',
-        background: 'rgba(7,7,9,0.9)', backdropFilter: 'blur(10px)',
-      }}
-      onClick={e => e.target === e.currentTarget && onClose?.()}
-    >
-      <div style={{ width: '100%', maxWidth: 780, paddingTop: 72 }}>
+    <Dialog.Root open={open} onOpenChange={(v) => !v && onClose?.()}>
+      <Dialog.Portal>
+        <Dialog.Overlay style={{
+          position: 'fixed', inset: 0, zIndex: 50,
+          display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+          padding: '0 24px 48px', overflowY: 'auto',
+          background: 'rgba(7,7,9,0.9)', backdropFilter: 'blur(10px)',
+        }}>
+          <Dialog.Content
+            style={{ width: '100%', maxWidth: 780, paddingTop: 72, outline: 'none' }}
+            onPointerDownOutside={() => onClose?.()}
+          >
+            <Dialog.Title style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>
+              Pricing
+            </Dialog.Title>
 
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 14 }}>
-            Pricing · 定价
-          </div>
-          <h2 style={{
-            fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic',
-            color: 'var(--text)', marginBottom: 10,
-          }}>
-            Unlock the full picture
-          </h2>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 300, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-            Chart calculation is always free. Upgrade for analysis, forecasts, and Q&A.
-          </p>
+            {/* Header */}
+            <div style={{ textAlign: 'center', marginBottom: 48 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 14 }}>
+                Pricing · 定价
+              </div>
+              <h2 style={{
+                fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic',
+                color: 'var(--text)', marginBottom: 10,
+              }}>
+                Unlock the full picture
+              </h2>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 300, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                Chart calculation is always free. Upgrade for analysis, forecasts, and Q&A.
+              </p>
 
-          {/* Billing toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, marginTop: 28, background: 'var(--border)', display: 'inline-flex' }}>
-            {[{ id: false, label: 'Monthly' }, { id: true, label: 'Annual  −30%' }].map(opt => (
-              <button
-                key={String(opt.id)}
-                onClick={() => setAnnual(opt.id)}
-                style={{
-                  fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase',
-                  padding: '9px 20px',
-                  background: annual === opt.id ? 'var(--jade-bg)' : 'var(--surface-1)',
-                  color: annual === opt.id ? 'var(--jade)' : 'var(--text-muted)',
-                  border: 'none', cursor: 'pointer',
-                  transition: 'background 0.15s, color 0.15s',
-                }}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {error && (
-          <div style={{
-            marginBottom: 24, padding: '12px 16px', textAlign: 'center',
-            fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.04em',
-            background: 'rgba(217,107,84,0.06)', color: '#d96b54', border: '1px solid rgba(217,107,84,0.15)',
-          }}>
-            {error}
-          </div>
-        )}
-
-        {/* Tier cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border)' }}>
-          {TIERS.map(tier => {
-            const isCurrent = currentTier === tier.key;
-            const price = tier.priceMonthly === 0 ? 'Free' : annual
-              ? `HK$${Math.round(tier.priceAnnual / 12)}/mo`
-              : `HK$${tier.priceMonthly}/mo`;
-            const subPrice = tier.priceMonthly === 0 ? null : annual
-              ? `HK$${tier.priceAnnual} billed annually`
-              : `~US$${tier.usdMonthly}/mo`;
-
-            return (
-              <div
-                key={tier.key}
-                style={{
-                  background: isCurrent ? 'var(--surface-2)' : 'var(--surface-1)',
-                  padding: '32px 28px 28px',
-                  borderTop: isCurrent ? `2px solid ${tier.accentColor}` : '2px solid transparent',
-                  display: 'flex', flexDirection: 'column',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-                  <div>
-                    <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>
-                      {tier.nameZh}
-                    </div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: tier.accentColor }}>
-                      {tier.name}
-                    </div>
-                  </div>
-                  {isCurrent && (
-                    <span style={{
-                      fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
-                      padding: '3px 10px', color: tier.accentColor,
-                      background: `${tier.accentColor}18`, border: `1px solid ${tier.accentColor}40`,
-                    }}>
-                      Current
-                    </span>
-                  )}
-                </div>
-
-                <div style={{ marginBottom: 28 }}>
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 300, color: 'var(--text)', lineHeight: 1 }}>
-                    {price}
-                  </div>
-                  {subPrice && (
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.06em', color: 'var(--text-muted)', marginTop: 6 }}>
-                      {subPrice}
-                    </div>
-                  )}
-                </div>
-
-                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28, flex: 1 }}>
-                  {tier.features.map((f, i) => (
-                    <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                      <span style={{ color: tier.accentColor, flexShrink: 0, lineHeight: 1.5 }}>·</span>
-                      <span style={{
-                        fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, lineHeight: 1.5,
-                        color: i === 0 ? 'var(--text-muted)' : 'var(--text-dim)',
-                      }}>
-                        {f}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                {tier.key !== 'free' && !isCurrent && (
+              {/* Billing toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, marginTop: 28, background: 'var(--border)', display: 'inline-flex' }}>
+                {[{ id: false, label: 'Monthly' }, { id: true, label: 'Annual  −30%' }].map(opt => (
                   <button
-                    onClick={() => handleUpgrade(tier)}
-                    disabled={!!loading}
+                    key={String(opt.id)}
+                    onClick={() => setAnnual(opt.id)}
                     style={{
-                      fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase',
-                      padding: '11px 0', width: '100%',
-                      background: loading === tier.key ? 'transparent' : `${tier.accentColor}18`,
-                      color: loading === tier.key ? 'var(--text-muted)' : tier.accentColor,
-                      border: `1px solid ${tier.accentColor}40`,
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      transition: 'background 0.15s',
+                      fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase',
+                      padding: '9px 20px',
+                      background: annual === opt.id ? 'var(--jade-bg)' : 'var(--surface-1)',
+                      color: annual === opt.id ? 'var(--jade)' : 'var(--text-muted)',
+                      border: 'none', cursor: 'pointer',
+                      transition: 'background 0.15s, color 0.15s',
                     }}
                   >
-                    {loading === tier.key ? '…' : `Upgrade to ${tier.name}`}
+                    {opt.label}
                   </button>
-                )}
+                ))}
               </div>
-            );
-          })}
-        </div>
+            </div>
 
-        {onClose && (
-          <div style={{ textAlign: 'center', marginTop: 32 }}>
-            <button
-              onClick={onClose}
-              style={{
-                fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em',
-                color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer',
-              }}
-            >
-              Maybe later
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+            {error && (
+              <div style={{
+                marginBottom: 24, padding: '12px 16px', textAlign: 'center',
+                fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.04em',
+                background: 'rgba(217,107,84,0.06)', color: '#d96b54', border: '1px solid rgba(217,107,84,0.15)',
+              }}>
+                {error}
+              </div>
+            )}
+
+            {/* Tier cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border)' }}>
+              {TIERS.map(tier => {
+                const isCurrent = currentTier === tier.key;
+                const price = tier.priceMonthly === 0 ? 'Free' : annual
+                  ? `HK$${Math.round(tier.priceAnnual / 12)}/mo`
+                  : `HK$${tier.priceMonthly}/mo`;
+                const subPrice = tier.priceMonthly === 0 ? null : annual
+                  ? `HK$${tier.priceAnnual} billed annually`
+                  : `~US$${tier.usdMonthly}/mo`;
+
+                return (
+                  <div
+                    key={tier.key}
+                    style={{
+                      background: isCurrent ? 'var(--surface-2)' : 'var(--surface-1)',
+                      padding: '32px 28px 28px',
+                      borderTop: isCurrent ? `2px solid ${tier.accentColor}` : '2px solid transparent',
+                      display: 'flex', flexDirection: 'column',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+                      <div>
+                        <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>
+                          {tier.nameZh}
+                        </div>
+                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: tier.accentColor }}>
+                          {tier.name}
+                        </div>
+                      </div>
+                      {isCurrent && (
+                        <span style={{
+                          fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
+                          padding: '3px 10px', color: tier.accentColor,
+                          background: `${tier.accentColor}18`, border: `1px solid ${tier.accentColor}40`,
+                        }}>
+                          Current
+                        </span>
+                      )}
+                    </div>
+
+                    <div style={{ marginBottom: 28 }}>
+                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 300, color: 'var(--text)', lineHeight: 1 }}>
+                        {price}
+                      </div>
+                      {subPrice && (
+                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.06em', color: 'var(--text-muted)', marginTop: 6 }}>
+                          {subPrice}
+                        </div>
+                      )}
+                    </div>
+
+                    <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28, flex: 1 }}>
+                      {tier.features.map((f, i) => (
+                        <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                          <span style={{ color: tier.accentColor, flexShrink: 0, lineHeight: 1.5 }}>·</span>
+                          <span style={{
+                            fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, lineHeight: 1.5,
+                            color: i === 0 ? 'var(--text-muted)' : 'var(--text-dim)',
+                          }}>
+                            {f}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {tier.key !== 'free' && !isCurrent && (
+                      <button
+                        onClick={() => handleUpgrade(tier)}
+                        disabled={!!loading}
+                        style={{
+                          fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase',
+                          padding: '11px 0', width: '100%',
+                          background: loading === tier.key ? 'transparent' : `${tier.accentColor}18`,
+                          color: loading === tier.key ? 'var(--text-muted)' : tier.accentColor,
+                          border: `1px solid ${tier.accentColor}40`,
+                          cursor: loading ? 'not-allowed' : 'pointer',
+                          transition: 'background 0.15s',
+                        }}
+                      >
+                        {loading === tier.key ? '…' : `Upgrade to ${tier.name}`}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {onClose && (
+              <div style={{ textAlign: 'center', marginTop: 32 }}>
+                <button
+                  onClick={onClose}
+                  style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em',
+                    color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer',
+                  }}
+                >
+                  Maybe later
+                </button>
+              </div>
+            )}
+          </Dialog.Content>
+        </Dialog.Overlay>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

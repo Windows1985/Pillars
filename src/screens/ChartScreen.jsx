@@ -25,9 +25,9 @@ export default function ChartScreen({ chart }) {
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
           Natal Chart · 八字命盘
         </div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.2 }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.2 }}>
           Four Pillars
-        </h2>
+        </h1>
         <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 18, color: 'var(--text-muted)', marginTop: 6 }}>四柱</div>
       </div>
 
