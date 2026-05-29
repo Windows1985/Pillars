@@ -2,18 +2,13 @@ import { useState } from 'react';
 import { STEMS, BRANCHES, ELEM } from '../bazi/constants.js';
 
 export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
-  const { startingAge, pillars } = luckPillars;
+  const { pillars } = luckPillars;
   const currentAge = currentYear - birthYear;
   const [selectedIdx, setSelectedIdx] = useState(null);
 
-  const timelineSpan = 80;
-  const currentPct = Math.max(0, Math.min(100, ((currentAge - startingAge) / timelineSpan) * 100));
-  const isInTimeline = currentAge >= startingAge && currentAge < startingAge + timelineSpan;
-
   return (
     <div>
-      {/* Character row */}
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', borderTop: '1px solid var(--border)' }}>
         {pillars.map((p, i) => {
           const stem = STEMS[p.stemIdx];
           const branch = BRANCHES[p.branchIdx];
@@ -28,97 +23,44 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
               onClick={() => setSelectedIdx(isSelected ? null : i)}
               style={{
                 flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-                gap: 3, padding: '6px 4px 10px', cursor: 'pointer',
-                background: 'none', border: 'none',
-                opacity: isCurrent || isSelected ? 1 : 0.35,
-                transition: 'opacity 0.2s',
+                padding: '0', cursor: 'pointer', background: 'none', border: 'none',
+                borderTop: `2px solid ${isCurrent ? 'var(--jade)' : isSelected ? 'var(--border)' : 'transparent'}`,
+                opacity: isCurrent || isSelected ? 1 : 0.28,
+                transition: 'opacity 0.2s, border-color 0.2s',
               }}
             >
-              <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 22, lineHeight: 1, color: se.hex }}>
-                {stem.char}
-              </span>
-              <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 22, lineHeight: 1, color: be.hex }}>
-                {branch.char}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+              <div style={{ paddingTop: 22, paddingBottom: 6 }}>
+                <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 22, lineHeight: 1, color: se.hex }}>
+                  {stem.char}
+                </div>
+                <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 22, lineHeight: 1, color: be.hex, marginTop: 5 }}>
+                  {branch.char}
+                </div>
+              </div>
 
-      {/* Bar + current marker */}
-      <div style={{ position: 'relative', height: 2, background: 'var(--border)', margin: '0 0 0' }}>
-        {/* Segment fills */}
-        {pillars.map((p, i) => {
-          const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
-          return (
-            <div
-              key={i}
-              style={{
-                position: 'absolute',
-                left: `${(i / 8) * 100}%`,
-                width: `${100 / 8}%`,
-                height: '100%',
-                background: isCurrent ? 'var(--jade)' : 'transparent',
-              }}
-            />
-          );
-        })}
-
-        {/* Current age cursor */}
-        {isInTimeline && (
-          <div style={{
-            position: 'absolute',
-            left: `${currentPct}%`,
-            top: -10,
-            transform: 'translateX(-50%)',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0,
-            pointerEvents: 'none',
-          }}>
-            <div style={{ width: 1, height: 22, background: 'var(--jade)' }} />
-          </div>
-        )}
-      </div>
-
-      {/* Age label row */}
-      <div style={{ display: 'flex', position: 'relative', marginTop: 8 }}>
-        {pillars.map((p, i) => {
-          const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
-          return (
-            <button
-              key={i}
-              onClick={() => setSelectedIdx(selectedIdx === i ? null : i)}
-              style={{
-                flex: 1, textAlign: 'center', cursor: 'pointer',
-                background: 'none', border: 'none', padding: '4px 0',
-              }}
-            >
-              <span style={{
-                fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.06em',
+              <div style={{
+                marginTop: 14, paddingBottom: 6,
+                fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.08em',
                 color: isCurrent ? 'var(--jade)' : 'var(--text-muted)',
               }}>
                 {p.startAge}
-              </span>
+              </div>
+
+              <div style={{ height: 14, display: 'flex', alignItems: 'center', paddingBottom: 16 }}>
+                {isCurrent && (
+                  <span style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.16em',
+                    textTransform: 'uppercase', color: 'var(--jade)',
+                  }}>
+                    now
+                  </span>
+                )}
+              </div>
             </button>
           );
         })}
-
-        {/* "now" label */}
-        {isInTimeline && (
-          <div style={{
-            position: 'absolute',
-            left: `${currentPct}%`,
-            top: 18,
-            transform: 'translateX(-50%)',
-            fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.12em',
-            textTransform: 'uppercase', color: 'var(--jade)', whiteSpace: 'nowrap',
-            pointerEvents: 'none',
-          }}>
-            {currentAge} · now
-          </div>
-        )}
       </div>
 
-      {/* Detail panel */}
       {selectedIdx !== null && pillars[selectedIdx] && (
         <PillarDetail pillar={pillars[selectedIdx]} currentAge={currentAge} />
       )}
@@ -135,7 +77,7 @@ function PillarDetail({ pillar, currentAge }) {
 
   return (
     <div style={{
-      marginTop: 40,
+      marginTop: 48,
       paddingTop: 32,
       borderTop: '1px solid var(--border)',
       display: 'flex', gap: 48, alignItems: 'flex-start',

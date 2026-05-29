@@ -25,12 +25,14 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
   const age = chart.currentYear - chart.birthDate.year;
   const currentPillar = chart.luckPillars?.pillars?.find(p => age >= p.startAge && age < p.endAge);
 
+  const ELEM_ZH = { Wood: '木', Fire: '火', Earth: '土', Metal: '金', Water: '水' };
   const totals = chart.elementBalance?.totals ?? {};
   const balStr = Object.entries(totals)
     .filter(([, v]) => v > 0)
     .sort(([, a], [, b]) => b - a)
-    .map(([k, v]) => `${k} ×${Math.round(v * 10) / 10}`)
-    .join(' · ');
+    .slice(0, 3)
+    .map(([k, v]) => `${ELEM_ZH[k]}×${Math.round(v * 10) / 10}`)
+    .join(' ');
 
   const bd = chart.birthDate;
   const birthStr = `${bd.year}-${String(bd.month).padStart(2,'0')}-${String(bd.day).padStart(2,'0')}`;
