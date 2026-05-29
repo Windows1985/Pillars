@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ELEM } from '../bazi/constants.js';
+import * as Tooltip from '@radix-ui/react-tooltip';
 
 const PILLAR_LABELS = [
   { en: 'Year', zh: '年' },
@@ -24,7 +25,7 @@ export default function PillarChart({ chart }) {
   specialStars.forEach(s => { if (starsByPillar[s.pillar]) starsByPillar[s.pillar].push(s); });
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }}>
+    <div className="pillar-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', alignItems: 'flex-start' }}>
       {pillars.map((p, i) => {
         const isDay = i === 2;
         const isHov = hovered === i;
@@ -73,15 +74,29 @@ export default function PillarChart({ chart }) {
                   日主 Day Master
                 </span>
               ) : p.tenGod ? (
-                <span
-                  style={{ fontFamily: 'var(--font-cjk)', fontSize: 11, color: 'var(--text-muted)' }}
-                  title={TEN_GOD_EN[p.tenGod.char]}
-                >
-                  {p.tenGod.char}
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, marginLeft: 6, letterSpacing: '0.1em' }}>
-                    {TEN_GOD_EN[p.tenGod.char] ?? p.tenGod.english}
-                  </span>
-                </span>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 11, color: 'var(--text-muted)', cursor: 'default' }}>
+                      {p.tenGod.char}
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, marginLeft: 6, letterSpacing: '0.1em' }}>
+                        {TEN_GOD_EN[p.tenGod.char] ?? p.tenGod.english}
+                      </span>
+                    </span>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      sideOffset={4}
+                      style={{
+                        background: 'var(--surface-2)', border: '1px solid var(--border)',
+                        padding: '6px 10px', fontFamily: 'var(--font-mono)', fontSize: 10,
+                        letterSpacing: '0.08em', color: 'var(--text-dim)', zIndex: 100,
+                      }}
+                    >
+                      {TEN_GOD_EN[p.tenGod.char]}
+                      <Tooltip.Arrow style={{ fill: 'var(--surface-2)' }} />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
               ) : null}
             </div>
 

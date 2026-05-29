@@ -18,17 +18,16 @@ function SectionDivider({ en, zh, chapter }) {
   );
 }
 
-function Spinner() {
+function AnalysisSkeleton() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: '32px 0' }}>
-      <div style={{
-        width: 32, height: 32, borderRadius: '50%',
-        border: '1.5px solid var(--border)', borderTopColor: 'var(--jade)',
-        animation: 'spin 0.9s linear infinite',
-      }} />
-      <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.12em', color: 'var(--text-muted)' }}>
-        Reading your chart…
-      </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '12px 0' }}>
+      {[100, 90, 95, 78, 88, 65, 92, 55, 82].map((w, i) => (
+        <div
+          key={i}
+          className="skeleton-line"
+          style={{ width: `${w}%`, height: 16, animationDelay: `${i * 0.1}s` }}
+        />
+      ))}
     </div>
   );
 }
@@ -65,7 +64,7 @@ export default function AnalysisScreen({
   chart, teaserText, teaserLoading, teaserError,
   natalText, natalLoading, natalError,
   tier, onUpgrade, anonAnalysis, anonLoading, anonError,
-  user,
+  user, onRetryTeaser, onRetryNatal, onRetryAnon,
 }) {
   const showAnon = !user;
   const activeText = showAnon ? anonAnalysis : teaserText;
@@ -73,7 +72,7 @@ export default function AnalysisScreen({
   const activeError = showAnon ? anonError : teaserError;
 
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: '0 64px 80px' }}>
+    <div className="screen-container" style={{ maxWidth: 860, margin: '0 auto' }}>
 
       <div style={{ padding: '56px 0 48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
@@ -88,9 +87,25 @@ export default function AnalysisScreen({
       </div>
 
       <SectionDivider en="Overview" zh="概述" chapter="I" />
-      {activeLoading && <Spinner />}
+      {activeLoading && <AnalysisSkeleton />}
       {activeError && (
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{activeError}</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{activeError}</p>
+          {(onRetryTeaser || onRetryAnon) && (
+            <button
+              onClick={showAnon ? onRetryAnon : onRetryTeaser}
+              style={{
+                alignSelf: 'flex-start',
+                fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em',
+                textTransform: 'uppercase', color: 'var(--text-muted)',
+                background: 'none', border: '1px solid var(--border)',
+                padding: '6px 16px', cursor: 'pointer',
+              }}
+            >
+              Retry
+            </button>
+          )}
+        </div>
       )}
       {activeText && <Prose text={activeText} />}
       {!activeLoading && !activeError && !activeText && (
@@ -102,8 +117,26 @@ export default function AnalysisScreen({
       <SectionDivider en="Full Natal Reading" zh="完整命理" chapter="II" />
       {tier !== 'free' ? (
         <>
-          {natalLoading && <Spinner />}
-          {natalError && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{natalError}</p>}
+          {natalLoading && <AnalysisSkeleton />}
+          {natalError && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{natalError}</p>
+              {onRetryNatal && (
+                <button
+                  onClick={onRetryNatal}
+                  style={{
+                    alignSelf: 'flex-start',
+                    fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em',
+                    textTransform: 'uppercase', color: 'var(--text-muted)',
+                    background: 'none', border: '1px solid var(--border)',
+                    padding: '6px 16px', cursor: 'pointer',
+                  }}
+                >
+                  Retry
+                </button>
+              )}
+            </div>
+          )}
           {natalText && <Prose text={natalText} />}
         </>
       ) : (

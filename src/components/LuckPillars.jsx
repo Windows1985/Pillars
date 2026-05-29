@@ -8,7 +8,7 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', borderTop: '1px solid var(--border)' }}>
+      <div className="luck-timeline" style={{ display: 'flex', borderTop: '1px solid var(--border)' }}>
         {pillars.map((p, i) => {
           const stem = STEMS[p.stemIdx];
           const branch = BRANCHES[p.branchIdx];
@@ -21,6 +21,7 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
             <button
               key={i}
               onClick={() => setSelectedIdx(isSelected ? null : i)}
+              className="luck-pillar-btn"
               style={{
                 flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
                 padding: '0', cursor: 'pointer', background: 'none', border: 'none',
@@ -28,7 +29,7 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
                 transition: 'opacity 0.2s',
               }}
             >
-              <div style={{ paddingTop: 22, paddingBottom: 6 }}>
+              <div className="luck-pillar-chars" style={{ paddingTop: 22, paddingBottom: 6 }}>
                 <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 22, lineHeight: 1, color: se.hex }}>
                   {stem.char}
                 </div>
@@ -37,7 +38,7 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
                 </div>
               </div>
 
-              <div style={{
+              <div className="luck-pillar-age" style={{
                 marginTop: 14, paddingBottom: 6,
                 fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.08em',
                 color: isCurrent ? 'var(--jade)' : 'var(--text-muted)',
@@ -45,7 +46,7 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
                 {p.startAge}
               </div>
 
-              <div style={{ height: 14, display: 'flex', alignItems: 'center', paddingBottom: 16 }}>
+              <div className="luck-pillar-now" style={{ height: 14, display: 'flex', alignItems: 'center', paddingBottom: 16 }}>
                 {isCurrent && (
                   <span style={{
                     fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.16em',

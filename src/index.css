@@ -10,8 +10,8 @@
   --jade-border: oklch(22% 0.06 162);
   /* Text */
   --text:        oklch(88% 0.01 75);
-  --text-dim:    oklch(54% 0.01 75);
-  --text-muted:  oklch(30% 0.008 75);
+  --text-dim:    oklch(67% 0.01 75);
+  --text-muted:  oklch(60% 0.008 75);
   /* Surfaces */
   --surface-0:   oklch(9% 0.008 60);
   --surface-1:   oklch(12% 0.008 60);
@@ -66,4 +66,61 @@
 
 .cjk {
   font-family: 'Noto Serif SC', 'Source Han Serif SC', Georgia, serif;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.skeleton-line {
+  background: var(--surface-2);
+  border-radius: 2px;
+  animation: skeletonPulse 1.6s ease-in-out infinite;
+}
+
+.screen-container { padding: 0 64px 80px; }
+
+@media (max-width: 640px) {
+  .screen-container { padding: 0 20px 80px; }
+}
+
+.pillar-grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; }
+
+@media (max-width: 640px) {
+  .pillar-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+.luck-timeline { display: flex !important; border-top: 1px solid var(--border) !important; }
+
+@media (max-width: 640px) {
+  .luck-timeline { flex-direction: column !important; border-top: none !important; gap: 0 !important; }
+
+  .luck-pillar-btn {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 12px 16px !important;
+    border-top: 1px solid var(--border) !important;
+  }
+
+  .luck-pillar-chars {
+    flex-direction: row !important;
+    align-items: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    gap: 8px !important;
+  }
+
+  .luck-pillar-age {
+    margin-top: 0 !important;
+    padding-bottom: 0 !important;
+    text-align: right !important;
+  }
+
+  .luck-pillar-now {
+    padding-bottom: 0 !important;
+    height: auto !important;
+    padding-top: 4px !important;
+  }
 }

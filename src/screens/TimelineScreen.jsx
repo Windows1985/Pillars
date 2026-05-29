@@ -6,7 +6,7 @@ export default function TimelineScreen({ chart }) {
   const currentPillar = luckPillars?.pillars?.find(p => age >= p.startAge && age < p.endAge);
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 64px 80px' }}>
+    <div className="screen-container" style={{ maxWidth: 1200, margin: '0 auto' }}>
 
       <div style={{ padding: '56px 0 48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
