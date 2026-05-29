@@ -81,7 +81,7 @@ export default function DayMaster({ dayMaster, dayPillar }) {
             </span>
           </div>
 
-          <div className="flex items-center gap-3 mb-5">
+          <div className="flex items-center gap-3 mb-2">
             <span
               className="text-xs px-2 py-0.5 rounded-full"
               style={{ background: e.bg, color: e.hex, border: `1px solid ${e.hex}30` }}
@@ -97,7 +97,13 @@ export default function DayMaster({ dayMaster, dayPillar }) {
               </span>
             )}
           </div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: '#3a3733', marginBottom: 16, letterSpacing: '0.04em' }}>
+            Yang is outward and active · Yin is inward and adaptive
+          </div>
 
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#3a3733', marginBottom: 8 }}>
+            Your nature
+          </div>
           <p className="text-[15px] leading-relaxed" style={{ color: '#9a9590' }}>
             {desc}
           </p>

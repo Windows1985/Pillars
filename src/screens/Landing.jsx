@@ -27,11 +27,20 @@ export default function Landing({ onEnter }) {
       <p style={{
         fontFamily: 'var(--font-display)',
         fontSize: 18, fontWeight: 300, lineHeight: 1.65,
-        color: 'var(--text-dim)', marginBottom: 52,
+        color: 'var(--text-dim)', marginBottom: 16,
         maxWidth: 460, textWrap: 'pretty',
       }}>
         A serious analysis of your BaZi chart. Personality, career,
         relationships, and timing — from the Four Pillars of Destiny.
+      </p>
+
+      <p style={{
+        fontFamily: 'var(--font-display)',
+        fontSize: 15, fontWeight: 300, lineHeight: 1.65,
+        color: 'var(--text-dim)', marginBottom: 52,
+        maxWidth: 460, textWrap: 'pretty',
+      }}>
+        BaZi is a 1,200-year-old Chinese system that reads your personality, timing, and life themes from your exact birth date and time.
       </p>
 
       <button

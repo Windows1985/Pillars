@@ -8,6 +8,9 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
 
   return (
     <div>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em', color: 'var(--text-muted)', marginBottom: 16 }}>
+        Each column is a 10-year chapter. Click to explore.
+      </div>
       <div style={{ display: 'flex', borderTop: '1px solid var(--border)' }}>
         {pillars.map((p, i) => {
           const stem = STEMS[p.stemIdx];
@@ -42,7 +45,7 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
                 fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.08em',
                 color: isCurrent ? 'var(--jade)' : 'var(--text-muted)',
               }}>
-                {p.startAge}
+                {p.startAge}–{p.endAge}
               </div>
 
               <div style={{ height: 14, display: 'flex', alignItems: 'center', paddingBottom: 16 }}>
@@ -139,6 +142,12 @@ function PillarDetail({ pillar, currentAge }) {
             {be.zh} {branch.element} · {branch.english}
           </span>
         </div>
+        <p style={{
+          fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, fontStyle: 'italic',
+          color: 'var(--text-dim)', lineHeight: 1.65, marginTop: 20, maxWidth: 440,
+        }}>
+          During this decade, {stem.english} and {branch.english} energy overlays your natal chart, shifting the elements available to you.
+        </p>
       </div>
     </div>
   );

@@ -29,6 +29,12 @@ export default function ChartScreen({ chart }) {
           Four Pillars
         </h2>
         <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 18, color: 'var(--text-muted)', marginTop: 6 }}>四柱</div>
+        <p style={{
+          fontFamily: 'var(--font-display)', fontWeight: 300, fontStyle: 'italic',
+          fontSize: 16, color: 'var(--text-dim)', maxWidth: 560, marginTop: 14, lineHeight: 1.6,
+        }}>
+          Four pairs of characters — year, month, day, and hour of birth. The top character of each pair is the Heavenly Stem (天干); the bottom is the Earthly Branch (地支).
+        </p>
       </div>
 
       <PillarChart chart={chart} />

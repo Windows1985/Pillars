@@ -40,6 +40,11 @@ function Tag({ name, type, typeEnglish, effect, pillars, element, combinedElemen
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
         {typeEnglish}{pillarsStr ? ` · ${pillarsStr}` : ''}
       </div>
+      {effect && (
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)', lineHeight: 1.5, maxWidth: 240 }}>
+          {effect}
+        </div>
+      )}
     </div>
   );
 }
@@ -47,6 +52,12 @@ function Tag({ name, type, typeEnglish, effect, pillars, element, combinedElemen
 export default function Interactions({ branchInteractions = [], stemCombinations = [] }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+      <p style={{
+        fontFamily: 'var(--font-display)', fontWeight: 300, fontStyle: 'italic',
+        fontSize: 14, color: 'var(--text-dim)', marginBottom: 16, lineHeight: 1.65,
+      }}>
+        Some character pairs in your chart interact — harmonies reinforce each other, tensions create friction that sharpens or disrupts. Green indicates harmony; red and amber indicate challenge.
+      </p>
       {stemCombinations.length > 0 && (
         <div>
           <div style={{
