@@ -1,0 +1,82 @@
+{
+  "timestamp": "2026-05-29T01:15:47.515Z",
+  "mode": "headless",
+  "workerType": "audit",
+  "model": "haiku",
+  "durationMs": 40436,
+  "executionId": "audit_1780017307079_u4kzzt",
+  "success": true,
+  "findings": {
+    "vulnerabilities": [
+      {
+        "severity": "high",
+        "file": "src/config.js",
+        "line": 1,
+        "description": "Hardcoded API key exposed in source code. The CHR_API_KEY 'sk-CZJ5LuJY3Kk9U3eeq0TGzPp3T7re772Inx960Y93nJMnwz6K' is embedded in the repository and will be visible in: (1) git history, (2) bundled frontend JavaScript, (3) browser DevTools. This key should be moved to environment variables (VITE_CHR_API_KEY) and never committed. Immediate rotation recommended."
+      },
+      {
+        "severity": "high",
+        "file": "src/api/serverAnalysis.js",
+        "line": 9,
+        "description": "Missing row-level security validation in Supabase queries. The saveChart() function inserts data with user_id but does not verify ownership in subsequent read operations (loadUserCharts). Without RLS policies on the charts table, any authenticated user could access charts belonging to other users."
+      },
+      {
+        "severity": "medium",
+        "file": "src/api/analysis.js",
+        "line": 65,
+        "description": "Unsanitized AI-generated content returned from API. The generateAnalysis() function returns content from the CHR API without HTML escaping or sanitization. If rendered in a browser context, this could enable XSS if the API response contains malicious HTML/JavaScript (either from injection upstream or API compromise)."
+      },
+      {
+        "severity": "medium",
+        "file": ".agents/skills/huashu-design/scripts/html2pptx.js",
+        "line": 129,
+        "description": "Potential path traversal vulnerability in image path handling. The addBackground() function accepts slideData.background.path without validation. A malicious slideData object could contain path traversal sequences (../../etc/passwd) or absolute paths to access unintended files, especially when used with file:// protocol."
+      },
+      {
+        "severity": "medium",
+        "file": "src/api/serverAnalysis.js",
+        "line": 16,
+        "description": "Incomplete authentication checks in generateNatal(). While the function checks for session existence, it does not verify that the chartId belongs to the authenticated user. An attacker could enumerate chartIds and access other users' charts by calling generateNatal() with different IDs."
+      },
+      {
+        "severity": "medium",
+        "file": "src/lib/supabase.js",
+        "line": 3,
+        "description": "Supabase anonymous key exposed in client-side code (expected behavior but requires proper RLS). The VITE_SUPABASE_ANON_KEY is public by design, but this means all security must be enforced via row-level security policies on the database. If RLS is not properly configured on the charts table, any client can read/write any row."
+      },
+      {
+        "severity": "low",
+        "file": "src/api/analysis.js",
+        "line": 9,
+        "description": "Weak rate limiting implementation. The checkAndIncrementUsage() function uses client-side localStorage for rate limiting (3 analyses/day). This is easily bypassed by: (1) clearing localStorage, (2) using incognito mode, (3) using different devices. This should be enforced server-side."
+      },
+      {
+        "severity": "low",
+        "file": ".agents/skills/huashu-design/assets/deck_stage.js",
+        "line": 58,
+        "description": "Use of innerHTML for Shadow DOM content injection. While the HTML appears static, this pattern is vulnerable if any user-controlled data is ever interpolated into the template string. Consider using textContent or template elements instead."
+      },
+      {
+        "severity": "low",
+        "file": "src/api/analysis.js",
+        "line": 13,
+        "description": "Insufficient error messaging reveals API endpoint details. The error message exposes the CHR_API_URL, which could help attackers map your API integrations. Consider generic error messages in production."
+      }
+    ],
+    "riskScore": 72,
+    "recommendations": [
+      "CRITICAL (Do Immediately): Rotate the exposed CHR API key 'sk-CZJ5LuJY3Kk9U3eeq0TGzPp3T7re772Inx960Y93nJMnwz6K'. Move all API keys to environment variables (VITE_CHR_API_KEY for frontend, server-side only for backend). Update git history with git-filter-branch or GitHub's secret scanning to remove the key.",
+      "CRITICAL: Implement Supabase Row-Level Security (RLS) on the 'charts' table. Add policy: CREATE POLICY 'Users can only access their own charts' ON charts FOR ALL USING (auth.uid() = user_id). Verify all queries include proper user_id checks.",
+      "HIGH: Add user ownership validation before accessing charts. In generateTeaser() and generateNatal(), verify: const chart = supabase.from('charts').select('*').eq('id', chartId).eq('user_id', session.user.id).single()",
+      "HIGH: Implement server-side rate limiting for generateAnalysis(). Move the rate check to a Supabase Edge Function or backend service, tied to user_id rather than localStorage. Current client-side check provides no security.",
+      "MEDIUM: Sanitize and validate slideData.background.path in html2pptx.js. Reject paths containing: '../', absolute paths, 'file://' protocol. Whitelist allowed image directories only.",
+      "MEDIUM: Add HTML sanitization for AI-generated content before rendering. Install DOMPurify and sanitize the analysis content: `import DOMPurify from 'dompurify'; const safe = DOMPurify.sanitize(content);`",
+      "MEDIUM: Configure Supabase Edge Functions to use service_role key (not anon key) for generateTeaser/generateNatal. Client should call a server function, not the API directly. This adds a security boundary.",
+      "LOW: Replace Shadow DOM innerHTML usage with safer alternatives (template elements, textContent, or framework binding).",
+      "LOW: Review and pin dependency versions in package.json. Audit for known vulnerabilities using `npm audit`. Set up Dependabot or similar for automated updates.",
+      "LOW: Add generic error messages in production. Replace detailed API endpoint URLs and implementation details with 'Service temporarily unavailable' in user-facing errors."
+    ]
+  },
+  "rawOutputPreview": "I'll analyze this codebase for security vulnerabilities systematically.\n\n## Security Analysis Report\n\n```json\n{\n  \"vulnerabilities\": [\n    {\n      \"severity\": \"high\",\n      \"file\": \"src/config.js\",\n      \"line\": 1,\n      \"description\": \"Hardcoded API key exposed in source code. The CHR_API_KEY 'sk-CZJ5LuJY3Kk9U3eeq0TGzPp3T7re772Inx960Y93nJMnwz6K' is embedded in the repository and will be visible in: (1) git history, (2) bundled frontend JavaScript, (3) browser DevTools. This key should be moved to environment variables (VITE_CHR_API_KEY) and never committed. Immediate rotation recommended.\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file\": \"src/api/serverAnalysis.js\",\n      \"line\": 9,\n      \"description\": \"Missing row-level security validation in Supabase queries. The saveChart() function inserts data with user_id but does not verify ownership in subsequent read operations (loadUserCharts). Without RLS policies on the charts table, any authenticated user could access charts belonging to other users.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file\": \"src/api/analysis.js\",\n      \"line\": 65,\n      \"description\": \"Unsanitized AI-generated content returned from API. The generateAnalysis() function returns content from the CHR API without HTML escaping or sanitization. If rendered in a browser context, this could enable XSS if the API response contains malicious HTML/JavaScript (either from injection upstream or API compromise).\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file\": \".agents/skills/huashu-design/scripts/html2pptx.js\",\n      \"line\": 129,\n      \"description\": \"Potential path traversal vulnerability in image path handling. The addBackground() function accepts slideData.background.path without validation. A malicious slideData object could contain path traversal sequences (../../etc/passwd) or absolute paths to access unintended files, especially when used with file:// protocol.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file\": \"src/api/server",
+  "rawOutputLength": 6874
+}
