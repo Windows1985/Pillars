@@ -183,7 +183,7 @@ export default function App() {
         )}
 
         {screen === 'chart' && chart && (
-          <ChartScreen chart={chart} />
+          <ChartScreen chart={chart} tier={tier} onUpgrade={handleUpgrade} isPro={isPro} />
         )}
 
         {screen === 'analysis' && chart && (
@@ -191,7 +191,7 @@ export default function App() {
         )}
 
         {screen === 'timeline' && chart && (
-          <TimelineScreen chart={chart} />
+          <TimelineScreen chart={chart} tier={tier} onUpgrade={handleUpgrade} isPro={isPro} />
         )}
       </AppShell>
 

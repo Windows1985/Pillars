@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import BlurGate from '../components/paywall/BlurGate.jsx';
+import { generatePersonalityReading, generateCareerReading, generateRelationshipsReading } from '../api/proAnalysis.js';
 
 function SectionDivider({ en, zh, chapter }) {
   return (
@@ -67,6 +69,41 @@ export default function AnalysisScreen({
   tier, onUpgrade, anonAnalysis, anonLoading, anonError,
   user,
 }) {
+  const isPro = tier === 'pro' || tier === 'max';
+
+  const [personalityText, setPersonalityText] = useState('');
+  const [personalityLoading, setPersonalityLoading] = useState(false);
+  const [personalityError, setPersonalityError] = useState('');
+
+  const [careerText, setCareerText] = useState('');
+  const [careerLoading, setCareerLoading] = useState(false);
+  const [careerError, setCareerError] = useState('');
+
+  const [relText, setRelText] = useState('');
+  const [relLoading, setRelLoading] = useState(false);
+  const [relError, setRelError] = useState('');
+
+  useEffect(() => {
+    if (!isPro || !chart) return;
+    setPersonalityLoading(true);
+    generatePersonalityReading(chart)
+      .then(t => setPersonalityText(t))
+      .catch(e => setPersonalityError(e.message))
+      .finally(() => setPersonalityLoading(false));
+
+    setCareerLoading(true);
+    generateCareerReading(chart)
+      .then(t => setCareerText(t))
+      .catch(e => setCareerError(e.message))
+      .finally(() => setCareerLoading(false));
+
+    setRelLoading(true);
+    generateRelationshipsReading(chart)
+      .then(t => setRelText(t))
+      .catch(e => setRelError(e.message))
+      .finally(() => setRelLoading(false));
+  }, [isPro]);
+
   const showAnon = !user;
   const activeText = showAnon ? anonAnalysis : teaserText;
   const activeLoading = showAnon ? anonLoading : teaserLoading;
@@ -113,19 +150,19 @@ export default function AnalysisScreen({
       {tier !== 'free' && (
         <>
           <SectionDivider en="Personality" zh="性格" chapter="III" />
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)' }}>
-            Personality chapter available in a future update.
-          </p>
+          {personalityLoading && <Spinner />}
+          {personalityError && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{personalityError}</p>}
+          {personalityText && <Prose text={personalityText} />}
 
           <SectionDivider en="Career" zh="事业" chapter="IV" />
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)' }}>
-            Career chapter available in a future update.
-          </p>
+          {careerLoading && <Spinner />}
+          {careerError && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{careerError}</p>}
+          {careerText && <Prose text={careerText} />}
 
           <SectionDivider en="Relationships" zh="感情" chapter="V" />
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)' }}>
-            Relationships chapter available in a future update.
-          </p>
+          {relLoading && <Spinner />}
+          {relError && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{relError}</p>}
+          {relText && <Prose text={relText} />}
         </>
       )}
 

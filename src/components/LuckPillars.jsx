@@ -1,7 +1,15 @@
 import { useState } from 'react';
 import { STEMS, BRANCHES, ELEM } from '../bazi/constants.js';
+import { generateLuckPillarReading } from '../api/proAnalysis.js';
+import UpgradeNudge from './paywall/UpgradeNudge.jsx';
 
-export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
+function Spinner() {
+  return (
+    <div style={{ display: 'inline-block', width: 14, height: 14, borderRadius: '50%', border: '1.5px solid var(--border)', borderTopColor: 'var(--jade)', animation: 'spin 0.9s linear infinite', verticalAlign: 'middle', marginRight: 6 }} />
+  );
+}
+
+export default function LuckPillars({ luckPillars, birthYear, currentYear, chart, isPro, onUpgrade }) {
   const { pillars } = luckPillars;
   const currentAge = currentYear - birthYear;
   const [selectedIdx, setSelectedIdx] = useState(null);
@@ -80,23 +88,44 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear }) {
       {/* Animated expand/collapse */}
       <div style={{
         overflow: 'hidden',
-        maxHeight: selectedIdx !== null && pillars[selectedIdx] ? 320 : 0,
+        maxHeight: selectedIdx !== null && pillars[selectedIdx] ? 480 : 0,
         transition: 'max-height 0.4s cubic-bezier(0.16,1,0.3,1)',
       }}>
         {selectedIdx !== null && pillars[selectedIdx] && (
-          <PillarDetail pillar={pillars[selectedIdx]} currentAge={currentAge} />
+          <PillarDetail
+            pillar={pillars[selectedIdx]}
+            currentAge={currentAge}
+            chart={chart}
+            isPro={isPro}
+            onUpgrade={onUpgrade}
+          />
         )}
       </div>
     </div>
   );
 }
 
-function PillarDetail({ pillar, currentAge }) {
+function PillarDetail({ pillar, currentAge, chart, isPro, onUpgrade }) {
   const stem = STEMS[pillar.stemIdx];
   const branch = BRANCHES[pillar.branchIdx];
   const se = ELEM[stem.element] ?? ELEM.Wood;
   const be = ELEM[branch.element] ?? ELEM.Wood;
   const isCurrent = currentAge >= pillar.startAge && currentAge < pillar.endAge;
+
+  const [text, setText] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [requested, setRequested] = useState(false);
+
+  function request() {
+    if (requested || !isPro) return;
+    setRequested(true);
+    setLoading(true);
+    generateLuckPillarReading(chart, pillar, STEMS, BRANCHES)
+      .then(t => setText(t))
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  }
 
   return (
     <div style={{
@@ -104,6 +133,7 @@ function PillarDetail({ pillar, currentAge }) {
       paddingTop: 32,
       borderTop: '1px solid var(--border)',
       display: 'flex', gap: 56, alignItems: 'flex-start',
+      flexWrap: 'wrap',
     }}>
       <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end', flexShrink: 0 }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
@@ -125,7 +155,7 @@ function PillarDetail({ pillar, currentAge }) {
         </div>
       </div>
 
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, minWidth: 220 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
           <div style={{
             fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 300, fontStyle: 'italic',
@@ -149,7 +179,7 @@ function PillarDetail({ pillar, currentAge }) {
         }}>
           Age {pillar.startAge}–{pillar.endAge}
         </div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 24 }}>
           <span style={{
             fontFamily: 'var(--font-mono)', fontSize: 10, padding: '4px 12px',
             background: se.bg, color: se.hex, border: `1px solid ${se.hex}30`, borderRadius: 4,
@@ -163,12 +193,43 @@ function PillarDetail({ pillar, currentAge }) {
             {be.zh} {branch.element} · {branch.english}
           </span>
         </div>
-        <p style={{
-          fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, fontStyle: 'italic',
-          color: 'var(--text-dim)', lineHeight: 1.65, marginTop: 20, maxWidth: 440,
-        }}>
-          During this decade, {stem.english} and {branch.english} energy overlays your natal chart, shifting the elements available to you.
-        </p>
+
+        {/* AI reading */}
+        {isPro ? (
+          <>
+            {!requested && (
+              <button
+                onClick={request}
+                style={{
+                  fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em',
+                  textTransform: 'uppercase', padding: '7px 16px',
+                  background: 'none', color: 'var(--jade)',
+                  border: '1px solid var(--jade-border)', borderRadius: 4,
+                  cursor: 'pointer', transition: 'background 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--jade-bg)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
+              >
+                Analyse this decade →
+              </button>
+            )}
+            {loading && (
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em' }}>
+                <Spinner />Reading this decade…
+              </p>
+            )}
+            {error && (
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#d96b54' }}>{error}</p>
+            )}
+            {text && (
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, lineHeight: 1.8, color: 'var(--text-dim)', maxWidth: 560, textWrap: 'pretty' }}>
+                {text}
+              </p>
+            )}
+          </>
+        ) : (
+          <UpgradeNudge label="Analyse this decade against your natal chart" onUpgrade={onUpgrade} />
+        )}
       </div>
     </div>
   );

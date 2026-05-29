@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-29T01:28:07.082Z",
+  "timestamp": "2026-05-29T01:43:07.088Z",
   "projectRoot": "/home/user/Pillars",
   "structure": {
     "hasPackageJson": true,
@@ -7,5 +7,5 @@
     "hasClaudeConfig": true,
     "hasClaudeFlow": true
   },
-  "scannedAt": 1780018087082
+  "scannedAt": 1780018987088
 }

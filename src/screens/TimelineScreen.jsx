@@ -1,6 +1,6 @@
 import LuckPillars from '../components/LuckPillars.jsx';
 
-export default function TimelineScreen({ chart }) {
+export default function TimelineScreen({ chart, tier, onUpgrade, isPro }) {
   const { luckPillars, birthDate, currentYear } = chart;
   const age = currentYear - birthDate.year;
   const currentPillar = luckPillars?.pillars?.find(p => age >= p.startAge && age < p.endAge);
@@ -52,6 +52,9 @@ export default function TimelineScreen({ chart }) {
           luckPillars={luckPillars}
           birthYear={birthDate.year}
           currentYear={currentYear}
+          chart={chart}
+          isPro={isPro}
+          onUpgrade={onUpgrade}
         />
       </div>
     </div>

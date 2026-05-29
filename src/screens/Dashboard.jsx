@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getTodayPillar } from '../bazi/dayPillar.js';
+import { generateTodayPillarReading } from '../api/proAnalysis.js';
+import UpgradeNudge from '../components/paywall/UpgradeNudge.jsx';
 
 const ELEMENT_INSIGHT = {
   Wood:  'Your Wood is unrooted — strong Water feeds it, no Earth anchors it. This decade activates your Resource pillar. Precision over expansion is not advice. It is structure.',
@@ -9,13 +11,32 @@ const ELEMENT_INSIGHT = {
   Water: 'Your Water flows around every obstacle with strategic depth. This decade the practice is direction — committing to a current and following it.',
 };
 
+function Spinner() {
+  return (
+    <div style={{ display: 'inline-block', width: 16, height: 16, borderRadius: '50%', border: '1.5px solid var(--border)', borderTopColor: 'var(--jade)', animation: 'spin 0.9s linear infinite', verticalAlign: 'middle', marginRight: 8 }} />
+  );
+}
 
-export default function Dashboard({ chart, chartId, teaserText, teaserLoading, onNavigate, savedCharts = [], onOpenSaved }) {
+export default function Dashboard({ chart, chartId, teaserText, teaserLoading, onNavigate, savedCharts = [], onOpenSaved, tier, onUpgrade }) {
+  const isPro = tier === 'pro' || tier === 'max';
   const stem = chart.dayMaster.stem;
   const today = getTodayPillar();
   const insight = teaserText || ELEMENT_INSIGHT[stem.element] || '';
   const todayStem = today.stem;
   const todayBranch = today.branch;
+
+  const [todayReading, setTodayReading] = useState('');
+  const [todayLoading, setTodayLoading] = useState(false);
+  const [todayError, setTodayError] = useState('');
+
+  useEffect(() => {
+    if (!isPro) return;
+    setTodayLoading(true);
+    generateTodayPillarReading(chart, today)
+      .then(t => setTodayReading(t))
+      .catch(e => setTodayError(e.message))
+      .finally(() => setTodayLoading(false));
+  }, [isPro]);
 
   const age = chart.currentYear - chart.birthDate.year;
   const currentPillar = chart.luckPillars?.pillars?.find(p => age >= p.startAge && age < p.endAge);
@@ -113,6 +134,27 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
               }}>
                 {today.reading}
               </p>
+
+              {/* Today's pillar AI reading */}
+              {isPro ? (
+                <div style={{ marginTop: 8, paddingTop: 16, borderTop: '1px solid var(--border)', maxWidth: 440 }}>
+                  {todayLoading && (
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em' }}>
+                      <Spinner />Reading today for your chart…
+                    </p>
+                  )}
+                  {todayError && (
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#d96b54' }}>{todayError}</p>
+                  )}
+                  {todayReading && (
+                    <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 300, lineHeight: 1.75, color: 'var(--text-dim)', textWrap: 'pretty' }}>
+                      {todayReading}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <UpgradeNudge label="Analyse today's pillar against your chart" onUpgrade={onUpgrade} />
+              )}
             </div>
           </div>
         </div>

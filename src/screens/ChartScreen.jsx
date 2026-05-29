@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import PillarChart from '../components/PillarChart.jsx';
 import ElementBalance from '../components/ElementBalance.jsx';
 import Interactions from '../components/Interactions.jsx';
+import UpgradeNudge from '../components/paywall/UpgradeNudge.jsx';
+import { generateElementBalanceReading, generateInteractionsReading } from '../api/proAnalysis.js';
 
 function SectionDivider({ en, zh }) {
   return (
@@ -15,8 +18,53 @@ function SectionDivider({ en, zh }) {
   );
 }
 
-export default function ChartScreen({ chart }) {
+function Spinner() {
+  return (
+    <div style={{ display: 'inline-block', width: 16, height: 16, borderRadius: '50%', border: '1.5px solid var(--border)', borderTopColor: 'var(--jade)', animation: 'spin 0.9s linear infinite', verticalAlign: 'middle', marginRight: 8 }} />
+  );
+}
+
+function AiReading({ text, loading, error }) {
+  if (loading) return <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em', marginTop: 24 }}><Spinner />Reading your chart…</p>;
+  if (error) return <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#d96b54', marginTop: 24 }}>{error}</p>;
+  if (!text) return null;
+  return (
+    <p style={{
+      fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 300, lineHeight: 1.8,
+      color: 'var(--text-dim)', maxWidth: 680, marginTop: 28, textWrap: 'pretty',
+    }}>
+      {text}
+    </p>
+  );
+}
+
+export default function ChartScreen({ chart, tier, onUpgrade, isPro }) {
   const hasInteractions = (chart?.branchInteractions?.length ?? 0) > 0 || (chart?.stemCombinations?.length ?? 0) > 0;
+
+  const [balanceText, setBalanceText] = useState('');
+  const [balanceLoading, setBalanceLoading] = useState(false);
+  const [balanceError, setBalanceError] = useState('');
+
+  const [interactText, setInteractText] = useState('');
+  const [interactLoading, setInteractLoading] = useState(false);
+  const [interactError, setInteractError] = useState('');
+
+  useEffect(() => {
+    if (!isPro) return;
+    setBalanceLoading(true);
+    generateElementBalanceReading(chart)
+      .then(t => setBalanceText(t))
+      .catch(e => setBalanceError(e.message))
+      .finally(() => setBalanceLoading(false));
+
+    if (hasInteractions) {
+      setInteractLoading(true);
+      generateInteractionsReading(chart)
+        .then(t => setInteractText(t))
+        .catch(e => setInteractError(e.message))
+        .finally(() => setInteractLoading(false));
+    }
+  }, [isPro]);
 
   return (
     <div className="screen-pad fade-in-up" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 64px 80px' }}>
@@ -37,10 +85,12 @@ export default function ChartScreen({ chart }) {
         </p>
       </div>
 
-      <PillarChart chart={chart} />
+      <PillarChart chart={chart} tier={tier} onUpgrade={onUpgrade} isPro={isPro} />
 
       <SectionDivider en="Element Balance" zh="五行" />
       <ElementBalance balance={chart.elementBalance} dayMaster={chart.dayMaster} />
+      <AiReading text={balanceText} loading={balanceLoading} error={balanceError} />
+      {!isPro && <UpgradeNudge label="Get an AI reading of your element balance" onUpgrade={onUpgrade} />}
 
       {hasInteractions && (
         <>
@@ -49,6 +99,8 @@ export default function ChartScreen({ chart }) {
             branchInteractions={chart.branchInteractions}
             stemCombinations={chart.stemCombinations}
           />
+          <AiReading text={interactText} loading={interactLoading} error={interactError} />
+          {!isPro && <UpgradeNudge label="Analyse your chart's interactions" onUpgrade={onUpgrade} />}
         </>
       )}
     </div>
