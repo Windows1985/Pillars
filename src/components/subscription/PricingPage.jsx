@@ -124,7 +124,7 @@ export default function PricingPage({ onClose, currentTier }) {
           </p>
 
           {/* Billing toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, marginTop: 28, background: 'var(--border)', display: 'inline-flex' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 0, marginTop: 28, background: 'var(--border)' }}>
             {[{ id: false, label: 'Monthly' }, { id: true, label: 'Annual  −30%' }].map(opt => (
               <button
                 key={String(opt.id)}
@@ -231,8 +231,12 @@ export default function PricingPage({ onClose, currentTier }) {
                       color: loading === tier.key ? 'var(--text-muted)' : tier.accentColor,
                       border: `1px solid ${tier.accentColor}40`,
                       cursor: loading ? 'not-allowed' : 'pointer',
-                      transition: 'background 0.15s',
+                      transition: 'background 0.15s, transform 0.12s ease',
                     }}
+                    onMouseEnter={e => { if (!loading) e.currentTarget.style.background = `${tier.accentColor}28`; }}
+                    onMouseLeave={e => { if (!loading) e.currentTarget.style.background = `${tier.accentColor}18`; e.currentTarget.style.transform = 'none'; }}
+                    onMouseDown={e => { if (!loading) e.currentTarget.style.transform = 'scale(0.98)'; }}
+                    onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
                   >
                     {loading === tier.key ? '…' : `Upgrade to ${tier.name}`}
                   </button>

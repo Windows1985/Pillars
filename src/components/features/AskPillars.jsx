@@ -101,6 +101,10 @@ export default function AskPillars({ chartId, tier, onUpgrade }) {
                 onClick={() => send(s)}
                 className="w-full text-left rounded-[10px] px-4 py-2.5 text-[13px]"
                 style={{ background: '#080809', color: '#5a5754', border: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer' }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#8a8784'; e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = '#5a5754'; e.currentTarget.style.border = '1px solid rgba(255,255,255,0.04)'; e.currentTarget.style.transform = 'none'; }}
+                onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.98)'; }}
+                onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
               >
                 {s}
               </button>
@@ -139,7 +143,11 @@ export default function AskPillars({ chartId, tier, onUpgrade }) {
               background: !input.trim() || loading ? 'rgba(196,145,58,0.15)' : '#c4913a',
               color: !input.trim() || loading ? '#5a5754' : '#070709',
               border: 'none', cursor: !input.trim() || loading ? 'not-allowed' : 'pointer',
+              transition: 'background 0.18s ease, transform 0.12s ease',
             }}
+            onMouseDown={e => { if (input.trim() && !loading) e.currentTarget.style.transform = 'scale(0.95)'; }}
+            onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; }}
           >
             →
           </button>

@@ -205,10 +205,12 @@ function PillarDetail({ pillar, currentAge, chart, isPro, onUpgrade }) {
                   textTransform: 'uppercase', padding: '7px 16px',
                   background: 'none', color: 'var(--jade)',
                   border: '1px solid var(--jade-border)', borderRadius: 4,
-                  cursor: 'pointer', transition: 'background 0.2s',
+                  cursor: 'pointer', transition: 'background 0.2s, transform 0.12s ease',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.background = 'var(--jade-bg)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.transform = 'none'; }}
+                onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+                onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
               >
                 Analyse this decade →
               </button>

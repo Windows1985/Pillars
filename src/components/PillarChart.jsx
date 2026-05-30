@@ -71,7 +71,9 @@ function PillarAnalysisPanel({ pillar, pillarLabel, chart, isPro, onUpgrade }) {
             cursor: 'pointer', transition: 'background 0.2s',
           }}
           onMouseEnter={e => { e.currentTarget.style.background = 'var(--jade-bg)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.transform = 'none'; }}
+          onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+          onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
         >
           Analyse this combination →
         </button>

@@ -44,7 +44,12 @@ export default function BlurGate({ required, current, label, children, onUpgrade
               textTransform: 'uppercase', padding: '10px 24px',
               background: '#c4913a', color: '#070709',
               border: 'none', cursor: 'pointer',
+              transition: 'background 0.18s ease, transform 0.12s ease',
             }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#d4a34a'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#c4913a'; e.currentTarget.style.transform = 'none'; }}
+            onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+            onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
           >
             Upgrade to {tierLabel} · {price}
           </button>

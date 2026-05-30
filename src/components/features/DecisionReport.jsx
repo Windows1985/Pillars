@@ -129,6 +129,10 @@ export default function DecisionReport({ chartId, tier, onUpgrade }) {
             onClick={() => { setSelected(t.key); setQuestion(''); setStep('compose'); }}
             className="text-left rounded-[12px] p-3 transition-all"
             style={{ background: '#080809', border: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer' }}
+            onMouseEnter={e => { e.currentTarget.style.border = '1px solid rgba(255,255,255,0.12)'; e.currentTarget.style.background = '#0f0f12'; }}
+            onMouseLeave={e => { e.currentTarget.style.border = '1px solid rgba(255,255,255,0.04)'; e.currentTarget.style.background = '#080809'; e.currentTarget.style.transform = 'none'; }}
+            onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.98)'; }}
+            onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
           >
             <div className="text-[12px] font-medium mb-0.5" style={{ color: '#e8e4dd' }}>{t.label}</div>
             <div className="text-[11px]" style={{ color: '#4a4844' }}>{t.desc}</div>
