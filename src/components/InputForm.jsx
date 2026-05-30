@@ -229,6 +229,7 @@ function TogglePair({ value, onChange, options }) {
           data-autofocus={o.value === options[0].value ? true : undefined}
           onClick={() => onChange(o.value)}
           aria-pressed={value === o.value}
+          aria-label={o.ariaLabel}
           style={{
             flex: 1, padding: '12px 0',
             fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase',
@@ -247,7 +248,7 @@ function TogglePair({ value, onChange, options }) {
 
 function HourGrid({ value, onChange }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'var(--border)' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border)' }}>
       {HOUR_BLOCKS.map(h => {
         const active = value === h.branchIdx;
         return (
@@ -259,19 +260,24 @@ function HourGrid({ value, onChange }) {
             aria-pressed={active}
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
-              gap: 2, padding: '12px 4px',
+              gap: 2, padding: '12px 6px',
               background: active ? 'var(--jade-bg)' : 'var(--surface-1)',
               border: 'none', cursor: 'pointer',
-              transition: 'background 0.15s',
+              transition: 'background 0.12s',
             }}
+            onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--surface-2)'; }}
+            onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'var(--surface-1)'; }}
           >
             <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 20, lineHeight: 1, color: active ? 'var(--text)' : 'var(--text-dim)' }}>
               {h.char}
             </span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.06em', color: active ? 'var(--jade)' : 'var(--text-muted)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.06em', color: active ? 'var(--jade)' : 'var(--text-muted)' }}>
               {h.pinyin}
             </span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.04em', color: active ? 'var(--text-dim)' : 'var(--text-muted)' }}>
+              {h.animal}
+            </span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.03em', color: 'var(--text-muted)' }}>
               {h.time}
             </span>
           </button>
@@ -338,7 +344,7 @@ export default function InputForm({ onSubmit }) {
           <Done label="Sex at birth" value={genderLabel} />
         ) : (
           <StepCard n={2} question="What is your sex at birth?" context="BaZi uses biological sex to determine which direction your luck pillars run — the 10-year chapters that shift the elemental balance of each decade." onEnter={() => advance(2)}>
-            <TogglePair value={gender} onChange={setGender} options={[{ value: 'male', label: 'Male 男' }, { value: 'female', label: 'Female 女' }]} />
+            <TogglePair value={gender} onChange={setGender} options={[{ value: 'male', label: 'Male', ariaLabel: 'Male (男)' }, { value: 'female', label: 'Female', ariaLabel: 'Female (女)' }]} />
             <div style={{ marginTop: 20 }}>
               <Btn label="Continue" onClick={() => advance(2)} />
             </div>
@@ -390,8 +396,14 @@ export default function InputForm({ onSubmit }) {
           <StepCard n={5} question="What time were you born?" context="Each 2-hour block is an Earthly Branch (地支). The Hour Pillar governs your inner world and close relationships." onEnter={submit}>
             <HourGrid value={hourBranch} onChange={setHourBranch} />
 
-            {hourBranch === 0 && (
-              <div style={{ marginTop: 16, padding: '16px', background: 'var(--surface-1)', border: '1px solid var(--border)' }}>
+            <div style={{
+              overflow: 'hidden',
+              maxHeight: hourBranch === 0 ? 120 : 0,
+              opacity: hourBranch === 0 ? 1 : 0,
+              transition: 'max-height 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.25s ease',
+              marginTop: hourBranch === 0 ? 16 : 0,
+            }}>
+              <div style={{ padding: '16px', background: 'var(--surface-1)', border: '1px solid var(--border)' }}>
                 <p style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, color: 'var(--text-muted)', marginBottom: 12 }}>
                   子 (Zǐ) spans midnight. Which half?
                 </p>
@@ -420,7 +432,7 @@ export default function InputForm({ onSubmit }) {
                   ))}
                 </div>
               </div>
-            )}
+            </div>
 
             <div style={{ marginTop: 24 }}>
               <Btn label="Calculate BaZi" onClick={submit} large />

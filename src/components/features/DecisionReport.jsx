@@ -3,11 +3,11 @@ import { supabase, SUPABASE_FN_URL } from '../../lib/supabase.js';
 import BlurGate from '../paywall/BlurGate.jsx';
 
 const TEMPLATES = [
-  { key: 'job', label: 'Career move', desc: 'Should I take this job or change roles?' },
-  { key: 'business', label: 'Start a business', desc: 'Best timing to launch?' },
-  { key: 'marriage', label: 'Marriage timing', desc: 'Relationship and commitment timing' },
-  { key: 'relocation', label: 'Relocation', desc: 'Is now a good time to move?' },
-  { key: 'custom', label: 'Custom decision', desc: 'Any question you have' },
+  { key: 'job', label: 'Career move', desc: 'Should I take this job or change roles now?' },
+  { key: 'business', label: 'Start a business', desc: 'Is this the right time to launch?' },
+  { key: 'marriage', label: 'Marriage timing', desc: 'When is your chart aligned for long-term commitment?' },
+  { key: 'relocation', label: 'Relocation', desc: 'Does your luck cycle favour a geographic move?' },
+  { key: 'custom', label: 'Custom decision', desc: 'Any question grounded in your chart' },
 ];
 
 export default function DecisionReport({ chartId, tier, onUpgrade }) {
@@ -151,7 +151,7 @@ export default function DecisionReport({ chartId, tier, onUpgrade }) {
                 className="w-full text-left rounded-[10px] px-3 py-2"
                 style={{ background: 'rgba(255,255,255,0.02)', border: 'none', cursor: 'pointer' }}
               >
-                <div className="text-[12px]" style={{ color: '#5a5754' }}>{TEMPLATES.find(t => t.key === r.template)?.label} · <span style={{ color: '#3a3733' }}>{r.question.slice(0, 50)}{r.question.length > 50 ? '…' : ''}</span></div>
+                <div className="text-[12px]" style={{ color: '#5a5754' }} title={r.question}>{TEMPLATES.find(t => t.key === r.template)?.label} · <span style={{ color: '#3a3733' }}>{r.question.slice(0, 80)}{r.question.length > 80 ? '…' : ''}</span></div>
               </button>
             ))}
           </div>

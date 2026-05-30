@@ -2,6 +2,14 @@ import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { supabase, SUPABASE_FN_URL, SUPABASE_ANON_KEY } from '../../lib/supabase.js';
 import * as Dialog from '@radix-ui/react-dialog';
+import * as Tooltip from '@radix-ui/react-tooltip';
+
+const FEATURE_TIPS = {
+  'Monthly forecast — auto-refreshes': 'A generated reading of the coming month based on how the current month\'s heavenly stem and earthly branch interact with your natal chart.',
+  '"Ask Pillars" — chart-grounded Q&A': 'Ask any question about your chart and get answers grounded in your specific BaZi data — not generic advice.',
+  'Decision Reports (job, business, timing)': 'Structured reports for major life decisions (career, relationships, relocation) showing timing signals from your chart.',
+  'Daily + monthly + annual transit stack': 'Transits are heavenly stem and branch combinations that interact with your natal chart each day, month, and year.',
+};
 
 const TIERS = [
   {
@@ -131,23 +139,30 @@ export default function PricingPage({ open, onClose, currentTier }) {
               </p>
 
               {/* Billing toggle */}
-              <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 1, marginTop: 28, background: 'var(--border)' }}>
-                {[{ id: false, label: 'Monthly' }, { id: true, label: 'Annual  −30%' }].map(opt => (
-                  <button
-                    key={String(opt.id)}
-                    onClick={() => setAnnual(opt.id)}
-                    style={{
-                      fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase',
-                      padding: '9px 20px',
-                      background: annual === opt.id ? 'var(--jade-bg)' : 'var(--surface-1)',
-                      color: annual === opt.id ? 'var(--jade)' : 'var(--text-muted)',
-                      border: 'none', cursor: 'pointer',
-                      transition: 'background 0.15s, color 0.15s',
-                    }}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, marginTop: 28 }}>
+                <div style={{ display: 'inline-flex', gap: 1, background: 'var(--border)' }}>
+                  {[{ id: false, label: 'Monthly' }, { id: true, label: 'Annual' }].map(opt => (
+                    <button
+                      key={String(opt.id)}
+                      onClick={() => setAnnual(opt.id)}
+                      style={{
+                        fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase',
+                        padding: '9px 20px',
+                        background: annual === opt.id ? 'var(--jade-bg)' : 'var(--surface-1)',
+                        color: annual === opt.id ? 'var(--jade)' : 'var(--text-muted)',
+                        border: 'none', cursor: 'pointer',
+                        transition: 'background 0.15s, color 0.15s',
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {annual && (
+                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.06em', color: 'var(--jade)', marginTop: 2 }}>
+                    Saves 30% vs monthly billing
+                  </p>
+                )}
               </div>
             </div>
 
@@ -214,17 +229,40 @@ export default function PricingPage({ open, onClose, currentTier }) {
                     </div>
 
                     <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28, flex: 1 }}>
-                      {tier.features.map((f, i) => (
-                        <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                          <span style={{ color: tier.accentColor, flexShrink: 0, lineHeight: 1.5 }}>·</span>
-                          <span style={{
-                            fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, lineHeight: 1.5,
-                            color: i === 0 ? 'var(--text-muted)' : 'var(--text-dim)',
-                          }}>
-                            {f}
-                          </span>
-                        </li>
-                      ))}
+                      {tier.features.map((f, i) => {
+                        const tip = FEATURE_TIPS[f];
+                        return (
+                          <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                            <span style={{ color: tier.accentColor, flexShrink: 0, lineHeight: 1.5 }}>·</span>
+                            {tip ? (
+                              <Tooltip.Root>
+                                <Tooltip.Trigger asChild>
+                                  <span style={{
+                                    fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, lineHeight: 1.5,
+                                    color: i === 0 ? 'var(--text-muted)' : 'var(--text-dim)',
+                                    cursor: 'help', borderBottom: '1px dotted var(--border)',
+                                  }}>
+                                    {f}
+                                  </span>
+                                </Tooltip.Trigger>
+                                <Tooltip.Portal>
+                                  <Tooltip.Content sideOffset={4} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', padding: '8px 12px', fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.04em', color: 'var(--text-dim)', zIndex: 100, maxWidth: 280, lineHeight: 1.6 }}>
+                                    {tip}
+                                    <Tooltip.Arrow style={{ fill: 'var(--surface-2)' }} />
+                                  </Tooltip.Content>
+                                </Tooltip.Portal>
+                              </Tooltip.Root>
+                            ) : (
+                              <span style={{
+                                fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, lineHeight: 1.5,
+                                color: i === 0 ? 'var(--text-muted)' : 'var(--text-dim)',
+                              }}>
+                                {f}
+                              </span>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
 
                     {tier.key !== 'free' && !isCurrent && (

@@ -9,7 +9,7 @@ export default function UpgradeNudge({ label, onUpgrade, compact = false }) {
         fontFamily: 'var(--font-display)', fontSize: compact ? 12 : 13, fontWeight: 300,
         fontStyle: 'italic', color: 'var(--text-muted)', lineHeight: 1.5,
       }}>
-        {label ?? 'Unlock AI analysis'}
+        {label ?? 'Unlock full AI analysis'}
       </span>
       <button
         onClick={onUpgrade}

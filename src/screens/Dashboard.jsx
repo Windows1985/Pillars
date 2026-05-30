@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getTodayPillar } from '../bazi/dayPillar.js';
 import { generateTodayPillarReading } from '../api/proAnalysis.js';
 import UpgradeNudge from '../components/paywall/UpgradeNudge.jsx';
@@ -53,11 +53,19 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
   const bd = chart.birthDate;
   const birthStr = `${bd.year}-${String(bd.month).padStart(2,'0')}-${String(bd.day).padStart(2,'0')}`;
 
+  const [copied, setCopied] = useState(false);
+  const copyChartId = useCallback(() => {
+    if (!chartId) return;
+    navigator.clipboard.writeText(chartId).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }, [chartId]);
+
   const techItems = [
     { label: 'Birth', value: birthStr },
     { label: 'Current Luck Pillar', value: currentPillar ? `Age ${currentPillar.startAge}–${currentPillar.endAge}` : '—', jade: true },
     { label: 'Element Balance', value: balStr },
-    { label: 'Chart ID', value: chartId ? chartId.slice(0, 8).toUpperCase() : 'Unsaved' },
     { label: 'Generated', value: new Date().toISOString().split('T')[0] },
   ];
 
@@ -89,7 +97,7 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
                 {stem.polarity === 'yang' ? 'Yang' : 'Yin'} {stem.element}
               </div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.1em', marginTop: 6 }}>
-                {stem.pinyin} · 天干
+                {stem.pinyin} · Heavenly Stem
               </div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 300, fontStyle: 'italic', fontSize: 13, color: 'var(--text-dim)', marginTop: 10, maxWidth: 220, lineHeight: 1.5 }}>
                 The Heavenly Stem of your birth day — the central reference point for your entire chart.
@@ -161,9 +169,9 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
       </div>
 
       {/* ── Tech strip ── */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '20px 0', marginTop: 56, borderTop: '1px solid var(--border)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '20px 0', marginTop: 56, borderTop: '1px solid var(--border)', flexWrap: 'wrap', gap: '8px 0' }}>
         {techItems.map((item, i) => (
-          <div key={item.label} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+          <div key={item.label} style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 120 }}>
             {i > 0 && <div style={{ width: 1, height: 30, background: 'var(--border)', flexShrink: 0, marginRight: 24 }} />}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
@@ -175,6 +183,30 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
             </div>
           </div>
         ))}
+        {/* Chart ID copy button — shown on demand */}
+        {chartId && (
+          <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+            <div style={{ width: 1, height: 30, background: 'var(--border)', flexShrink: 0, marginRight: 24 }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+                Chart ID
+              </div>
+              <button
+                onClick={copyChartId}
+                title="Copy chart ID for sharing"
+                style={{
+                  fontFamily: 'var(--font-mono)', fontSize: 11,
+                  color: copied ? 'var(--jade)' : 'var(--text-dim)',
+                  background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                  transition: 'color 0.2s',
+                  textAlign: 'left',
+                }}
+              >
+                {copied ? '✓ Copied' : `${chartId.slice(0, 8).toUpperCase()} ⓘ`}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

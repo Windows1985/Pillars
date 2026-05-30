@@ -133,11 +133,14 @@ export default function AskPillars({ chartId, tier, onUpgrade }) {
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send(input)}
             placeholder="Ask about your chart…"
             className="flex-1 rounded-[10px] px-4 py-2.5 text-[13px] outline-none"
-            style={{ background: '#080809', border: '1px solid rgba(255,255,255,0.06)', color: '#e8e4dd' }}
+            style={{ background: '#080809', border: '1px solid rgba(255,255,255,0.06)', color: '#e8e4dd', transition: 'border-color 0.15s' }}
+            onFocus={e => { e.target.style.borderColor = 'var(--jade-dim)'; }}
+            onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.06)'; }}
           />
           <button
             onClick={() => send(input)}
             disabled={!input.trim() || loading}
+            aria-label="Send message"
             className="rounded-[10px] px-4 py-2.5 text-[13px] font-medium"
             style={{
               background: !input.trim() || loading ? 'rgba(196,145,58,0.15)' : '#c4913a',

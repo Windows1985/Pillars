@@ -86,22 +86,22 @@ export default function DayMaster({ dayMaster, dayPillar }) {
               className="text-xs px-2 py-0.5 rounded-full"
               style={{ background: e.bg, color: e.hex, border: `1px solid ${e.hex}30` }}
             >
-              {e.zh} {stem.element}
+              {stem.element}
             </span>
-            <span className="text-xs" style={{ color: '#4a4844' }}>
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
               {polarity}
             </span>
             {branch && (
-              <span className="text-xs" style={{ color: '#3a3733' }}>
-                · Branch {branch.char} {branch.pinyin}
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                · {branch.english} Branch ({branch.char})
               </span>
             )}
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: '#3a3733', marginBottom: 16, letterSpacing: '0.04em' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)', marginBottom: 16, marginTop: 12, letterSpacing: '0.04em' }}>
             Yang is outward and active · Yin is inward and adaptive
           </div>
 
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#3a3733', marginBottom: 8 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontStyle: 'italic', fontWeight: 300, color: 'var(--text-dim)', marginBottom: 8 }}>
             Your nature
           </div>
           <p className="text-[15px] leading-relaxed" style={{ color: '#9a9590' }}>

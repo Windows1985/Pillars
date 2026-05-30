@@ -19,6 +19,27 @@ const TEN_GOD_EN = {
   '偏印': 'Indirect Resource', '正印': 'Direct Resource',
 };
 
+const TEN_GOD_DESC = {
+  '比肩': 'Same element and polarity as the Day Master — peers, competitors, and siblings.',
+  '劫财': 'Same element, opposite polarity — rivals who challenge or take resources.',
+  '食神': 'Element produced by Day Master, same polarity — talents, output, and contentment.',
+  '伤官': 'Element produced by Day Master, opposite polarity — creativity, disruption, and sharp wit.',
+  '正官': 'Element that controls Day Master, opposite polarity — discipline, status, and responsibility.',
+  '偏官': 'Element that controls Day Master, same polarity — pressure, ambition, and direct authority.',
+  '正财': 'Element controlled by Day Master, opposite polarity — earned wealth and tangible assets.',
+  '偏财': 'Element controlled by Day Master, same polarity — unexpected income and opportunistic gain.',
+  '偏印': 'Element that produces Day Master, same polarity — indirect support, intuition, and solitude.',
+  '正印': 'Element that produces Day Master, opposite polarity — learning, mentorship, and nurturing.',
+};
+
+const STAR_DESC = {
+  '天乙贵人': 'Heavenly Noble Star — brings timely help and support from influential people.',
+  '文昌贵人': 'Academic Star — favours intellectual pursuits, examinations, and writing.',
+  '桃花': 'Peach Blossom — romantic magnetism and social charm.',
+  '驿马': 'Travelling Horse — movement, relocation, and career changes.',
+  '华盖': 'Canopy Star — spiritual sensitivity, artistic gifts, and occasional isolation.',
+};
+
 const ELEM_LEGEND = [
   { name: 'Wood', hex: '#6abf7a' }, { name: 'Fire', hex: '#d96b54' },
   { name: 'Earth', hex: '#c4913a' }, { name: 'Metal', hex: '#9db0c2' }, { name: 'Water', hex: '#5592b8' },
@@ -111,8 +132,25 @@ export default function PillarChart({ chart, tier, onUpgrade, isPro }) {
 
   return (
     <div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', textAlign: 'center', marginBottom: 16 }}>
-        Heavenly Stem (天干) above · Earthly Branch (地支) below · click a pillar to analyse
+      {/* Instruction hint + legend */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ fontSize: 8, color: 'var(--jade)', lineHeight: 1 }}>●</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-dim)', letterSpacing: '0.04em' }}>
+            Select a pillar to explore it
+          </span>
+        </div>
+        <div style={{ display: 'flex', gap: 16 }}>
+          {ELEM_LEGEND.map(el => (
+            <div key={el.name} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: el.hex, flexShrink: 0 }} />
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'var(--text-muted)', letterSpacing: '0.08em' }}>{el.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>
+        Heavenly Stem above · Earthly Branch below
       </div>
       {/* Horizontal scroll on mobile */}
       <div className="h-scroll">
@@ -134,28 +172,28 @@ export default function PillarChart({ chart, tier, onUpgrade, isPro }) {
                 onMouseLeave={() => setHovered(null)}
                 style={{
                   display: 'flex', flexDirection: 'column', cursor: 'pointer',
-                  borderLeft: i === 0 ? '1px solid var(--border)' : 'none',
+                  borderLeft: `${isSel || isHov ? 2 : 1}px solid ${isSel ? 'var(--jade)' : isHov ? 'var(--jade-dim)' : (i === 0 ? 'var(--border)' : 'var(--border)')}`,
                   borderRight: '1px solid var(--border)',
                   borderTop: `1px solid ${isSel ? 'var(--jade)' : isDay || isHov ? 'var(--jade-dim)' : 'var(--border)'}`,
                   borderBottom: `1px solid ${isSel ? 'var(--jade)' : 'var(--border)'}`,
-                  background: isSel ? 'var(--jade-bg)' : 'transparent',
-                  transition: 'border-color 0.2s, background 0.2s',
+                  background: isSel ? 'var(--jade-bg)' : isHov ? 'rgba(255,255,255,0.025)' : 'transparent',
+                  transition: 'border-color 0.15s, background 0.15s',
                 }}
               >
                 {/* Pillar name */}
                 <div style={{
                   padding: '14px 20px 12px',
                   borderBottom: '1px solid var(--border)',
-                  display: 'flex', alignItems: 'baseline', gap: 8,
+                  display: 'flex', flexDirection: 'column', gap: 3,
                 }}>
+                  <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 11, color: isSel || isDay ? 'var(--jade)' : 'var(--text-muted)' }}>
+                    {PILLAR_LABELS[i].zh}
+                  </span>
                   <span style={{
-                    fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.18em',
+                    fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.18em',
                     textTransform: 'uppercase', color: isSel ? 'var(--jade)' : isDay ? 'var(--jade)' : 'var(--text-muted)',
                   }}>
                     {PILLAR_LABELS[i].en}
-                  </span>
-                  <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 12, color: 'var(--text-muted)' }}>
-                    {PILLAR_LABELS[i].zh}
                   </span>
                 </div>
 
@@ -183,11 +221,17 @@ export default function PillarChart({ chart, tier, onUpgrade, isPro }) {
                           sideOffset={4}
                           style={{
                             background: 'var(--surface-2)', border: '1px solid var(--border)',
-                            padding: '6px 10px', fontFamily: 'var(--font-mono)', fontSize: 10,
-                            letterSpacing: '0.08em', color: 'var(--text-dim)', zIndex: 100,
+                            padding: '8px 12px', fontFamily: 'var(--font-mono)', fontSize: 10,
+                            letterSpacing: '0.06em', color: 'var(--text-dim)', zIndex: 100,
+                            maxWidth: 260, lineHeight: 1.6,
                           }}
                         >
-                          {TEN_GOD_EN[p.tenGod.char]}
+                          <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 300, color: 'var(--text)', marginBottom: 4 }}>
+                            {TEN_GOD_EN[p.tenGod.char]} <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 11, color: 'var(--text-muted)' }}>{p.tenGod.char}</span>
+                          </div>
+                          <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                            {TEN_GOD_DESC[p.tenGod.char]}
+                          </div>
                           <Tooltip.Arrow style={{ fill: 'var(--surface-2)' }} />
                         </Tooltip.Content>
                       </Tooltip.Portal>
@@ -229,11 +273,11 @@ export default function PillarChart({ chart, tier, onUpgrade, isPro }) {
                   marginTop: 'auto', padding: '20px 20px 20px',
                   borderTop: '1px solid var(--border)',
                 }}>
-                  <div style={{
-                    fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.16em',
-                    textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10,
-                  }}>
-                    藏干 Hidden
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 5, marginBottom: 10 }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+                      Hidden Stems
+                    </span>
+                    <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 9, color: 'var(--text-muted)', opacity: 0.7 }}>藏干</span>
                   </div>
                   {p.hiddenStems.length > 0 ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
@@ -248,8 +292,8 @@ export default function PillarChart({ chart, tier, onUpgrade, isPro }) {
                               {hs.stem.pinyin}
                             </span>
                             {hs.tenGod && (
-                              <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 9, color: 'var(--text-muted)', marginLeft: 'auto' }}>
-                                {hs.tenGod.char}
+                              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'var(--text-muted)', marginLeft: 'auto', letterSpacing: '0.04em' }} title={TEN_GOD_DESC[hs.tenGod.char]}>
+                                {TEN_GOD_EN[hs.tenGod.char] ?? hs.tenGod.char}
                               </span>
                             )}
                           </div>
@@ -265,13 +309,17 @@ export default function PillarChart({ chart, tier, onUpgrade, isPro }) {
                 {stars.length > 0 && (
                   <div style={{ padding: '0 20px 20px', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                     {stars.map((s, j) => (
-                      <span key={j} title={s.english || s.star} style={{
+                      <span key={j} title={`${s.english ?? s.star}\n${STAR_DESC[s.star] ?? ''}`} style={{
                         fontFamily: 'var(--font-cjk)', fontSize: 9, padding: '2px 7px',
                         background: 'rgba(196,145,58,0.08)', color: '#c4913a',
                         border: '1px solid rgba(196,145,58,0.2)',
                         borderRadius: 4,
-                        letterSpacing: '0.04em', cursor: 'default',
-                      }}>
+                        letterSpacing: '0.04em', cursor: 'help',
+                        transition: 'background 0.12s',
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(196,145,58,0.16)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(196,145,58,0.08)'; }}
+                      >
                         {s.star}
                       </span>
                     ))}
@@ -294,14 +342,6 @@ export default function PillarChart({ chart, tier, onUpgrade, isPro }) {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginTop: 20 }}>
-        {ELEM_LEGEND.map(el => (
-          <div key={el.name} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: el.hex, flexShrink: 0 }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'var(--text-muted)', letterSpacing: '0.08em' }}>{el.name}</span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

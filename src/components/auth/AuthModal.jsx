@@ -115,6 +115,11 @@ export default function AuthModal({ open, onClose, defaultMode = 'signin' }) {
                 Password
               </label>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" style={INPUT_STYLE} />
+              {mode === 'signup' && (
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', marginTop: 6, letterSpacing: '0.04em' }}>
+                  At least 8 characters
+                </p>
+              )}
             </div>
 
             <button

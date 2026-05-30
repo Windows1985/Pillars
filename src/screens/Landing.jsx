@@ -6,13 +6,17 @@ export default function Landing({ onEnter }) {
       alignItems: 'center', justifyContent: 'center',
       padding: 'clamp(32px, 8vw, 64px)', textAlign: 'center',
     }}>
-      <div className="glow-cjk" style={{
-        fontFamily: 'var(--font-cjk)',
-        fontSize: 'clamp(80px, 14vw, 128px)', lineHeight: 0.9,
-        color: 'var(--text)',
-        marginBottom: 32,
-      }}>
-        柱
+      <div style={{ marginBottom: 32, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+        <div aria-hidden="true" className="glow-cjk" style={{
+          fontFamily: 'var(--font-cjk)',
+          fontSize: 'clamp(80px, 14vw, 128px)', lineHeight: 0.9,
+          color: 'var(--text)',
+        }}>
+          柱
+        </div>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+          Pillars
+        </span>
       </div>
 
       <h1 style={{
@@ -56,15 +60,15 @@ export default function Landing({ onEnter }) {
         onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.97)'; }}
         onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
       >
-        Enter birth data →
+        Calculate your chart →
       </button>
 
-      <p style={{
-        fontFamily: 'var(--font-mono)',
-        fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase',
-        color: 'var(--text-muted)', marginTop: 24,
-      }}>
-        四柱命理 · Four Pillars of Destiny
+      <p style={{ marginTop: 24 }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>
+          Four Pillars of Destiny
+        </span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.1em', color: 'var(--text-muted)', margin: '0 8px' }}>·</span>
+        <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 11, color: 'var(--text-muted)' }}>四柱命理</span>
       </p>
     </div>
   );
