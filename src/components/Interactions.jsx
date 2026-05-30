@@ -11,19 +11,30 @@ const BRANCH_STYLE = {
   '自刑':   { color: '#c07060', bg: 'rgba(192,112,96,0.06)',  border: 'rgba(192,112,96,0.18)'  },
 };
 
+const BRANCH_TYPE_EN = {
+  '六合': 'Six Harmony', '三合': 'Three Harmony', '半合': 'Half Harmony',
+  '六冲': 'Six Clash', '相害': 'Six Harm', '六破': 'Six Break',
+  '持势刑': 'Dominant Punishment', '无礼刑': 'Ungrateful Punishment',
+  '无恩刑': 'Unkind Punishment', '自刑': 'Self Punishment',
+  '天干合': 'Stem Combination',
+};
+
 function Tag({ name, type, typeEnglish, effect, pillars, element, combinedElement, transforms }) {
   const s = BRANCH_STYLE[type] ?? { color: 'var(--text-muted)', bg: 'rgba(90,87,84,0.07)', border: 'rgba(90,87,84,0.2)' };
   const pillarsStr = pillars?.join(' · ');
+  const typeLabel = BRANCH_TYPE_EN[type] ?? typeEnglish ?? type;
 
   return (
     <div
       style={{
         display: 'inline-flex', flexDirection: 'column', gap: 4,
-        padding: '10px 14px', cursor: 'default',
+        padding: '10px 14px', cursor: 'help',
         background: s.bg, border: `1px solid ${s.border}`,
-        borderRadius: 4,
+        borderRadius: 4, transition: 'background 0.12s',
       }}
-      title={`${typeEnglish}\n${effect}${pillarsStr ? `\nPillars: ${pillarsStr}` : ''}`}
+      title={`${typeLabel}\n${effect ?? ''}${pillarsStr ? `\nPillars: ${pillarsStr}` : ''}`}
+      onMouseEnter={e => { e.currentTarget.style.background = s.bg.replace('0.07', '0.12').replace('0.05', '0.10').replace('0.06', '0.10'); }}
+      onMouseLeave={e => { e.currentTarget.style.background = s.bg; }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 14, fontWeight: 500, color: s.color }}>
@@ -35,11 +46,13 @@ function Tag({ name, type, typeEnglish, effect, pillars, element, combinedElemen
           </span>
         )}
         {type === '天干合' && !transforms && (
-          <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 9, color: 'var(--text-muted)' }}>未化</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
+            · unrealized <span style={{ fontFamily: 'var(--font-cjk)' }}>未化</span>
+          </span>
         )}
       </div>
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
-        {typeEnglish}{pillarsStr ? ` · ${pillarsStr}` : ''}
+        {typeLabel}{pillarsStr ? ` · ${pillarsStr}` : ''}
       </div>
       {effect && (
         <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 300, fontStyle: 'italic', color: 'var(--text-muted)', lineHeight: 1.55, maxWidth: 240, marginTop: 2 }}>
@@ -79,7 +92,7 @@ export default function Interactions({ branchInteractions = [], stemCombinations
             fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.18em',
             textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 16,
           }}>
-            Branch Interactions · 地支
+            Earthly Branch Interactions <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 10, textTransform: 'none', letterSpacing: 0 }}>地支</span>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {branchInteractions.map((ia, i) => <Tag key={i} {...ia} />)}

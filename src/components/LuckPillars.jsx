@@ -16,8 +16,8 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear, chart
 
   return (
     <div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em', color: 'var(--text-muted)', marginBottom: 16 }}>
-        Each column is a 10-year chapter. Click to explore.
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: 16, lineHeight: 1.5 }}>
+        Each column covers ~10 years of your life, ordered left to right. Your current period is highlighted. Click any column to explore it.
       </div>
       <div className="luck-timeline" style={{ display: 'flex', borderTop: '1px solid var(--border)' }}>
         {pillars.map((p, i) => {
@@ -37,15 +37,23 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear, chart
               style={{
                 flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
                 padding: '0', cursor: 'pointer', background: 'none', border: 'none',
-                opacity: isCurrent || isSelected ? 1 : 0.28,
-                transition: 'opacity 0.2s',
+                color: isCurrent || isSelected ? 'var(--text)' : 'var(--text-muted)',
+                transition: 'color 0.2s',
               }}
+              onMouseEnter={e => { if (!isCurrent && !isSelected) e.currentTarget.style.color = 'var(--text-dim)'; }}
+              onMouseLeave={e => { if (!isCurrent && !isSelected) e.currentTarget.style.color = 'var(--text-muted)'; }}
             >
               <div className="luck-pillar-chars" style={{ paddingTop: 28, paddingBottom: 8 }}>
-                <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 24, lineHeight: 1, color: se.hex }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.1em', color: 'inherit', marginBottom: 3, opacity: 0.6 }}>
+                  {stem.english}
+                </div>
+                <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 24, lineHeight: 1, color: isCurrent || isSelected ? se.hex : 'inherit' }}>
                   {stem.char}
                 </div>
-                <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 24, lineHeight: 1, color: be.hex, marginTop: 8 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.1em', color: 'inherit', marginTop: 6, marginBottom: 3, opacity: 0.6 }}>
+                  {branch.english}
+                </div>
+                <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 24, lineHeight: 1, color: isCurrent || isSelected ? be.hex : 'inherit', marginTop: 0 }}>
                   {branch.char}
                 </div>
               </div>
@@ -59,7 +67,7 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear, chart
               </div>
 
               {/* Chevron + "now" indicator */}
-              <div className="luck-pillar-now" style={{ height: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, paddingBottom: 20 }}>
+              <div className="luck-pillar-now" style={{ height: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, paddingBottom: 20 }}>
                 {isCurrent && (
                   <span style={{
                     fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.16em',
@@ -68,15 +76,24 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear, chart
                     now
                   </span>
                 )}
-                <span style={{
-                  fontFamily: 'var(--font-mono)', fontSize: 8,
-                  color: isSelected ? 'var(--jade)' : 'var(--text-muted)',
-                  display: 'inline-block',
-                  transform: isSelected ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.25s ease, color 0.2s ease',
-                }}>
-                  ↓
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.1em',
+                    color: isSelected ? 'var(--jade)' : 'var(--text-muted)',
+                    transition: 'color 0.2s',
+                  }}>
+                    {isSelected ? 'Hide' : 'Show'}
+                  </span>
+                  <span style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 8,
+                    color: isSelected ? 'var(--jade)' : 'var(--text-muted)',
+                    display: 'inline-block',
+                    transform: isSelected ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.25s ease, color 0.2s ease',
+                  }}>
+                    ↓
+                  </span>
+                </div>
               </div>
             </button>
           );
@@ -134,7 +151,10 @@ function PillarDetail({ pillar, currentAge, chart, isPro, onUpgrade }) {
       flexWrap: 'wrap',
     }}>
       <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end', flexShrink: 0 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'var(--text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+            {stem.english}
+          </div>
           <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 56, lineHeight: 1, color: se.hex }}>
             {stem.char}
           </div>
@@ -143,7 +163,10 @@ function PillarDetail({ pillar, currentAge, chart, isPro, onUpgrade }) {
           </div>
         </div>
         <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 20, color: 'var(--border)', paddingBottom: 14 }}>·</div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'var(--text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+            {branch.english}
+          </div>
           <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 56, lineHeight: 1, color: be.hex }}>
             {branch.char}
           </div>
@@ -182,13 +205,13 @@ function PillarDetail({ pillar, currentAge, chart, isPro, onUpgrade }) {
             fontFamily: 'var(--font-mono)', fontSize: 10, padding: '4px 12px',
             background: se.bg, color: se.hex, border: `1px solid ${se.hex}30`, borderRadius: 4,
           }}>
-            {se.zh} {stem.element}
+            {stem.element} <span style={{ fontFamily: 'var(--font-cjk)', opacity: 0.7 }}>{se.zh}</span>
           </span>
           <span style={{
             fontFamily: 'var(--font-mono)', fontSize: 10, padding: '4px 12px',
             background: be.bg, color: be.hex, border: `1px solid ${be.hex}30`, borderRadius: 4,
           }}>
-            {be.zh} {branch.element} · {branch.english}
+            {branch.element} · {branch.english} <span style={{ fontFamily: 'var(--font-cjk)', opacity: 0.7 }}>{be.zh}</span>
           </span>
         </div>
 

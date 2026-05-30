@@ -3,6 +3,9 @@ import BlurGate from './paywall/BlurGate.jsx';
 function AnalysisSkeleton() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '16px 0' }}>
+      <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 4 }}>
+        Generating analysis…
+      </p>
       {[100, 88, 96, 72, 84, 60, 90, 50].map((w, i) => (
         <div
           key={i}
@@ -42,7 +45,7 @@ export default function Analysis({ teaserText, teaserLoading, teaserError, natal
               <Prose text={teaserText} dim={false} />
               {tier === 'free' && (
                 <div className="mt-5 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                  <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>BaZi describes patterns and tendencies — not certainties.</p>
+                  <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>BaZi (八字) is a Chinese system that maps tendencies from your birth date — not certainties.</p>
                 </div>
               )}
             </>
@@ -59,7 +62,7 @@ export default function Analysis({ teaserText, teaserLoading, teaserError, natal
             <>
               <Prose text={natalText} dim={false} />
               <p className="text-[11px] mt-5 pt-3" style={{ color: 'var(--text-muted)', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                BaZi describes patterns and tendencies — not certainties. Interpretations are probabilistic.
+                BaZi (八字) is a Chinese system that maps tendencies from your birth date — not certainties. Interpretations are probabilistic.
               </p>
             </>
           )}

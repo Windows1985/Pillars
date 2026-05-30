@@ -60,7 +60,7 @@ export default function ElementBalance({ balance, dayMaster }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ height: 220, marginBottom: 32 }}>
+      <div style={{ height: 240, marginBottom: 8 }}>
         <ResponsiveBar
           data={barData}
           keys={['score']}
@@ -81,11 +81,20 @@ export default function ElementBalance({ balance, dayMaster }) {
             renderTick: ({ x, y, value, textAnchor }) => (
               <g transform={`translate(${x},${y})`}>
                 <text
+                  y={-6}
                   textAnchor={textAnchor ?? 'end'}
                   dominantBaseline="middle"
-                  style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 14, fill: ELEM[value]?.hex ?? '#9ca3af' }}
+                  style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, fill: ELEM[value]?.hex ?? '#9ca3af', letterSpacing: '0.06em' }}
                 >
-                  {ELEM[value]?.zh ?? value}
+                  {value}
+                </text>
+                <text
+                  y={7}
+                  textAnchor={textAnchor ?? 'end'}
+                  dominantBaseline="middle"
+                  style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 11, fill: ELEM[value]?.hex ? `${ELEM[value].hex}80` : '#9ca3af' }}
+                >
+                  {ELEM[value]?.zh ?? ''}
                 </text>
               </g>
             ),
@@ -101,9 +110,9 @@ export default function ElementBalance({ balance, dayMaster }) {
         />
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 40, flexWrap: 'wrap' }}>
-        {/* Strong / Weak */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'stretch', gap: 16, flexWrap: 'wrap', marginTop: 24 }}>
+        {/* Strong / Weak card */}
+        <div style={{ background: 'var(--surface-1)', border: '1px solid var(--border)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 160 }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
             Day Master
           </span>
@@ -114,24 +123,26 @@ export default function ElementBalance({ balance, dayMaster }) {
               ? { color: '#c4913a', background: 'rgba(196,145,58,0.08)', border: '1px solid rgba(196,145,58,0.2)' }
               : { color: 'var(--jade)', background: 'var(--jade-bg)', border: '1px solid var(--jade-dim)' }),
           }}>
-            {strong ? 'Strong 旺' : 'Weak 弱'}
+            {strong ? 'Strong' : 'Weak'}
           </span>
         </div>
 
-        {/* Suggested balance */}
-        <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>
+        {/* Suggested balance card */}
+        <div style={{ background: 'var(--surface-1)', border: '1px solid var(--border)', padding: '16px 20px', flex: 2, minWidth: 200 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
             Suggested Balance
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 20, color: ELEM[balancingElement.primaryElement]?.hex ?? '#c4913a' }}>
-              {ELEM[balancingElement.primaryElement]?.zh}
-            </span>
             <div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 300, color: 'var(--text-dim)' }}>
-                {balancingElement.primaryElement}
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                <span style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 300, color: ELEM[balancingElement.primaryElement]?.hex ?? '#c4913a' }}>
+                  {balancingElement.primaryElement}
+                </span>
+                <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 14, color: ELEM[balancingElement.primaryElement]?.hex ?? '#c4913a', opacity: 0.7 }}>
+                  {ELEM[balancingElement.primaryElement]?.zh}
+                </span>
               </div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'var(--text-muted)', marginTop: 2, letterSpacing: '0.06em' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'var(--text-muted)', marginTop: 4, letterSpacing: '0.06em' }}>
                 {balancingElement.reason}
               </div>
             </div>

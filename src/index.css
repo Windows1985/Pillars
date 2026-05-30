@@ -21,6 +21,8 @@
   --font-display: 'Fraunces', Georgia, serif;
   --font-mono:    'JetBrains Mono', monospace;
   --font-cjk:     'Noto Serif SC', 'Source Han Serif SC', serif;
+  /* Interaction hover */
+  --bg-hover: rgba(255,255,255,0.04);
 }
 
 @layer base {
@@ -49,7 +51,7 @@
     background-image:
       radial-gradient(ellipse 70% 50% at 12% 75%, rgba(190, 115, 30, 0.055) 0%, transparent 65%),
       radial-gradient(ellipse 55% 45% at 88% 18%, rgba(45, 80, 130, 0.06) 0%, transparent 65%);
-    color: #e8e4dd;
+    color: var(--text);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'kern' 1, 'liga' 1;
@@ -58,8 +60,8 @@
   }
 
   ::selection {
-    background: rgba(196, 145, 58, 0.22);
-    color: #e8e4dd;
+    background: var(--jade-bg);
+    color: var(--text);
   }
 }
 

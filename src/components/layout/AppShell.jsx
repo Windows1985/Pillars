@@ -1,3 +1,5 @@
+import * as Tooltip from '@radix-ui/react-tooltip';
+
 const NAV = [
   { id: 'dashboard', en: 'Dashboard', zh: '首页' },
   { id: 'chart',     en: 'Chart',     zh: '四柱' },
@@ -52,12 +54,14 @@ export default function AppShell({
                   fontFamily: 'var(--font-display)',
                   fontSize: 13, fontWeight: 300, letterSpacing: '0.02em',
                   color: screen === id ? 'var(--text)' : 'var(--text-muted)',
-                  background: 'none', border: 'none', cursor: 'pointer',
+                  background: screen === id ? 'var(--jade-bg)' : 'none',
+                  border: 'none', cursor: 'pointer',
                   padding: '8px 14px', position: 'relative',
                   borderRadius: 4,
+                  transition: 'background 0.15s, color 0.15s',
                 }}
-                onMouseEnter={e => { if (screen !== id) e.currentTarget.style.color = 'var(--text-dim)'; }}
-                onMouseLeave={e => { if (screen !== id) e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.transform = 'none'; }}
+                onMouseEnter={e => { if (screen !== id) { e.currentTarget.style.color = 'var(--text-dim)'; e.currentTarget.style.background = 'var(--bg-hover)'; } }}
+                onMouseLeave={e => { if (screen !== id) { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'none'; } e.currentTarget.style.transform = 'none'; }}
                 onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.97)'; }}
                 onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
               >
@@ -81,9 +85,19 @@ export default function AppShell({
           {user ? (
             <>
               {isPro && (
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em', color: 'var(--jade)', background: 'var(--jade-bg)', border: '1px solid var(--jade-border)', padding: '3px 8px', borderRadius: 4 }}>
-                  Pro
-                </span>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em', color: 'var(--jade)', background: 'var(--jade-bg)', border: '1px solid var(--jade-border)', padding: '3px 8px', borderRadius: 4, cursor: 'default' }}>
+                      Pro
+                    </span>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content sideOffset={6} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', padding: '6px 10px', fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.06em', color: 'var(--text-dim)', zIndex: 100, maxWidth: 240, lineHeight: 1.5 }}>
+                      Pro — full natal analysis, monthly forecasts, and chart Q&A enabled
+                      <Tooltip.Arrow style={{ fill: 'var(--surface-2)' }} />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
               )}
               {!isPro && (
                 <button

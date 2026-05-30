@@ -40,8 +40,8 @@ export default function TimelineScreen({ chart, tier, onUpgrade, isPro }) {
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Direction</div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--text-dim)' }}>
               {luckPillars.forward
-                ? 'Forward 顺 — pillars unfold in the natural stem cycle'
-                : 'Backward 逆 — pillars unfold in reverse'}
+                ? 'Forward — pillars unfold in the natural stem cycle'
+                : 'Backward — pillars unfold in reverse'}
             </div>
           </div>
         </div>

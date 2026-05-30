@@ -6,14 +6,17 @@ function SectionDivider({ en, zh, chapter }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '56px 0 28px' }}>
       {chapter && (
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+        <span
+          title={`Section ${chapter}`}
+          style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}
+        >
           {chapter}
         </span>
       )}
       <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{en}</span>
-        <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 12, color: 'var(--text-muted)' }}>{zh}</span>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>{en}</span>
+        <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 10, color: 'var(--text-muted)' }}>{zh}</span>
       </div>
       <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
     </div>
@@ -23,6 +26,9 @@ function SectionDivider({ en, zh, chapter }) {
 function AnalysisSkeleton() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '12px 0' }}>
+      <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 4 }}>
+        Generating analysis…
+      </p>
       {[100, 90, 95, 78, 88, 65, 92, 55, 82].map((w, i) => (
         <div
           key={i}
@@ -119,7 +125,7 @@ export default function AnalysisScreen({
 
       <div style={{ padding: '56px 0 48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
-          Analysis · 命理解析
+          Analysis <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 10, textTransform: 'none', letterSpacing: 0, color: 'var(--text-muted)', opacity: 0.7 }}>命理解析</span>
         </div>
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.2 }}>
           Your natal reading
@@ -143,8 +149,10 @@ export default function AnalysisScreen({
                   fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em',
                   textTransform: 'uppercase', color: 'var(--text-muted)',
                   background: 'none', border: '1px solid var(--border)',
-                  padding: '6px 16px', cursor: 'pointer',
+                  padding: '6px 16px', cursor: 'pointer', transition: 'background 0.15s',
                 }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--surface-2)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
               >
                 Retry
               </button>
@@ -174,8 +182,10 @@ export default function AnalysisScreen({
                     fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em',
                     textTransform: 'uppercase', color: 'var(--text-muted)',
                     background: 'none', border: '1px solid var(--border)',
-                    padding: '6px 16px', cursor: 'pointer',
+                    padding: '6px 16px', cursor: 'pointer', transition: 'background 0.15s',
                   }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--surface-2)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
                 >
                   Retry
                 </button>

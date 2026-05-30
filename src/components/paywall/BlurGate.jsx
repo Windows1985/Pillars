@@ -33,9 +33,15 @@ export default function BlurGate({ required, current, label, children, onUpgrade
           </div>
           <p style={{
             fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 300,
-            color: 'var(--text-dim)', marginBottom: 20, lineHeight: 1.6,
+            color: 'var(--text-dim)', marginBottom: 8, lineHeight: 1.6,
           }}>
             {label ?? `Unlock this section with ${tierLabel}`}
+          </p>
+          <p style={{
+            fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.08em',
+            color: 'var(--text-muted)', marginBottom: 20,
+          }}>
+            {price}
           </p>
           <button
             onClick={onUpgrade}
@@ -51,7 +57,7 @@ export default function BlurGate({ required, current, label, children, onUpgrade
             onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.97)'; }}
             onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
           >
-            Upgrade to {tierLabel} · {price}
+            Upgrade to {tierLabel} →
           </button>
         </div>
       </div>
