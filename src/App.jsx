@@ -19,6 +19,7 @@ import PricingPage from './components/subscription/PricingPage.jsx';
 import { calculateChart } from './bazi/calculate.js';
 import { saveChart, generateTeaser, generateNatal, loadUserCharts } from './api/serverAnalysis.js';
 import { generateAnalysis } from './api/analysis.js';
+import { generateFullProAnalysis } from './api/proAnalysis.js';
 
 export default function App() {
   const { user, tier, isPro, loading: authLoading, signOut, refreshProfile } = useAuth();
@@ -37,6 +38,10 @@ export default function App() {
   const [anonAnalysis, setAnonAnalysis] = useState('');
   const [anonLoading, setAnonLoading] = useState(false);
   const [anonError, setAnonError] = useState('');
+
+  const [proAnalysis, setProAnalysis] = useState(null);
+  const [proAnalysisLoading, setProAnalysisLoading] = useState(false);
+  const [proAnalysisError, setProAnalysisError] = useState('');
 
   const [chartLoading, setChartLoading] = useState(false);
 
@@ -68,6 +73,7 @@ export default function App() {
     setTeaserText(''); setTeaserLoading(false); setTeaserError('');
     setNatalText(''); setNatalLoading(false); setNatalError('');
     setAnonAnalysis(''); setAnonLoading(false); setAnonError('');
+    setProAnalysis(null); setProAnalysisLoading(false); setProAnalysisError('');
     setChartId(null);
   }
 
@@ -101,6 +107,12 @@ export default function App() {
             .then(t => setNatalText(t))
             .catch(e => setNatalError(e.message))
             .finally(() => setNatalLoading(false));
+
+          setProAnalysisLoading(true);
+          withTimeout(generateFullProAnalysis(result), 45000)
+            .then(t => setProAnalysis(t))
+            .catch(e => setProAnalysisError(e.message))
+            .finally(() => setProAnalysisLoading(false));
         }
       } catch (e) {
         setTeaserError(e.message);
@@ -132,6 +144,12 @@ export default function App() {
         .then(t => setNatalText(t))
         .catch(e => setNatalError(e.message))
         .finally(() => setNatalLoading(false));
+
+      setProAnalysisLoading(true);
+      withTimeout(generateFullProAnalysis(saved.chart_data), 45000)
+        .then(t => setProAnalysis(t))
+        .catch(e => setProAnalysisError(e.message))
+        .finally(() => setProAnalysisLoading(false));
     }
   }
 
@@ -146,6 +164,7 @@ export default function App() {
     chart, teaserText, teaserLoading, teaserError,
     natalText, natalLoading, natalError,
     anonAnalysis, anonLoading, anonError,
+    proAnalysis, proAnalysisLoading, proAnalysisError,
     tier, onUpgrade: handleUpgrade, user,
     onRetryTeaser: chartId ? () => {
       setTeaserText(''); setTeaserError(''); setTeaserLoading(true);
@@ -208,7 +227,10 @@ export default function App() {
         )}
 
         {screen === 'chart' && chart && (
-          <ChartScreen chart={chart} tier={tier} onUpgrade={handleUpgrade} isPro={isPro} />
+          <ChartScreen
+            chart={chart} tier={tier} onUpgrade={handleUpgrade} isPro={isPro}
+            proAnalysis={proAnalysis} proAnalysisLoading={proAnalysisLoading} proAnalysisError={proAnalysisError}
+          />
         )}
 
         {screen === 'analysis' && chart && (

@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
 import BlurGate from '../components/paywall/BlurGate.jsx';
-import { generatePersonalityReading, generateCareerReading, generateRelationshipsReading } from '../api/proAnalysis.js';
 
 function SectionDivider({ en, zh, chapter }) {
   return (
@@ -78,42 +76,10 @@ export default function AnalysisScreen({
   chart, teaserText, teaserLoading, teaserError,
   natalText, natalLoading, natalError,
   tier, onUpgrade, anonAnalysis, anonLoading, anonError,
+  proAnalysis, proAnalysisLoading, proAnalysisError,
   user, onRetryTeaser, onRetryNatal, onRetryAnon,
 }) {
   const isPro = tier === 'pro' || tier === 'max';
-
-  const [personalityText, setPersonalityText] = useState('');
-  const [personalityLoading, setPersonalityLoading] = useState(false);
-  const [personalityError, setPersonalityError] = useState('');
-
-  const [careerText, setCareerText] = useState('');
-  const [careerLoading, setCareerLoading] = useState(false);
-  const [careerError, setCareerError] = useState('');
-
-  const [relText, setRelText] = useState('');
-  const [relLoading, setRelLoading] = useState(false);
-  const [relError, setRelError] = useState('');
-
-  useEffect(() => {
-    if (!isPro || !chart) return;
-    setPersonalityLoading(true);
-    generatePersonalityReading(chart)
-      .then(t => setPersonalityText(t))
-      .catch(e => setPersonalityError(e.message))
-      .finally(() => setPersonalityLoading(false));
-
-    setCareerLoading(true);
-    generateCareerReading(chart)
-      .then(t => setCareerText(t))
-      .catch(e => setCareerError(e.message))
-      .finally(() => setCareerLoading(false));
-
-    setRelLoading(true);
-    generateRelationshipsReading(chart)
-      .then(t => setRelText(t))
-      .catch(e => setRelError(e.message))
-      .finally(() => setRelLoading(false));
-  }, [isPro]);
 
   const showAnon = !user;
   const activeText = showAnon ? anonAnalysis : teaserText;
@@ -201,19 +167,17 @@ export default function AnalysisScreen({
       {tier !== 'free' && (
         <>
           <SectionDivider en="Personality" zh="性格" chapter="III" />
-          {personalityLoading && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em' }}><Spinner />Reading…</p>}
-          {personalityError && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{personalityError}</p>}
-          {personalityText && <Prose text={personalityText} />}
+          {proAnalysisLoading && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em' }}><Spinner />Reading…</p>}
+          {proAnalysisError && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{proAnalysisError}</p>}
+          {proAnalysis?.personality && <Prose text={proAnalysis.personality} />}
 
           <SectionDivider en="Career" zh="事业" chapter="IV" />
-          {careerLoading && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em' }}><Spinner />Reading…</p>}
-          {careerError && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{careerError}</p>}
-          {careerText && <Prose text={careerText} />}
+          {proAnalysisLoading && !proAnalysis?.career && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em' }}><Spinner />Reading…</p>}
+          {proAnalysis?.career && <Prose text={proAnalysis.career} />}
 
           <SectionDivider en="Relationships" zh="感情" chapter="V" />
-          {relLoading && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em' }}><Spinner />Reading…</p>}
-          {relError && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#d96b54' }}>{relError}</p>}
-          {relText && <Prose text={relText} />}
+          {proAnalysisLoading && !proAnalysis?.relationships && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em' }}><Spinner />Reading…</p>}
+          {proAnalysis?.relationships && <Prose text={proAnalysis.relationships} />}
         </>
       )}
 

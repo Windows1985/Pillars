@@ -1,9 +1,7 @@
-import { useState, useEffect } from 'react';
 import PillarChart from '../components/PillarChart.jsx';
 import ElementBalance from '../components/ElementBalance.jsx';
 import Interactions from '../components/Interactions.jsx';
 import UpgradeNudge from '../components/paywall/UpgradeNudge.jsx';
-import { generateElementBalanceReading, generateInteractionsReading } from '../api/proAnalysis.js';
 
 function SectionDivider({ en, zh }) {
   return (
@@ -38,33 +36,8 @@ function AiReading({ text, loading, error }) {
   );
 }
 
-export default function ChartScreen({ chart, tier, onUpgrade, isPro }) {
+export default function ChartScreen({ chart, tier, onUpgrade, isPro, proAnalysis, proAnalysisLoading, proAnalysisError }) {
   const hasInteractions = (chart?.branchInteractions?.length ?? 0) > 0 || (chart?.stemCombinations?.length ?? 0) > 0;
-
-  const [balanceText, setBalanceText] = useState('');
-  const [balanceLoading, setBalanceLoading] = useState(false);
-  const [balanceError, setBalanceError] = useState('');
-
-  const [interactText, setInteractText] = useState('');
-  const [interactLoading, setInteractLoading] = useState(false);
-  const [interactError, setInteractError] = useState('');
-
-  useEffect(() => {
-    if (!isPro) return;
-    setBalanceLoading(true);
-    generateElementBalanceReading(chart)
-      .then(t => setBalanceText(t))
-      .catch(e => setBalanceError(e.message))
-      .finally(() => setBalanceLoading(false));
-
-    if (hasInteractions) {
-      setInteractLoading(true);
-      generateInteractionsReading(chart)
-        .then(t => setInteractText(t))
-        .catch(e => setInteractError(e.message))
-        .finally(() => setInteractLoading(false));
-    }
-  }, [isPro]);
 
   return (
     <div className="screen-container fade-in-up" style={{ maxWidth: 1200, margin: '0 auto' }}>
@@ -89,7 +62,7 @@ export default function ChartScreen({ chart, tier, onUpgrade, isPro }) {
 
       <SectionDivider en="Element Balance" zh="五行" />
       <ElementBalance balance={chart.elementBalance} dayMaster={chart.dayMaster} />
-      <AiReading text={balanceText} loading={balanceLoading} error={balanceError} />
+      <AiReading text={proAnalysis?.elementBalance} loading={proAnalysisLoading && !proAnalysis?.elementBalance} error={proAnalysisError} />
       {!isPro && <UpgradeNudge label="Get an AI reading of your element balance" onUpgrade={onUpgrade} />}
 
       {hasInteractions && (
@@ -99,7 +72,7 @@ export default function ChartScreen({ chart, tier, onUpgrade, isPro }) {
             branchInteractions={chart.branchInteractions}
             stemCombinations={chart.stemCombinations}
           />
-          <AiReading text={interactText} loading={interactLoading} error={interactError} />
+          <AiReading text={proAnalysis?.interactions} loading={proAnalysisLoading && !proAnalysis?.interactions} error={isPro ? proAnalysisError : ''} />
           {!isPro && <UpgradeNudge label="Analyse your chart's interactions" onUpgrade={onUpgrade} />}
         </>
       )}
