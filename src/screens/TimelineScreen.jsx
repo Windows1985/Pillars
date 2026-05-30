@@ -6,15 +6,15 @@ export default function TimelineScreen({ chart, tier, onUpgrade, isPro }) {
   const currentPillar = luckPillars?.pillars?.find(p => age >= p.startAge && age < p.endAge);
 
   return (
-    <div className="screen-pad fade-in-up" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 64px 80px' }}>
+    <div className="screen-container fade-in-up" style={{ maxWidth: 1200, margin: '0 auto' }}>
 
       <div style={{ padding: '56px 0 48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
           Luck Pillars · 大运
         </div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.2 }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 300, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1.2 }}>
           Your life arc
-        </h2>
+        </h1>
         <p style={{
           fontFamily: 'var(--font-display)', fontWeight: 300, fontSize: 15,
           lineHeight: 1.65, color: 'var(--text-dim)', maxWidth: 560, marginTop: 14, marginBottom: 32,

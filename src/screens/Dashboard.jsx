@@ -62,7 +62,7 @@ export default function Dashboard({ chart, chartId, teaserText, teaserLoading, o
   ];
 
   return (
-    <div className="screen-pad fade-in-up" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 64px 80px' }}>
+    <div className="screen-container fade-in-up" style={{ maxWidth: 1200, margin: '0 auto' }}>
 
       {/* ── Hero ── */}
       <div style={{ padding: '72px 0 0' }}>

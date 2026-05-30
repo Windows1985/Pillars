@@ -1,6 +1,6 @@
 export default function Landing({ onEnter }) {
   return (
-    <div className="fade-in-up" style={{
+    <div id="main-content" className="fade-in-up" style={{
       minHeight: 'calc(100vh - 56px)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',

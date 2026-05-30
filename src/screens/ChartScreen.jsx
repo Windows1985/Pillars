@@ -67,7 +67,7 @@ export default function ChartScreen({ chart, tier, onUpgrade, isPro }) {
   }, [isPro]);
 
   return (
-    <div className="screen-pad fade-in-up" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 64px 80px' }}>
+    <div className="screen-container fade-in-up" style={{ maxWidth: 1200, margin: '0 auto' }}>
 
       <div style={{ padding: '56px 0 48px' }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>

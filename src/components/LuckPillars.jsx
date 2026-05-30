@@ -19,70 +19,68 @@ export default function LuckPillars({ luckPillars, birthYear, currentYear, chart
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em', color: 'var(--text-muted)', marginBottom: 16 }}>
         Each column is a 10-year chapter. Click to explore.
       </div>
-      {/* Horizontal scroll on mobile */}
-      <div className="h-scroll">
-        <div style={{ display: 'flex', borderTop: '1px solid var(--border)', minWidth: 480 }}>
-          {pillars.map((p, i) => {
-            const stem = STEMS[p.stemIdx];
-            const branch = BRANCHES[p.branchIdx];
-            const se = ELEM[stem.element] ?? ELEM.Wood;
-            const be = ELEM[branch.element] ?? ELEM.Wood;
-            const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
-            const isSelected = selectedIdx === i;
-            const colClass = `luck-col-${Math.min(i, 8)}`;
+      <div className="luck-timeline" style={{ display: 'flex', borderTop: '1px solid var(--border)' }}>
+        {pillars.map((p, i) => {
+          const stem = STEMS[p.stemIdx];
+          const branch = BRANCHES[p.branchIdx];
+          const se = ELEM[stem.element] ?? ELEM.Wood;
+          const be = ELEM[branch.element] ?? ELEM.Wood;
+          const isCurrent = currentAge >= p.startAge && currentAge < p.endAge;
+          const isSelected = selectedIdx === i;
+          const colClass = `luck-col-${Math.min(i, 8)}`;
 
-            return (
-              <button
-                key={i}
-                onClick={() => setSelectedIdx(isSelected ? null : i)}
-                className={colClass}
-                style={{
-                  flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-                  padding: '0', cursor: 'pointer', background: 'none', border: 'none',
-                  opacity: isCurrent || isSelected ? 1 : 0.28,
-                }}
-              >
-                <div style={{ paddingTop: 28, paddingBottom: 8 }}>
-                  <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 24, lineHeight: 1, color: se.hex }}>
-                    {stem.char}
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 24, lineHeight: 1, color: be.hex, marginTop: 8 }}>
-                    {branch.char}
-                  </div>
+          return (
+            <button
+              key={i}
+              onClick={() => setSelectedIdx(isSelected ? null : i)}
+              className={`luck-pillar-btn ${colClass}`}
+              style={{
+                flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
+                padding: '0', cursor: 'pointer', background: 'none', border: 'none',
+                opacity: isCurrent || isSelected ? 1 : 0.28,
+                transition: 'opacity 0.2s',
+              }}
+            >
+              <div className="luck-pillar-chars" style={{ paddingTop: 28, paddingBottom: 8 }}>
+                <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 24, lineHeight: 1, color: se.hex }}>
+                  {stem.char}
                 </div>
-
-                <div style={{
-                  marginTop: 16, paddingBottom: 8,
-                  fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.08em',
-                  color: isCurrent ? 'var(--jade)' : 'var(--text-muted)',
-                }}>
-                  {p.startAge}–{p.endAge}
+                <div style={{ fontFamily: 'var(--font-cjk)', fontSize: 24, lineHeight: 1, color: be.hex, marginTop: 8 }}>
+                  {branch.char}
                 </div>
+              </div>
 
-                {/* Chevron + "now" indicator */}
-                <div style={{ height: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, paddingBottom: 20 }}>
-                  {isCurrent && (
-                    <span style={{
-                      fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.16em',
-                      textTransform: 'uppercase', color: 'var(--jade)',
-                    }}>
-                      now
-                    </span>
-                  )}
+              <div className="luck-pillar-age" style={{
+                marginTop: 16, paddingBottom: 8,
+                fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.08em',
+                color: isCurrent ? 'var(--jade)' : 'var(--text-muted)',
+              }}>
+                {p.startAge}–{p.endAge}
+              </div>
+
+              {/* Chevron + "now" indicator */}
+              <div className="luck-pillar-now" style={{ height: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, paddingBottom: 20 }}>
+                {isCurrent && (
                   <span style={{
-                    fontFamily: 'var(--font-mono)', fontSize: 8,
-                    color: isSelected ? 'var(--jade)' : 'var(--text-muted)',
-                    display: 'inline-block',
-                    transform: isSelected ? 'rotate(180deg)' : 'rotate(0deg)',
-                    transition: 'transform 0.25s ease, color 0.2s ease',
+                    fontFamily: 'var(--font-mono)', fontSize: 7, letterSpacing: '0.16em',
+                    textTransform: 'uppercase', color: 'var(--jade)',
                   }}>
-                    ↓
+                    now
                   </span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+                )}
+                <span style={{
+                  fontFamily: 'var(--font-mono)', fontSize: 8,
+                  color: isSelected ? 'var(--jade)' : 'var(--text-muted)',
+                  display: 'inline-block',
+                  transform: isSelected ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.25s ease, color 0.2s ease',
+                }}>
+                  ↓
+                </span>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       {/* Animated expand/collapse */}
