@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './contexts/AuthContext.jsx';
+
+function withTimeout(promise, ms = 30000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out — please try again.')), ms)),
+  ]);
+}
 import AppShell from './components/layout/AppShell.jsx';
 import Landing from './screens/Landing.jsx';
 import Dashboard from './screens/Dashboard.jsx';
@@ -83,14 +90,14 @@ export default function App() {
         loadUserCharts().then(setSavedCharts).catch(() => {});
 
         setTeaserLoading(true);
-        generateTeaser(id)
+        withTimeout(generateTeaser(id), 30000)
           .then(t => setTeaserText(t))
           .catch(e => setTeaserError(e.message))
           .finally(() => setTeaserLoading(false));
 
         if (isPro) {
           setNatalLoading(true);
-          generateNatal(id)
+          withTimeout(generateNatal(id), 30000)
             .then(t => setNatalText(t))
             .catch(e => setNatalError(e.message))
             .finally(() => setNatalLoading(false));
@@ -100,7 +107,7 @@ export default function App() {
       }
     } else {
       setAnonLoading(true);
-      generateAnalysis(result)
+      withTimeout(generateAnalysis(result), 30000)
         .then(t => setAnonAnalysis(t))
         .catch(e => setAnonError(e.message))
         .finally(() => setAnonLoading(false));
@@ -114,14 +121,14 @@ export default function App() {
     setScreen('dashboard');
 
     setTeaserLoading(true);
-    generateTeaser(saved.id)
+    withTimeout(generateTeaser(saved.id), 30000)
       .then(t => setTeaserText(t))
       .catch(e => setTeaserError(e.message))
       .finally(() => setTeaserLoading(false));
 
     if (isPro) {
       setNatalLoading(true);
-      generateNatal(saved.id)
+      withTimeout(generateNatal(saved.id), 30000)
         .then(t => setNatalText(t))
         .catch(e => setNatalError(e.message))
         .finally(() => setNatalLoading(false));
@@ -140,6 +147,24 @@ export default function App() {
     natalText, natalLoading, natalError,
     anonAnalysis, anonLoading, anonError,
     tier, onUpgrade: handleUpgrade, user,
+    onRetryTeaser: chartId ? () => {
+      setTeaserText(''); setTeaserError(''); setTeaserLoading(true);
+      withTimeout(generateTeaser(chartId), 30000)
+        .then(t => setTeaserText(t)).catch(e => setTeaserError(e.message))
+        .finally(() => setTeaserLoading(false));
+    } : null,
+    onRetryNatal: (chartId && isPro) ? () => {
+      setNatalText(''); setNatalError(''); setNatalLoading(true);
+      withTimeout(generateNatal(chartId), 30000)
+        .then(t => setNatalText(t)).catch(e => setNatalError(e.message))
+        .finally(() => setNatalLoading(false));
+    } : null,
+    onRetryAnon: chart ? () => {
+      setAnonAnalysis(''); setAnonError(''); setAnonLoading(true);
+      withTimeout(generateAnalysis(chart), 30000)
+        .then(t => setAnonAnalysis(t)).catch(e => setAnonError(e.message))
+        .finally(() => setAnonLoading(false));
+    } : null,
   };
 
   return (
@@ -195,8 +220,8 @@ export default function App() {
         )}
       </AppShell>
 
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} defaultMode={authMode} />}
-      {showPricing && <PricingPage onClose={() => setShowPricing(false)} currentTier={tier} />}
+      <AuthModal open={showAuth} onClose={() => setShowAuth(false)} defaultMode={authMode} />
+      <PricingPage open={showPricing} onClose={() => setShowPricing(false)} currentTier={tier} />
     </>
   );
 }

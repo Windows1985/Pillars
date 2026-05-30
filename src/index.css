@@ -10,8 +10,8 @@
   --jade-border: oklch(22% 0.06 162);
   /* Text */
   --text:        oklch(88% 0.01 75);
-  --text-dim:    oklch(54% 0.01 75);
-  --text-muted:  oklch(30% 0.008 75);
+  --text-dim:    oklch(67% 0.01 75);
+  --text-muted:  oklch(60% 0.008 75);
   /* Surfaces */
   --surface-0:   oklch(9% 0.008 60);
   --surface-1:   oklch(12% 0.008 60);
@@ -30,7 +30,19 @@
   }
   *::-webkit-scrollbar { display: none; }
 
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  button, [role="button"], a {
+    touch-action: manipulation;
+  }
+
+  /* Tabular numbers utility */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
 
   body {
     background-color: oklch(9% 0.008 60);
@@ -49,6 +61,34 @@
     background: rgba(196, 145, 58, 0.22);
     color: #e8e4dd;
   }
+}
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  padding: 8px 16px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  z-index: 999;
+  text-decoration: none;
+}
+.skip-link:focus-visible {
+  top: 16px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--jade-dim);
+  outline-offset: 3px;
+}
+/* Suppress focus ring on mouse click, keep for keyboard */
+:focus:not(:focus-visible) {
+  outline: none;
 }
 
 @keyframes fadeIn    { from { opacity: 0; }                           to { opacity: 1; }          }
@@ -121,16 +161,71 @@ button { transition: background 0.18s ease, color 0.18s ease, border-color 0.18s
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  .skeleton-line {
+    animation: none !important;
+    opacity: 0.5;
+  }
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.skeleton-line {
+  background: var(--surface-2);
+  border-radius: 2px;
+  animation: skeletonPulse 1.6s ease-in-out infinite;
+}
+
+.screen-container { padding: 0 64px 80px; }
+
+@media (max-width: 640px) {
+  .screen-container { padding: 0 20px 80px; }
+}
+
+.pillar-grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; }
+
+@media (max-width: 640px) {
+  .pillar-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+.luck-timeline { display: flex !important; border-top: 1px solid var(--border) !important; }
+
+@media (max-width: 640px) {
+  .luck-timeline { flex-direction: column !important; border-top: none !important; gap: 0 !important; }
+
+  .luck-pillar-btn {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 12px 16px !important;
+    border-top: 1px solid var(--border) !important;
+  }
+
+  .luck-pillar-chars {
+    flex-direction: row !important;
+    align-items: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    gap: 8px !important;
+  }
+
+  .luck-pillar-age {
+    margin-top: 0 !important;
+    padding-bottom: 0 !important;
+    text-align: right !important;
+  }
+
+  .luck-pillar-now {
+    padding-bottom: 0 !important;
+    height: auto !important;
+    padding-top: 4px !important;
+  }
 }
 
 /* ─── Responsive breakpoint ─── */
 @media (max-width: 768px) {
-  /* Screens: reduce outer padding */
-  .screen-pad {
-    padding-left: clamp(16px, 5vw, 64px) !important;
-    padding-right: clamp(16px, 5vw, 64px) !important;
-  }
-
   /* Dashboard hero: stack vertically */
   .hero-flex { flex-direction: column !important; }
   .hero-left {

@@ -13,6 +13,7 @@ export default function AppShell({
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-0)' }}>
+      <a href="#main-content" className="skip-link">Skip to content</a>
       <header
         className="shell-header"
         style={{
@@ -26,6 +27,7 @@ export default function AppShell({
         {/* Logo */}
         <button
           onClick={() => onNavigate(hasChart ? 'dashboard' : 'landing')}
+          aria-label="Pillars — go to home"
           style={{ display: 'flex', alignItems: 'baseline', gap: 10, background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }}
           onMouseDown={e => { e.currentTarget.style.opacity = '0.7'; }}
           onMouseUp={e => { e.currentTarget.style.opacity = '1'; }}
@@ -40,17 +42,18 @@ export default function AppShell({
 
         {/* Nav — only when chart exists */}
         {hasChart && (
-          <nav style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <nav aria-label="Main navigation" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             {NAV.map(({ id, en, zh }) => (
               <button
                 key={id}
                 onClick={() => onNavigate(id)}
+                aria-current={screen === id ? 'page' : undefined}
                 style={{
                   fontFamily: 'var(--font-display)',
                   fontSize: 13, fontWeight: 300, letterSpacing: '0.02em',
                   color: screen === id ? 'var(--text)' : 'var(--text-muted)',
                   background: 'none', border: 'none', cursor: 'pointer',
-                  padding: '6px 10px', position: 'relative',
+                  padding: '8px 14px', position: 'relative',
                   borderRadius: 4,
                 }}
                 onMouseEnter={e => { if (screen !== id) e.currentTarget.style.color = 'var(--text-dim)'; }}
@@ -96,6 +99,7 @@ export default function AppShell({
               )}
               <button
                 onClick={onSignOut}
+                aria-label="Sign out"
                 style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 6px' }}
                 onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-dim)'; }}
                 onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.transform = 'none'; }}
@@ -120,7 +124,9 @@ export default function AppShell({
         </div>
       </header>
 
-      {children}
+      <main id="main-content">
+        {children}
+      </main>
     </div>
   );
 }
