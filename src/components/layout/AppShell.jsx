@@ -27,6 +27,9 @@ export default function AppShell({
         <button
           onClick={() => onNavigate(hasChart ? 'dashboard' : 'landing')}
           style={{ display: 'flex', alignItems: 'baseline', gap: 10, background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }}
+          onMouseDown={e => { e.currentTarget.style.opacity = '0.7'; }}
+          onMouseUp={e => { e.currentTarget.style.opacity = '1'; }}
+          onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
         >
           <span style={{ fontFamily: 'var(--font-cjk)', fontSize: 18, color: 'var(--text)' }}>柱</span>
           <span style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 300, letterSpacing: '0.06em', color: 'var(--text)' }}>Pillars</span>
@@ -51,7 +54,9 @@ export default function AppShell({
                   borderRadius: 4,
                 }}
                 onMouseEnter={e => { if (screen !== id) e.currentTarget.style.color = 'var(--text-dim)'; }}
-                onMouseLeave={e => { if (screen !== id) e.currentTarget.style.color = 'var(--text-muted)'; }}
+                onMouseLeave={e => { if (screen !== id) e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.transform = 'none'; }}
+                onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+                onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
               >
                 {/* Show CJK on mobile, English on desktop */}
                 <span className="nav-label-long">{en}</span>
@@ -81,6 +86,10 @@ export default function AppShell({
                 <button
                   onClick={onUpgrade}
                   style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.12em', color: '#c4913a', background: 'rgba(196,145,58,0.08)', border: '1px solid rgba(196,145,58,0.2)', padding: '4px 10px', borderRadius: 4, cursor: 'pointer' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(196,145,58,0.16)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(196,145,58,0.08)'; e.currentTarget.style.transform = 'none'; }}
+                  onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+                  onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
                 >
                   Upgrade
                 </button>
@@ -88,6 +97,10 @@ export default function AppShell({
               <button
                 onClick={onSignOut}
                 style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 6px' }}
+                onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-dim)'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.transform = 'none'; }}
+                onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+                onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
               >
                 Sign out
               </button>
@@ -96,6 +109,10 @@ export default function AppShell({
             <button
               onClick={onSignIn}
               style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', color: 'var(--text-dim)', background: 'var(--surface-1)', border: '1px solid var(--border)', padding: '5px 12px', borderRadius: 4, cursor: 'pointer' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-muted)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'none'; }}
+              onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+              onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
             >
               Sign in
             </button>

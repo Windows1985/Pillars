@@ -118,8 +118,12 @@ export default function AuthModal({ onClose, defaultMode = 'signin' }) {
               color: loading ? 'var(--text-muted)' : 'var(--jade)',
               border: loading ? '1px solid var(--border)' : '1px solid var(--jade-border)',
               cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'background 0.15s',
+              transition: 'background 0.15s, transform 0.12s ease',
             }}
+            onMouseEnter={e => { if (!loading) e.currentTarget.style.background = 'oklch(17% 0.05 162)'; }}
+            onMouseLeave={e => { if (!loading) e.currentTarget.style.background = 'var(--jade-bg)'; e.currentTarget.style.transform = 'none'; }}
+            onMouseDown={e => { if (!loading) e.currentTarget.style.transform = 'scale(0.98)'; }}
+            onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
           >
             {loading ? '…' : mode === 'signin' ? 'Sign in' : 'Create account'}
           </button>
@@ -132,6 +136,8 @@ export default function AuthModal({ onClose, defaultMode = 'signin' }) {
               color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer',
             }}
             onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(''); setSuccess(''); }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-dim)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; }}
           >
             {mode === 'signin' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
           </button>

@@ -114,6 +114,15 @@ button { transition: background 0.18s ease, color 0.18s ease, border-color 0.18s
   font-family: 'Noto Serif SC', 'Source Han Serif SC', Georgia, serif;
 }
 
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ─── Responsive breakpoint ─── */
 @media (max-width: 768px) {
   /* Screens: reduce outer padding */

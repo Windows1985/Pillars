@@ -133,7 +133,9 @@ function Btn({ label, onClick, disabled, large }) {
         transition: 'background 0.15s, border-color 0.15s',
       }}
       onMouseEnter={e => { if (!disabled) e.currentTarget.style.background = 'oklch(17% 0.05 162)'; }}
-      onMouseLeave={e => { if (!disabled) e.currentTarget.style.background = 'var(--jade-bg)'; }}
+      onMouseLeave={e => { if (!disabled) e.currentTarget.style.background = 'var(--jade-bg)'; e.currentTarget.style.transform = 'none'; }}
+      onMouseDown={e => { if (!disabled) e.currentTarget.style.transform = 'scale(0.97)'; }}
+      onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
     >
       {label}{!large && ' →'}
     </button>

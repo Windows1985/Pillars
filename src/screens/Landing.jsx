@@ -53,8 +53,8 @@ export default function Landing({ onEnter }) {
         }}
         onMouseEnter={e => { e.currentTarget.style.background = 'oklch(17% 0.05 162)'; e.currentTarget.style.boxShadow = '0 0 0 1px var(--jade-border)'; }}
         onMouseLeave={e => { e.currentTarget.style.background = 'var(--jade-bg)'; e.currentTarget.style.boxShadow = 'none'; }}
-        onMouseDown={e => { e.currentTarget.style.opacity = '0.75'; }}
-        onMouseUp={e => { e.currentTarget.style.opacity = '1'; }}
+        onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+        onMouseUp={e => { e.currentTarget.style.transform = 'none'; }}
       >
         Enter birth data →
       </button>
